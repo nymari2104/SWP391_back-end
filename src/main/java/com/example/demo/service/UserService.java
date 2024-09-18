@@ -71,6 +71,8 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         userMapper.updateUser(user, request);
+        //set password after encode
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
