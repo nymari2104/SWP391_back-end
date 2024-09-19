@@ -5,9 +5,11 @@ import com.example.demo.dto.request.IntrospectRequest;
 import com.example.demo.dto.request.LogoutRequest;
 import com.example.demo.dto.response.AuthenticationResponse;
 import com.example.demo.dto.response.IntrospectResponse;
+import com.example.demo.entity.InvalidatedToken;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
+import com.example.demo.repository.InvalidatedTokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -27,6 +29,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -35,6 +38,7 @@ import java.util.Date;
 public class AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -71,7 +75,20 @@ public class AuthenticationService {
     }
 
     public void Logout(LogoutRequest request) throws ParseException, JOSEException {
+        //1. Read token
+        //1.1 Verify token
         var token = verifyToken(request.getToken());
+        //1.2 Get ID token
+        String jit = token.getJWTClaimsSet().getJWTID();
+        //1.3 Get expiry time
+        Date expiryDate = token.getJWTClaimsSet().getExpirationTime();
+        //2. store in DB
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expiryDate(expiryDate)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
 
     }
 
@@ -106,6 +123,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
+                .jwtID(UUID.randomUUID().toString())//Create ID for jwt
                 .claim("scope", user.getRole())
                 .build();
         //convert jwt claims to JSON to create a payload

@@ -40,6 +40,9 @@ public class Order {
     @Column(name = "createDate")
      LocalDate createDate;
 
+    @Column(name = "status")
+    boolean status;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
      List<OrderDetail> orderDetails;
 }

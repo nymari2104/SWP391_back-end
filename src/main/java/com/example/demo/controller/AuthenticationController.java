@@ -25,14 +25,16 @@ import java.text.ParseException;
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
-    @PostMapping("/token")
-    ApiResponse<AuthenticationResponse> authenticate(@RequestBody SignInRequest request){
+
+    //Sign In
+    @PostMapping("/sign-in")
+    ApiResponse<AuthenticationResponse> signIn(@RequestBody SignInRequest request){
         var result = authenticationService.authenticate(request);
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
     }
-
+    //Authenticate token
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
             throws ParseException, JOSEException {
@@ -41,11 +43,13 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
-
+    //Sign Out
     @PostMapping("/logout")
-    ApiResponse<Void> logout(LogoutRequest request) throws ParseException, JOSEException {
+    ApiResponse<Void> signOut(@RequestBody LogoutRequest request)
+            throws ParseException, JOSEException {
         authenticationService.Logout(request);
         return ApiResponse.<Void>builder()
+                .message("Logout")
                 .build();
     }
 }

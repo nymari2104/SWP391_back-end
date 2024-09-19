@@ -18,7 +18,7 @@ public class Blog {
     @Id
     @Column(name = "blogId", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String blogId;
+     String blogId;
 
     @ManyToOne
     @JoinColumn(name = "userId")

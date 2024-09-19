@@ -23,8 +23,8 @@ import java.util.List;
 public class UserController {
     UserService userService;
 
-    //Create a user
-    @PostMapping
+    //Sign Up
+    @PostMapping("/sign-up")
     ApiResponse<UserResponse> createUser(@RequestBody @Valid SignUpRequest request){
         return ApiResponse.<UserResponse>builder()
                 .result(userService.createUser(request))
@@ -52,8 +52,8 @@ public class UserController {
                 .build();
     }
 
-    //get info who is login
-    @GetMapping("/myInfo")
+    //get my info
+    @GetMapping("/my-info")
     ApiResponse<UserResponse> getMyInfo(){
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getMyInfo())
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     //Update my info
-    @PutMapping("/updateMyInfo")
+    @PutMapping("/update-my-info")
     ApiResponse<UserResponse> updateMyInfo(@RequestBody UserUpdateRequest request){
         return ApiResponse.<UserResponse>builder()
                 .result(userService.updateMyInfo(request))

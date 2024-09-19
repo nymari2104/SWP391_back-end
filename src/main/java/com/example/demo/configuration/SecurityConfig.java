@@ -19,16 +19,18 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+    import org.springframework.web.servlet.config.annotation.CorsRegistry;
+    import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.crypto.spec.SecretKeySpec;
+    import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
-    private final String[] PUBLIC_ENDPOINTS ={"/users",
-            "auth/token", "/auth/introspect"
+    private final String[] PUBLIC_ENDPOINTS ={"/users/sign-up",
+            "auth/sign-in", "/auth/introspect", "/auth/logout"
     };
 
     @Value("${jwt.signerKey}")
