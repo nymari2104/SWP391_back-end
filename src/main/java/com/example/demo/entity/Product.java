@@ -44,11 +44,11 @@ public class Product {
     String description;
 
     @Column(name = "status")
-    private Boolean status;
+     Boolean status;
 
     @OneToMany(mappedBy = "product")
-    private List<OrderDetail> orderDetails;
+     List<OrderDetail> orderDetails;
 
     @OneToMany(mappedBy = "product")
-    private List<CartItem> cartItems;
+     List<CartItem> cartItems;
 }
