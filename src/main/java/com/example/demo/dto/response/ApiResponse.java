@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)//not show field which is null
 public class ApiResponse <T>{
      @Builder.Default
-     int code = 1000;
+     int code = 200;
      String message;
      T result;
 }

@@ -1,6 +1,6 @@
 package com.example.demo.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
+    import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +16,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -34,9 +37,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
             httpSecurity.authorizeHttpRequests(request ->
-                    request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-//                            .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
-                            .anyRequest().authenticated());
+                    request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated());
 
             httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
@@ -48,6 +52,24 @@ public class SecurityConfig {
             httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    public CorsFilter corsFilter(){
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+
+        //Allow specific origin
+        corsConfiguration.addAllowedOrigin("*");
+        //Use specific API (* = all)
+        corsConfiguration.addAllowedMethod("*");
+        //Use all Header pass this filter
+        corsConfiguration.addAllowedHeader("*");
+
+        //applies CORS for all end point
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+
+        return new CorsFilter(urlBasedCorsConfigurationSource);
     }
 
     //Change SCOPE_ to ROLE_
@@ -78,4 +100,5 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);
     }
+
 }

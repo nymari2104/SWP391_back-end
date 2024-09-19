@@ -54,12 +54,12 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(SignInRequest request){
         //check username
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
 
         //check match password
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!authenticated)
-            throw new AppException(ErrorCode.UNAUTHENTICATED);//no match
+            throw new AppException(ErrorCode.LOGIN_FAIL);//no match
 
         //create token for this login time
         var token = generateToken(user);
