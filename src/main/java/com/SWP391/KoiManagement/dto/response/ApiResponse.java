@@ -1,0 +1,19 @@
+package com.SWP391.KoiManagement.dto.response;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)//not show field which is null
+public class ApiResponse <T>{
+     @Builder.Default
+     String code = "200";
+     String message;
+     T result;
+}
