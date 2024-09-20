@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         //Set role default
         user.setRole(Role.USER.toString());
+
         userRepository.save(user);
 
         return userMapper.toUserResponse(user);
@@ -91,7 +93,7 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
 //    @PostAuthorize("returnObject.username == authentication.name")//check if username is match with who is login
     public UserResponse getUser(String Id){
-        return userMapper.toUserResponse(userRepository.findById(Id).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED)));
+        return userMapper.toUserResponse(userRepository.findById(Id).orElseThrow(() -> new AppException(ErrorCode.USER_ID_NOT_EXISTED)));
     }
 
 }

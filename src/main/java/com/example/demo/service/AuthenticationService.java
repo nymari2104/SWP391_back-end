@@ -5,9 +5,11 @@ import com.example.demo.dto.request.IntrospectRequest;
 import com.example.demo.dto.request.LogoutRequest;
 import com.example.demo.dto.response.AuthenticationResponse;
 import com.example.demo.dto.response.IntrospectResponse;
+import com.example.demo.entity.InvalidatedToken;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
+import com.example.demo.repository.InvalidatedTokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -20,6 +22,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -34,7 +38,8 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
-    PasswordEncoder passwordEncoder;
+    InvalidatedTokenRepository invalidatedTokenRepository;
+
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -44,10 +49,15 @@ public class AuthenticationService {
         //get token
         var token = request.getToken();
         //check token
-        verifyToken(token);
+        boolean isValid = true;
+        try {
+            verifyToken(token);
+        } catch (ParseException e) {
+            isValid = false;
+        }
 
         return IntrospectResponse.builder()
-                .valid(true).build();
+                .valid(isValid).build();
 
     }
 
@@ -57,6 +67,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
 
         //check match password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!authenticated)
             throw new AppException(ErrorCode.LOGIN_FAIL);//no match
@@ -71,7 +82,20 @@ public class AuthenticationService {
     }
 
     public void Logout(LogoutRequest request) throws ParseException, JOSEException {
+        //1. Read token
+        //1.1 Verify token
         var token = verifyToken(request.getToken());
+        //1.2 Get ID token
+        String jit = token.getJWTClaimsSet().getJWTID();
+        //1.3 Get expiry time
+        Date expiryDate = token.getJWTClaimsSet().getExpirationTime();
+        //2. store in DB
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .tokenId(jit)
+                .expiryDate(expiryDate)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
 
     }
 
@@ -91,6 +115,9 @@ public class AuthenticationService {
         if(!(verified && expiryTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
+        //5. Check if token has been logout
+        if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.TOKEN_INVALID);
         return signedJWT;
     }
 
@@ -106,6 +133,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", user.getRole())
                 .build();
         //convert jwt claims to JSON to create a payload

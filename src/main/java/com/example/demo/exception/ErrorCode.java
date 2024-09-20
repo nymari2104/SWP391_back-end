@@ -19,7 +19,9 @@ public enum ErrorCode {
     EMAIL_NOT_EXISTED(404,"Email not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(401,"Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(403,"You do not have permission", HttpStatus.FORBIDDEN),
-    LOGIN_FAIL(400, "Email or password incorrect", HttpStatus.BAD_REQUEST)
+    LOGIN_FAIL(400, "Email or password incorrect", HttpStatus.BAD_REQUEST),
+    TOKEN_INVALID(401, "Token is invalid", HttpStatus.UNAUTHORIZED),
+    USER_ID_NOT_EXISTED(404, "User id not existed", HttpStatus.NOT_FOUND),
     ;
 
     private int code;

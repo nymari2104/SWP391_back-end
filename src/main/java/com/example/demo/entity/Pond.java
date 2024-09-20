@@ -20,9 +20,8 @@ import java.util.List;
 public class Pond {
     @Id
     @Column(name = "pondId", nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     String pondId;
-
 
     @ManyToOne
     @JoinColumn(name = "userId")

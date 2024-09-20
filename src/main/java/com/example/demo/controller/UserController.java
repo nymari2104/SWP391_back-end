@@ -24,9 +24,10 @@ public class UserController {
     UserService userService;
 
     //Create a user
-    @PostMapping
+    @PostMapping("/sign-up")
     ApiResponse<UserResponse> createUser(@RequestBody @Valid SignUpRequest request){
         return ApiResponse.<UserResponse>builder()
+                .message("Sign up successfully!")
                 .result(userService.createUser(request))
                 .build();
     }
@@ -40,6 +41,7 @@ public class UserController {
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
 
        return ApiResponse.<List<UserResponse>>builder()
+               .message("Get all users successfully!")
                .result(userService.getUsers())
                .build();
     }
@@ -48,22 +50,25 @@ public class UserController {
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable String userId){
         return ApiResponse.<UserResponse>builder()
+                .message("Get user successfully!")
                 .result(userService.getUser(userId))
                 .build();
     }
 
     //get info who is login
-    @GetMapping("/myInfo")
+    @GetMapping("/my-info")
     ApiResponse<UserResponse> getMyInfo(){
         return ApiResponse.<UserResponse>builder()
+                .message("Get my info successfully!")
                 .result(userService.getMyInfo())
                 .build();
     }
 
     //Update my info
-    @PutMapping("/updateMyInfo")
+    @PutMapping("/update-my-info")
     ApiResponse<UserResponse> updateMyInfo(@RequestBody UserUpdateRequest request){
         return ApiResponse.<UserResponse>builder()
+                .message("Update info successfully!")
                 .result(userService.updateMyInfo(request))
                 .build();
     }
@@ -72,6 +77,7 @@ public class UserController {
     @PutMapping("/{userId}")
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request){
         return ApiResponse.<UserResponse>builder()
+                .message("Update user successfully!")
                 .result(userService.updateUser(userId, request))
                 .build();
     }
@@ -81,7 +87,7 @@ public class UserController {
     ApiResponse<String> deleteUser(@PathVariable String userId){
         userService.deleteUser(userId);
         return  ApiResponse.<String>builder()
-                .result("id has been delete")
+                .result("Delete user successfully!")
                 .build();
     }
 }
