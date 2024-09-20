@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,17 +21,21 @@ public class Blog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String blogId;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "userId")
-     User user;
+    User user;
+
+    @Column(name = "image", columnDefinition = "VARCHAR(MAX)")
+    String image;
 
     @Column(name = "content")
-     String content;
+    String content;
 
     @Column(name = "title")
-     String title;
+    String title;
 
     @Column(name = "createDate")
-     LocalDate createDate;
+    LocalDate createDate;
 
 }

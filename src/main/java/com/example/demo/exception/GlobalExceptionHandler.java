@@ -8,19 +8,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLException;
+
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-//    @ExceptionHandler(value = Exception.class)
-//      ResponseEntity<ApiResponse<?>> handlingException(){
-//
-//        return ResponseEntity.internalServerError()
-//                .body(ApiResponse.builder()
-//                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
-//                        .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
-//                        .build());
-//    }
+    @ExceptionHandler(value = Exception.class)
+      ResponseEntity<ApiResponse<?>> handlingException(){
+
+        return ResponseEntity.internalServerError()
+                .body(ApiResponse.builder()
+                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
+                        .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
+                        .build());
+    }
 
     @ExceptionHandler(value = AppException.class)
       ResponseEntity<ApiResponse<?>> handlingAppException(AppException exception){
@@ -58,6 +60,15 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(value = SQLException.class)
+    ResponseEntity<ApiResponse<?>> handlingSQLServerException(SQLException exception){
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.builder()
+                        .code(exception.getSQLState())
+                        .message(exception.getMessage())
                         .build());
     }
 }

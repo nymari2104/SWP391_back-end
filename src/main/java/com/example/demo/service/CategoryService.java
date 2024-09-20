@@ -19,7 +19,7 @@ public class CategoryService {
 
     CategoryRepository categoryRepository;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("permitAll()")
     public List<Category> getAllCategories() {
         return categoryRepository.findAll().stream().toList();
     }

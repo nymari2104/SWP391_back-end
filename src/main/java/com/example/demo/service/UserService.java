@@ -32,7 +32,6 @@ public class UserService {
 
     public UserResponse createUser(SignUpRequest request){
 
-
         //Map data from UserCreationRequest to User
         User user = userMapper.toUser(request);
         //Encoder password

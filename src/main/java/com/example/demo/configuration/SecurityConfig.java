@@ -45,6 +45,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .anyRequest()
                             .authenticated());
 
+
             httpSecurity.oauth2ResourceServer(oauth2 ->
                     oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer
