@@ -4,7 +4,7 @@ import com.example.demo.dto.request.LogoutRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.request.SignInRequest;
 import com.example.demo.dto.request.IntrospectRequest;
-import com.example.demo.dto.response.AuthenticationResponse;
+import com.example.demo.dto.response.SignInResponse;
 import com.example.demo.dto.response.IntrospectResponse;
 import com.example.demo.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
@@ -23,9 +23,9 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/sign-in")
-    ApiResponse<AuthenticationResponse> signIn(@RequestBody SignInRequest request){
+    ApiResponse<SignInResponse> signIn(@RequestBody SignInRequest request){
         var result = authenticationService.authenticate(request);
-        return ApiResponse.<AuthenticationResponse>builder()
+        return ApiResponse.<SignInResponse>builder()
                 .message("Sign in successfully!")
                 .result(result)
                 .build();

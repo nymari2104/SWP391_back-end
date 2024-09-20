@@ -31,15 +31,17 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(SignUpRequest request){
-        //1. Check username
-        if (userRepository.existsByEmail(request.getEmail()))
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
+
+
         //Map data from UserCreationRequest to User
         User user = userMapper.toUser(request);
         //Encoder password
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         //Set role default
         user.setRole(Role.USER.toString());
+        // Check username
+        if (userRepository.existsByEmail(request.getEmail()))
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
 
         userRepository.save(user);
 
