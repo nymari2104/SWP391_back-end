@@ -1,10 +1,15 @@
 package com.example.demo.entity;
 
+import com.example.demo.exception.ErrorCode;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
 
@@ -20,9 +25,11 @@ import java.util.List;
 public class Product {
     @Id
     @Column(name = "productId", nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String productId;
+    @GeneratedValue(generator = "product-id")
+    @GenericGenerator(name = "product-id", strategy = "com.example.demo.configuration.IdGenerator")
+    int productId;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "cateId")
     Category category;
@@ -30,13 +37,13 @@ public class Product {
     @Column(name = "productName", nullable = false)
     String productName;
 
-    @Lob
-    @Column(name = "image")
-    byte[] image;
+    @Column(name = "image", columnDefinition = "TEXT")
+    String image;
 
     @Column(name = "unitPrice", nullable = false)
     float unitPrice;
 
+    @Min(value = 0, message = "STOCK_INVALID")
     @Column(name = "stock")
     int stock;
 
@@ -46,9 +53,9 @@ public class Product {
     @Column(name = "status")
     private Boolean status;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartItem> cartItems;
 }

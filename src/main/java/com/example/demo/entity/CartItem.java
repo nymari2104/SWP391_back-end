@@ -22,12 +22,12 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "cartId")
-     Cart cart;
+    Cart cart;
 
     @ManyToOne
     @JoinColumn(name = "productId")
-     Product product;
+    Product product;
 
     @Column(name = "quantity", nullable = false)
-     int quantity;
+    int quantity;
 }

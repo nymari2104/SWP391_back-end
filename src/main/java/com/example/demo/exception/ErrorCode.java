@@ -22,6 +22,10 @@ public enum ErrorCode {
     LOGIN_FAIL(400, "Email or password incorrect", HttpStatus.BAD_REQUEST),
     TOKEN_INVALID(401, "Token is invalid", HttpStatus.UNAUTHORIZED),
     USER_ID_NOT_EXISTED(404, "User id not existed", HttpStatus.NOT_FOUND),
+    STOCK_INVALID(400, "Stock must be at least 0", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXISTED(400, "Category is existed", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_EXISTED(400, "Category is not existed", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_FOUND(400, "Product not found", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

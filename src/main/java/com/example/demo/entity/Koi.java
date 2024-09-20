@@ -3,9 +3,11 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -17,38 +19,38 @@ import java.util.List;
 public class Koi {
     @Id
     @Column(name = "koiId", nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
-     String koiId;
+    @GeneratedValue(generator = "koi-id")
+    @GenericGenerator(name = "koi-id", strategy = "com.example.demo.configuration.IdGenerator")
+    int koiId;
 
     @ManyToOne
     @JoinColumn(name = "pondId")
-     Pond pond;
+    Pond pond;
 
     @Column(name = "koiName", nullable = false)
-     String koiName;
+    String koiName;
 
-    @Lob
     @Column(name = "koiImage")
-     byte[] koiImage;
+    String koiImage;
 
     @Column(name = "size")
-     float size;
+    float size;
 
     @Column(name = "sex")
-     Boolean sex;
+    Boolean sex;
 
     @Column(name = "weight")
-     float weight;
+    float weight;
 
     @Column(name = "type")
-     String type;
+    String type;
 
     @Column(name = "origin")
-     String origin;
+    String origin;
 
     @Column(name = "createDate")
-     LocalDate createDate;
+    LocalDate createDate;
 
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
-     List<KoiGrowthLog> koiGrowthLogs;
+    List<KoiGrowthLog> koiGrowthLogs;
 }

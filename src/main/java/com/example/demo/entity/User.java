@@ -20,21 +20,21 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-     String userId;
-     String fullname;
-     String email;
-     String password;
-     String role;
+    String userId;
+    String fullname;
+    String email;
+    String password;
+    String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     List<Blog> blogs;
+    List<Blog> blogs;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-     List<Cart> carts;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Cart cart;
 
     @OneToMany(mappedBy = "user")
-     List<Order> orders;
+    List<Order> orders;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     List<Pond> ponds;
+    List<Pond> ponds;
 }

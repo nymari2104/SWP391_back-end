@@ -23,23 +23,23 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "id")
-     User user;
+    User user;
 
     @Column(name = "orderDate")
-     LocalDate orderDate;
+    LocalDate orderDate;
 
     @Column(name = "phone", length = 20)
-     String phone;
+    String phone;
 
     @Column(name = "address")
-     String address;
+    String address;
 
     @Column(name = "email")
-     String email;
+    String email;
 
     @Column(name = "createDate")
-     LocalDate createDate;
+    LocalDate createDate;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-     List<OrderDetail> orderDetails;
+    List<OrderDetail> orderDetails;
 }

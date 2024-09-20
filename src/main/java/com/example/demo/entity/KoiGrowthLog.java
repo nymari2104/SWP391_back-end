@@ -22,14 +22,14 @@ public class KoiGrowthLog {
 
     @ManyToOne
     @JoinColumn(name = "koiId")
-     Koi koi;
+    Koi koi;
 
     @Column(name = "koiLogDate", nullable = false)
-     LocalDate koiLogDate;
+    LocalDate koiLogDate;
 
     @Column(name = "weight")
-     float weight;
+    float weight;
 
     @Column(name = "size")
-     float size;
+    float size;
 }

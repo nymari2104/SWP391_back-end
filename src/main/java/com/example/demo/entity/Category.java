@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,12 +18,12 @@ import java.util.List;
 public class Category {
     @Id
     @Column(name = "cateId", nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String cateId;
+    int cateId;
 
     @Column(name = "cateName", nullable = false)
-     String cateName;
+    String cateName;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-     List<Product> products;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<Product> products;
 }

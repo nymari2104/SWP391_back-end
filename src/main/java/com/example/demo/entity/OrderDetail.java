@@ -22,15 +22,15 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "orderId", nullable = false)
-     Order order;
+    Order order;
 
     @ManyToOne
     @JoinColumn(name = "productId", nullable = false)
-     Product product;
+    Product product;
 
     @Column(name = "total", nullable = false)
-     float total;
+    float total;
 
     @Column(name = "quantity", nullable = false)
-     int quantity;
+    int quantity;
 }

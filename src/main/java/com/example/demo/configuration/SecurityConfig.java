@@ -25,7 +25,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final String[] PUBLIC_ENDPOINTS ={"/users/sign-up",
-            "auth/sign-in", "/auth/introspect", "/auth/logout"
+            "auth/sign-in", "/auth/introspect", "/auth/logout", "/category/list",
+            "/product/**"
     };
 
     @Value("${jwt.signerKey}")

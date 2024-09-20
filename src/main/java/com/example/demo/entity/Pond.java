@@ -5,6 +5,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,31 +21,31 @@ import java.util.List;
 public class Pond {
     @Id
     @Column(name = "pondId", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    String pondId;
+    @GeneratedValue(generator = "pond-id")
+    @GenericGenerator(name = "pond-id", strategy = "com.example.demo.configuration.IdGenerator")
+    int pondId;
 
     @ManyToOne
     @JoinColumn(name = "userId")
-     User user;
+    User user;
 
     @Column(name = "pondName", nullable = false)
-     String pondName;
+    String pondName;
 
     @Column(name = "pumpPower")
-     float pumpPower;
+    float pumpPower;
 
-    @Lob
     @Column(name = "image")
-     byte[] image;
+    String image;
 
     @Column(name = "size")
-     float size;
+    float size;
 
     @Column(name = "depth")
-     float depth;
+    float depth;
 
     @Column(name = "volume")
-     float volume;
+    float volume;
 
     @Column(name = "vein")
     private int vein;

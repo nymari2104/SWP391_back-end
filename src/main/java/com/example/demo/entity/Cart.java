@@ -18,15 +18,15 @@ import java.util.List;
 public class Cart {
     @Id
     @Column(name = "cartId", nullable = false)
-     String cartId;
+    String cartId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "userId")
-     User user;
+    User user;
 
     @Column(name = "createDate")
-     LocalDate createDate;
+    LocalDate createDate;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-     List<CartItem> cartItems;
+    List<CartItem> cartItems;
 }
