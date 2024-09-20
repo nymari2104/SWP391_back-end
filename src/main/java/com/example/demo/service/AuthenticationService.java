@@ -3,12 +3,13 @@ package com.example.demo.service;
 import com.example.demo.dto.request.SignInRequest;
 import com.example.demo.dto.request.IntrospectRequest;
 import com.example.demo.dto.request.LogoutRequest;
-import com.example.demo.dto.response.AuthenticationResponse;
+import com.example.demo.dto.response.SignInResponse;
 import com.example.demo.dto.response.IntrospectResponse;
 import com.example.demo.entity.InvalidatedToken;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.InvalidatedTokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.nimbusds.jose.*;
@@ -39,6 +40,7 @@ import java.util.UUID;
 public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    UserMapper userMapper;
 
 
     @NonFinal
@@ -61,10 +63,12 @@ public class AuthenticationService {
 
     }
 
-    public AuthenticationResponse authenticate(SignInRequest request){
+    public SignInResponse authenticate(SignInRequest request){
         //check username
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
+
+
 
         //check match password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -75,8 +79,9 @@ public class AuthenticationService {
         //create token for this login time
         var token = generateToken(user);
 
-        return AuthenticationResponse.builder()
+        return SignInResponse.builder()
                 .token(token)
+                .user(userMapper.toUserResponse(user))
                 .authenticated(true)
                 .build();
     }

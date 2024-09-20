@@ -20,7 +20,7 @@ public class Cart {
     @Column(name = "cartId", nullable = false)
      String cartId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "userId")
      User user;
 
