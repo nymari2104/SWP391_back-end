@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.LogoutRequest;
+import com.example.demo.dto.request.VerifyEmailRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.request.SignInRequest;
 import com.example.demo.dto.request.IntrospectRequest;
 import com.example.demo.dto.response.SignInResponse;
 import com.example.demo.dto.response.IntrospectResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -47,6 +49,23 @@ public class AuthenticationController {
         authenticationService.Logout(request);
         return ApiResponse.<Void>builder()
                 .message("Logout")
+                .build();
+    }
+
+    @PostMapping("/forgot-password")
+    ApiResponse<Void> forgotPassword(){
+        authenticationService.forgotPassword();
+        return ApiResponse.<Void>builder()
+                .message("Send mail successfully!")
+                .build();
+    }
+
+    @PostMapping("/verify-email")
+    ApiResponse<UserResponse> verifyEmail(@RequestBody VerifyEmailRequest request){
+
+        return ApiResponse.<UserResponse>builder()
+                .message("sign-up successfully!")
+                .result(authenticationService.verifyEmail(request))
                 .build();
     }
 }

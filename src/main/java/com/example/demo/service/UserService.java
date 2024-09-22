@@ -2,24 +2,34 @@ package com.example.demo.service;
 
 import com.example.demo.dto.request.SignUpRequest;
 import com.example.demo.dto.request.UserUpdateRequest;
+import com.example.demo.dto.response.SignUpResponse;
 import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
-import com.example.demo.enums.Role;
+import com.example.demo.entity.VerificationToken;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.mapper.VerificationMapper;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.VerificationTokenRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -29,22 +39,55 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    VerificationTokenRepository verificationTokenRepository;
+    VerificationMapper verificationMapper;
+    JavaMailSender javaMailSender;
 
-    public UserResponse createUser(SignUpRequest request){
+    @NonFinal
+    @Value("${spring.mail.username}")
+    protected String SENDER_EMAIL;
 
-        //Map data from UserCreationRequest to User
-        User user = userMapper.toUser(request);
-        //Encoder password
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        //Set role default
-        user.setRole(Role.USER.toString());
+    public SignUpResponse createUser(SignUpRequest request){
         // Check username
-        if (userRepository.existsByEmail(request.getEmail()))
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+        //Map data from SignUpRequest to VerificationToken
+        VerificationToken verificationToken = verificationMapper.toVerificationToken(request);
+        //Encoder password
+        verificationToken.setPassword(passwordEncoder.encode(request.getPassword()));
+        Random random = new Random();
+        int otp;
+        do {
+            otp = random.nextInt(100000, 999999);
+        }while (verificationTokenRepository.existsById(otp));
+        verificationToken.setOtp(otp);
+        verificationToken.setExpiryTime(new Date(
+                Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()
+        ));
 
-        userRepository.save(user);
+        verificationTokenRepository.save(verificationToken);
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-        return userMapper.toUserResponse(user);
+        String to = "manhcat24@gmail.com";
+        String subject = "Test verify email";
+        String body = String.valueOf(otp);
+
+        simpleMailMessage.setTo(to);
+        simpleMailMessage.setSubject(subject);
+        simpleMailMessage.setText(body);
+        simpleMailMessage.setFrom(SENDER_EMAIL);
+
+        javaMailSender.send(simpleMailMessage);
+
+
+//        try {
+//            user = userRepository.save(user);
+//        } catch (DataIntegrityViolationException e) {
+//            throw new AppException(ErrorCode.EMAIL_EXISTED);
+//        }
+
+        return verificationMapper.toSignUpResponse(verificationToken);
     }
 
 

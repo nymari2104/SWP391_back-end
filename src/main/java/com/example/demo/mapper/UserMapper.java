@@ -10,7 +10,6 @@ import org.mapstruct.MappingTarget;
 @Mapper
 public interface UserMapper {
     User toUser(SignUpRequest request);
-
 //    @Mapping(source = "lastname", target = "username")  //map field lastname to field username
 //    @Mapping(target = "lastname", ignore = true)  //ignore field lastname
     UserResponse toUserResponse(User user);

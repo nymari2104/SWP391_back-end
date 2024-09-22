@@ -10,8 +10,6 @@ public class IdGenerator implements IdentifierGenerator {
     public Object generate(SharedSessionContractImplementor session, Object o) {
         Random random = new Random();
 
-        int id = 100000 + random.nextInt(899999);
-
-        return id;
+        return random.nextInt(100000,999999);
     }
 }

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,7 +24,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final String[] PUBLIC_ENDPOINTS ={"/users/sign-up",
-            "auth/sign-in", "/auth/introspect", "/auth/logout", "/category/list",
+            "auth/**",
+            "/category/list",
             "/product/**"
     };
 
@@ -40,10 +40,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             httpSecurity
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeHttpRequests(request ->
-                    request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated());
+                    request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                            .anyRequest().authenticated());
 
 
             httpSecurity.oauth2ResourceServer(oauth2 ->
@@ -71,24 +69,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-//    @Bean
-//    public CorsFilter corsFilter(){
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//
-//        //Allow specific origin
-//        corsConfiguration.addAllowedOrigin("*");
-//        //Use specific API (* = all)
-//        corsConfiguration.addAllowedMethod("*");
-//        //Use all Header pass this filter
-//        corsConfiguration.addAllowedHeader("*");
-//
-//        //applies CORS for all end point
-//        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-//        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-//
-//        return new CorsFilter(urlBasedCorsConfigurationSource);
-//    }
 
     //Change SCOPE_ to ROLE_
     @Bean

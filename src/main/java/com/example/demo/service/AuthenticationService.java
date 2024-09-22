@@ -3,15 +3,21 @@ package com.example.demo.service;
 import com.example.demo.dto.request.SignInRequest;
 import com.example.demo.dto.request.IntrospectRequest;
 import com.example.demo.dto.request.LogoutRequest;
+import com.example.demo.dto.request.VerifyEmailRequest;
 import com.example.demo.dto.response.SignInResponse;
 import com.example.demo.dto.response.IntrospectResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.InvalidatedToken;
 import com.example.demo.entity.User;
+import com.example.demo.entity.VerificationToken;
+import com.example.demo.enums.Role;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.mapper.VerificationMapper;
 import com.example.demo.repository.InvalidatedTokenRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.VerificationTokenRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -23,6 +29,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +39,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 @Slf4j
@@ -41,11 +50,18 @@ public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
     UserMapper userMapper;
+    JavaMailSender javaMailSender;
+    VerificationTokenRepository verificationTokenRepository;
+    VerificationMapper verificationMapper;
 
 
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SECRET_KEY;
+
+    @NonFinal
+    @Value("${spring.mail.username}")
+    protected String SENDER_EMAIL;
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         //get token
@@ -67,8 +83,6 @@ public class AuthenticationService {
         //check username
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
-
-
 
         //check match password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -104,6 +118,41 @@ public class AuthenticationService {
 
     }
 
+    public UserResponse verifyEmail(VerifyEmailRequest request){
+        //get verificationToken
+        VerificationToken verificationToken = verificationTokenRepository.findById(request.getOtp())
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_OTP_INVALID));
+        //check if this otp is generated for sign-up email
+        if (!verificationToken.getEmail().equals(request.getEmail()))
+            throw new AppException(ErrorCode.EMAIL_OTP_INVALID);
+        //check if otp is expired
+        if (!verificationToken.getExpiryTime().after(new Date()))
+            throw new AppException(ErrorCode.EMAIL_OTP_EXPIRED);
+
+        User user = verificationMapper.toUser(verificationToken);
+        user.setRole(Role.USER.toString());
+        try {
+            user = userRepository.save(user);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+         return userMapper.toUserResponse(user);
+    }
+
+    public void forgotPassword(){
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+
+        String to = "manhcat24@gmail.com";
+        String subject = "Test forgot password";
+        String body = String.valueOf(new Random().nextInt(100000, 999999));
+        simpleMailMessage.setTo(to);
+        simpleMailMessage.setSubject(subject);
+        simpleMailMessage.setText(body);
+        simpleMailMessage.setFrom(SENDER_EMAIL);
+
+        javaMailSender.send(simpleMailMessage);
+    }
+
     public SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         //1. Parse jwt token to SignedJWT to access jwt component
         SignedJWT signedJWT = SignedJWT.parse(token);
@@ -136,7 +185,7 @@ public class AuthenticationService {
                 .issuer("demo.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(365, ChronoUnit.DAYS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", user.getRole())

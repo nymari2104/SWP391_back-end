@@ -20,7 +20,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     String userId;
     String fullname;
+
+    @Column(name = "email", unique = true,  columnDefinition = "VARCHAR(255)")
     String email;
+
     String password;
     String role;
 
@@ -36,4 +39,5 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Pond> ponds;
+
 }
