@@ -5,12 +5,16 @@ import com.example.demo.entity.Blog;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
+import com.example.demo.mapper.BlogMapper;
 import com.example.demo.repository.BlogRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ public class BlogService {
 
     BlogRepository blogRepository;
     UserRepository userRepository;
+    BlogMapper blogMapper;
 
     public Blog createBlog(BlogCreateRequest request) {
 
@@ -33,5 +38,18 @@ public class BlogService {
                 .user(user)
                 .build());
 
+    }
+
+    public Blog getBlog(String id) {
+        return blogRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
+    }
+
+//    public List<Blog> getAllBlog(int page, int limit) {
+//        return blogRepository.findAll(PageRequest.of(page, limit)).getContent();
+//    }
+
+    public List<Blog> getAllBlogs() {
+        return blogRepository.findAll().stream().toList();
     }
 }

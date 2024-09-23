@@ -13,7 +13,7 @@ public class SignUpRequest {
     String fullname;
     String email;
     @Size(min = 8, message = "PASSWORD_INVALID")
-     String password;
-     String phone;
-     String address;
+    String password;
+    String phone;
+    String address;
 }

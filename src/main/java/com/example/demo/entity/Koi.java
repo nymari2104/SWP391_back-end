@@ -28,19 +28,19 @@ public class Koi {
     Pond pond;
 
     @Column(name = "koiName", nullable = false)
-    String koiName;
+    String name;
 
     @Column(name = "koiImage")
-    String koiImage;
+    String image;
 
-    @Column(name = "size")
-    float size;
+//    @Column(name = "size")
+//    float size;
 
     @Column(name = "sex")
     Boolean sex;
 
-    @Column(name = "weight")
-    float weight;
+//    @Column(name = "weight")
+//    float weight;
 
     @Column(name = "type")
     String type;

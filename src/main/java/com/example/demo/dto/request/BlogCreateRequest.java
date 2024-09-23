@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
+
+import java.util.Date;
 
 @Builder
 @Getter
@@ -16,6 +17,6 @@ public class BlogCreateRequest {
     String image;
     String title;
     String content;
-    LocalDate createDate;
+    Date createDate;
     String userId;
 }

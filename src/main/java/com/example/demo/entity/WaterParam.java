@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -39,14 +40,14 @@ public class WaterParam {
     float salt;
 
     @Column(name = "pH")
-     float ph;
+    float ph;
 
     @Column(name = "NO2")
-     float no2;
+    float no2;
 
     @Column(name = "NO3")
-     float no3;
+    float no3;
 
     @Column(name = "createDate")
-     LocalDate createDate;
+    Date createDate;
 }

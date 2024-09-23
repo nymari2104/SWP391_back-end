@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,9 +26,6 @@ public class Order {
     @JoinColumn(name = "id")
     User user;
 
-    @Column(name = "orderDate")
-    LocalDate orderDate;
-
     @Column(name = "phone", length = 20)
     String phone;
 
@@ -38,7 +36,7 @@ public class Order {
     String email;
 
     @Column(name = "createDate")
-    LocalDate createDate;
+    Date createDate;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderDetail> orderDetails;

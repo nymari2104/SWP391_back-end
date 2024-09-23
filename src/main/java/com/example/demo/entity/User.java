@@ -34,6 +34,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     List<Order> orders;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Pond> ponds;
 }

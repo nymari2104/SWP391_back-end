@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -8,6 +9,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,6 +27,7 @@ public class Pond {
     @GenericGenerator(name = "pond-id", strategy = "com.example.demo.configuration.IdGenerator")
     int pondId;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "userId")
     User user;
@@ -48,14 +51,14 @@ public class Pond {
     float volume;
 
     @Column(name = "vein")
-    private int vein;
+    int vein;
 
     @Column(name = "createDate")
-    private LocalDate createDate;
+    Date createDate;
 
     @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
-    private List<Koi> kois;
+    List<Koi> kois;
 
     @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
-    private List<WaterParam> waterParams;
+    List<WaterParam> waterParams;
 }

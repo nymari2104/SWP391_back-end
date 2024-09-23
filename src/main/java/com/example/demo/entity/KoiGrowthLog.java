@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -25,7 +25,7 @@ public class KoiGrowthLog {
     Koi koi;
 
     @Column(name = "koiLogDate", nullable = false)
-    LocalDate koiLogDate;
+    Date koiLogDate;
 
     @Column(name = "weight")
     float weight;

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -29,13 +29,13 @@ public class Blog {
     @Column(name = "image", columnDefinition = "VARCHAR(MAX)")
     String image;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "VARCHAR(MAX)")
     String content;
 
     @Column(name = "title")
     String title;
 
     @Column(name = "createDate")
-    LocalDate createDate;
+    Date createDate;
 
 }
