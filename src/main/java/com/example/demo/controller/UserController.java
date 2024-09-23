@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.SignUpRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.request.UserUpdateRequest;
+import com.example.demo.dto.response.SignUpResponse;
 import com.example.demo.dto.response.UserResponse;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -25,9 +26,9 @@ public class UserController {
 
     //Create a user
     @PostMapping("/sign-up")
-    ApiResponse<UserResponse> createUser(@RequestBody @Valid SignUpRequest request){
-        return ApiResponse.<UserResponse>builder()
-                .message("Sign up successfully!")
+    ApiResponse<SignUpResponse> createUser(@Valid @RequestBody SignUpRequest request){
+        return ApiResponse.<SignUpResponse>builder()
+                .message("Please check your email!")
                 .result(userService.createUser(request))
                 .build();
     }
