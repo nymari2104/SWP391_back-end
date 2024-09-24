@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +25,7 @@ public class Koi {
     @GenericGenerator(name = "koi-id", strategy = "com.example.demo.configuration.IdGenerator")
     int koiId;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "pondId")
     Pond pond;
@@ -31,7 +33,7 @@ public class Koi {
     @Column(name = "koiName", nullable = false)
     String name;
 
-    @Column(name = "koiImage")
+    @Column(name = "koiImage", columnDefinition = "TEXT")
     String image;
 
 //    @Column(name = "size")

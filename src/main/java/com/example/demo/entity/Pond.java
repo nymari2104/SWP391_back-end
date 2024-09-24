@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -56,6 +57,7 @@ public class Pond {
     @Column(name = "createDate")
     Date createDate;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
     List<Koi> kois;
 

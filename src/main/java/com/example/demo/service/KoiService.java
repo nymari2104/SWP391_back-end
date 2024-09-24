@@ -27,7 +27,7 @@ public class KoiService {
         Pond pond = pondRepository.findById(request.getPondId())
                 .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
 
-        return Koi.builder()
+        return koiRepository.save(Koi.builder()
                 .name(request.getName())
                 .image(request.getImage())
                 .sex(request.getSex())
@@ -35,7 +35,7 @@ public class KoiService {
                 .origin(request.getOrigin())
                 .createDate(request.getCreateDate())
                 .pond(pond)
-                .build();
+                .build());
     }
 
 }
