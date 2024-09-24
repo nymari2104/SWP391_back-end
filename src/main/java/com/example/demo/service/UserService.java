@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.SignUpRequest;
 import com.example.demo.dto.request.UserUpdateRequest;
 import com.example.demo.dto.response.SignUpResponse;
@@ -15,11 +16,7 @@ import com.example.demo.repository.VerificationTokenRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,8 +26,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,11 +36,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
-    JavaMailSender javaMailSender;
-
-    @NonFinal
-    @Value("${spring.mail.username}")
-    protected String SENDER_EMAIL;
+    EmailSender emailSender;
 
     public SignUpResponse createUser(SignUpRequest request){
         // Check username
@@ -56,36 +47,25 @@ public class UserService {
         VerificationToken verificationToken = verificationMapper.toVerificationToken(request);
         //Encoder password
         verificationToken.setPassword(passwordEncoder.encode(request.getPassword()));
-        Random random = new Random();
-        int otp;
-        do {
-            otp = random.nextInt(100000, 999999);
-        }while (verificationTokenRepository.existsById(otp));
+
+        String to = request.getEmail();
+        String subject = "Verify Your Email!";
+        String body = ("Dear " + request.getEmail() + ",\n\n" +
+                "Thank you for signing up! To complete your registration, please verify your email address by using the following OTP (One-Time Password):\n\n" +
+                "\"Verification Code: ");
+
+        int otp = emailSender.sendSixDigitOtp(to, subject, body);
+
+        //Set otp
         verificationToken.setOtp(otp);
+        //Set expiry time after 1 minute
         verificationToken.setExpiryTime(new Date(
                 Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()
         ));
 
         verificationTokenRepository.save(verificationToken);
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-
-        String to = "manhcat24@gmail.com";
-        String subject = "Test verify email";
-        String body = String.valueOf(otp);
-
-        simpleMailMessage.setTo(to);
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(body);
-        simpleMailMessage.setFrom(SENDER_EMAIL);
-
-        javaMailSender.send(simpleMailMessage);
 
 
-//        try {
-//            user = userRepository.save(user);
-//        } catch (DataIntegrityViolationException e) {
-//            throw new AppException(ErrorCode.EMAIL_EXISTED);
-//        }
 
         return verificationMapper.toSignUpResponse(verificationToken);
     }

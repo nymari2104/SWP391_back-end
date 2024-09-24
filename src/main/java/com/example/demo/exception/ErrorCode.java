@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     EMAIL_EXISTED("EMAIL_EXISTED","Email existed", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_EXCEPTION("UNCATEGORIZED_EXCEPTION","Uncategorized exception", HttpStatus.INTERNAL_SERVER_ERROR),
-    USERNAME_INVALID("USERNAME_INVALID", "Username must be at least 3 characters", HttpStatus.BAD_REQUEST),
+    EMAIL_INVALID("EMAIL_INVALID", "Email is invalid", HttpStatus.BAD_REQUEST),
     PASSWORD_INVALID("PASSWORD_INVALID","Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     INVALID_MESSAGE_KEY("INVALID_MESSAGE_KEY","Invalid message key", HttpStatus.BAD_REQUEST),
     EMAIL_NOT_EXISTED("EMAIL_NOT_EXISTED","Email not existed", HttpStatus.NOT_FOUND),
@@ -27,14 +27,15 @@ public enum ErrorCode {
     CATEGORY_NOT_EXISTED("CATEGORY_NOT_EXISTED", "Category is not existed", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_FOUND("PRODUCT_NOT_FOUND", "Product not found", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND("USER_NOT_FOUND", "User not found", HttpStatus.BAD_REQUEST),
+    EMAIL_OTP_INVALID("EMAIL_OTP_INVALID", "Email OTP is invalid", HttpStatus.BAD_REQUEST),
+    EMAIL_OTP_EXPIRED("EMAIL_OTP_EXPIRED", "Email OTP is expired", HttpStatus.BAD_REQUEST),
     BLOG_NOT_FOUND("BLOG_NOT_FOUND", "Blog not found", HttpStatus.BAD_REQUEST),
-    POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.BAD_REQUEST),
-
+    BLANK_EMAIL("BLANK_EMAIL", "Email cannot be blank", HttpStatus.BAD_REQUEST),
     ;
 
-    private String code;
-    private String message;
-    private HttpStatusCode statusCode;
+     String code;
+     String message;
+     HttpStatusCode statusCode;
 
 }
 

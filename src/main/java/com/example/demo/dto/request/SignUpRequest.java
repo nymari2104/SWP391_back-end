@@ -6,7 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 public class SignUpRequest {
     String fullname;
 
-    @NotBlank(message = "email cannot be blank")
+    @NotBlank(message = "BLANK_EMAIL")
     @Email(message = "EMAIL_INVALID")
     @Size(min = 3, message = "EMAIL_INVALID")
     String email;
