@@ -60,7 +60,7 @@ public class UserService {
         verificationToken.setOtp(otp);
         //Set expiry time after 1 minute
         verificationToken.setExpiryTime(new Date(
-                Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()
+                Instant.now().plus(30, ChronoUnit.MINUTES).toEpochMilli()
         ));
 
         verificationTokenRepository.save(verificationToken);

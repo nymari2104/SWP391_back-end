@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 @Builder
@@ -19,6 +20,7 @@ public class PondCreateRequest {
     float depth;
     float volume;
     int vein;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;
     String userId;
 }

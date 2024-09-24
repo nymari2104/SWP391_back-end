@@ -26,7 +26,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     private final String[] PUBLIC_ENDPOINTS ={"/users/sign-up",
             "auth/**",
             "/category/list",
-            "/product/**"
+            "/product/**",
+            "/swagger-ui/index.html"
     };
 
     @Value("${jwt.signerKey}")
@@ -61,6 +62,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:8080/swagger-ui/index.html");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

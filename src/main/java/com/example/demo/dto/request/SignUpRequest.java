@@ -17,8 +17,8 @@ public class SignUpRequest {
 
     @NotBlank(message = "BLANK_EMAIL")
     @Email(message = "EMAIL_INVALID")
-    @Size(min = 3, message = "EMAIL_INVALID")
     String email;
     @Size(min = 8, message = "PASSWORD_INVALID")
      String password;
+
 }

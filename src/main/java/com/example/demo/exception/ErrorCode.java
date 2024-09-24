@@ -31,6 +31,7 @@ public enum ErrorCode {
     EMAIL_OTP_EXPIRED("EMAIL_OTP_EXPIRED", "Email OTP is expired", HttpStatus.BAD_REQUEST),
     BLOG_NOT_FOUND("BLOG_NOT_FOUND", "Blog not found", HttpStatus.BAD_REQUEST),
     BLANK_EMAIL("BLANK_EMAIL", "Email cannot be blank", HttpStatus.BAD_REQUEST),
+    POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.BAD_REQUEST),
     ;
 
      String code;

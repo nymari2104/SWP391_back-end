@@ -24,26 +24,19 @@ public class ProductController {
     ProductService productService;
 
     @PostMapping("/create")
-    ApiResponse<Product> createProduct(
-            @RequestParam("name") String name,
-            @RequestParam("image") MultipartFile imageFile,
-            @RequestParam("stock") int stock,
-            @RequestParam("description") String description,
-            @RequestParam("unitprice") float unitprice,
-            @RequestParam("status") boolean status,
-            @RequestParam("category") int id) throws IOException {
+    ApiResponse<Product> createProduct(@RequestBody ProductCreateRequest request){
 
-        String resizedImageBase64 = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
+//        String resizedImageBase64 = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
 
         return ApiResponse.<Product>builder()
                 .result(productService.createProduct(ProductCreateRequest.builder()
-                        .name(name)
-                        .image(resizedImageBase64)
-                        .description(description)
-                        .stock(stock)
-                        .unitprice(unitprice)
-                        .status(status)
-                        .categoryId(id)
+                        .name(request.getName())
+                        .image(request.getImage())
+                        .description(request.getDescription())
+                        .stock(request.getStock())
+                        .unitprice(request.getUnitprice())
+                        .status(request.isStatus())
+                        .categoryId(request.getCategoryId())
                         .build()))
                 .message("Create product successfully")
                 .build();

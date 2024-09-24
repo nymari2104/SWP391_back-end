@@ -27,34 +27,25 @@ public class PondController {
     PondService pondService;
 
     @PostMapping("/create")
-    ApiResponse<Pond> createPond(
-            @RequestParam("name") String name,
-            @RequestParam("pumpPower") float pumpPower,
-            @RequestParam("image") MultipartFile imageFile,
-            @RequestParam("vein") int vein,
-            @RequestParam("volume") float volume,
-            @RequestParam("size") float size,
-            @RequestParam("depth") float depth,
-            @RequestParam("createDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date createDate,
-            @RequestParam("user") String userId) throws IOException {
+    ApiResponse<Pond> createPond(@RequestBody PondCreateRequest request){
 
-        String resizedImageBase64 = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
-
+//        String resizedImageBase64 = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
         return ApiResponse.<Pond>builder()
                 .result(pondService.createPond(PondCreateRequest.builder()
-                        .pondName(name)
-                        .image(resizedImageBase64)
-                        .pumpPower(pumpPower)
-                        .vein(vein)
-                        .size(size)
-                        .depth(depth)
-                        .volume(volume)
-                        .createDate(createDate)
-                        .userId(userId)
+                        .pondName(request.getPondName())
+                        .image(request.getImage())
+                        .pumpPower(request.getPumpPower())
+                        .vein(request.getVein())
+                        .size(request.getSize())
+                        .depth(request.getDepth())
+                        .volume(request.getVolume())
+                        .createDate(request.getCreateDate())
+                        .userId(request.getUserId())
                         .build()))
                 .message("Create pond successfully")
                 .build();
     }
+
     @GetMapping("/user/{userId}")
     ApiResponse<List<Pond>> getPonds(@PathVariable String userId) {
         return ApiResponse.<List<Pond>>builder()

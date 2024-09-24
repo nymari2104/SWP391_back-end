@@ -10,6 +10,7 @@ import com.example.demo.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class PondService {
     PondRepository pondRepository;
     UserRepository userRepository;
 
+    @PreAuthorize("hasRole('USER')")
     public Pond createPond(PondCreateRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -46,6 +48,7 @@ public class PondService {
                 .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
     }
 
+    @PreAuthorize("hasRole('USER')")
     public List<Pond> getPonds(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
