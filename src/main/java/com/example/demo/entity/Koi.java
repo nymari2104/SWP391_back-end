@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -49,7 +50,7 @@ public class Koi {
     String origin;
 
     @Column(name = "createDate")
-    LocalDate createDate;
+    Date createDate;
 
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
     List<KoiGrowthLog> koiGrowthLogs;

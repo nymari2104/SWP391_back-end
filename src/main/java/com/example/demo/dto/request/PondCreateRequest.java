@@ -1,7 +1,16 @@
 package com.example.demo.dto.request;
 
-import java.util.Date;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
+@Builder
+@Getter
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PondCreateRequest {
     String pondName;
     float pumpPower;

@@ -38,7 +38,7 @@ public class Pond {
     @Column(name = "pumpPower")
     float pumpPower;
 
-    @Column(name = "image")
+    @Column(name = "image", columnDefinition = "VARCHAR(MAX)")
     String image;
 
     @Column(name = "size")

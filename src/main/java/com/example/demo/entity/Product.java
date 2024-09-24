@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import com.example.demo.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
@@ -22,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "Products")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Product {
     @Id
     @Column(name = "productId", nullable = false)
