@@ -1,10 +1,12 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -51,9 +53,12 @@ public class Koi {
     @Column(name = "origin")
     String origin;
 
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "createDate")
     Date createDate;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
     List<KoiGrowthLog> koiGrowthLogs;
 }

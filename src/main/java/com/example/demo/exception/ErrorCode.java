@@ -32,6 +32,7 @@ public enum ErrorCode {
     BLOG_NOT_FOUND("BLOG_NOT_FOUND", "Blog not found", HttpStatus.BAD_REQUEST),
     BLANK_EMAIL("BLANK_EMAIL", "Email cannot be blank", HttpStatus.BAD_REQUEST),
     POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.BAD_REQUEST),
+    KOI_NOT_FOUND("KOI_NOT_FOUND", "Koi not found", HttpStatus.BAD_REQUEST),
     ;
 
      String code;

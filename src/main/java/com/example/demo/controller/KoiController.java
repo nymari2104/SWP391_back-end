@@ -25,7 +25,7 @@ public class KoiController {
     KoiService koiService;
 
     @PostMapping("/create")
-    ApiResponse<Koi> createKoi(@RequestBody KoiCreateRequest request){
+    ApiResponse<Koi> createKoi(@RequestBody KoiCreateRequest request) {
 
 //        String image = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
 
@@ -41,7 +41,12 @@ public class KoiController {
                         .pondId(request.getPondId())
                         .build()))
                 .build();
-
-
+    }
+    @GetMapping("/{koiId}")
+    ApiResponse<Koi> getKoi(@PathVariable int koiId) {
+        return ApiResponse.<Koi>builder()
+                .message("Get koi sucessfully")
+                .result(koiService.getKoi(koiId))
+                .build();
     }
 }

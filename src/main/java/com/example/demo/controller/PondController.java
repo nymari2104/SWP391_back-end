@@ -60,4 +60,12 @@ public class PondController {
                 .result(pondService.getAllPond())
                 .build();
     }
+
+    @GetMapping("/{pondId}")
+    ApiResponse<Pond> getPond(@PathVariable int pondId) {
+        return ApiResponse.<Pond>builder()
+                .message("Get pond successfully")
+                .result(pondService.getPond(pondId))
+                .build();
+    }
 }

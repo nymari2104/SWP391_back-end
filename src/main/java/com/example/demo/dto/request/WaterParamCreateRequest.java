@@ -14,16 +14,16 @@ import java.util.Date;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PondCreateRequest {
-    String pondName;
-    float pumpPower;
-    String image;
-    float size;
-    float depth;
-    float volume;
-    int vein;
+public class WaterParamCreateRequest {
+
+    float o2;
+    float temperature;
+    float nh4;
+    float salt;
+    float ph;
+    float no2;
+    float no3;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;
-    String userId;
 }

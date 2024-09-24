@@ -1,8 +1,10 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -22,6 +24,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     String orderId;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "id")
     User user;
@@ -35,6 +38,8 @@ public class Order {
     @Column(name = "email")
     String email;
 
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "createDate")
     Date createDate;
 

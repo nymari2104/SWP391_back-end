@@ -43,8 +43,8 @@ public class PondService {
         );
     }
 
-    public Pond getPond(int id) {
-        return pondRepository.findById(id)
+    public Pond getPond(int pondId) {
+        return pondRepository.findById(pondId)
                 .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
     }
 
@@ -58,4 +58,5 @@ public class PondService {
     public List<Pond> getAllPond() {
         return pondRepository.findAll().stream().toList();
     }
+
 }

@@ -13,6 +13,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -36,6 +38,14 @@ public class KoiService {
                 .createDate(request.getCreateDate())
                 .pond(pond)
                 .build());
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    public Koi getKoi(int koiId) {
+
+        Optional<Koi> koi = koiRepository.findById(koiId);
+
+        return koi.orElse(null);
     }
 
 }

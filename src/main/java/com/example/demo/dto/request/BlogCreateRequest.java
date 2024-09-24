@@ -1,5 +1,7 @@
 package com.example.demo.dto.request;
 
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +20,7 @@ public class BlogCreateRequest {
     String image;
     String title;
     String content;
+    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;
     String userId;

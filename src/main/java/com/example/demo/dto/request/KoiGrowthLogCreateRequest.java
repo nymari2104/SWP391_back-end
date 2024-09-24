@@ -1,5 +1,6 @@
 package com.example.demo.dto.request;
 
+
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AccessLevel;
@@ -10,20 +11,16 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+
 @Builder
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PondCreateRequest {
-    String pondName;
-    float pumpPower;
-    String image;
-    float size;
-    float depth;
-    float volume;
-    int vein;
+public class KoiGrowthLogCreateRequest {
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    Date createDate;
-    String userId;
+    Date koiLogDate;
+    float weight;
+    float size;
+    int koiId;
 }
