@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.SignInRequest;
 import com.example.demo.dto.request.IntrospectRequest;
 import com.example.demo.dto.request.LogoutRequest;
@@ -29,8 +30,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,18 +49,15 @@ public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
     UserMapper userMapper;
-    JavaMailSender javaMailSender;
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
+    EmailSender emailSender;
 
 
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SECRET_KEY;
 
-    @NonFinal
-    @Value("${spring.mail.username}")
-    protected String SENDER_EMAIL;
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         //get token
@@ -140,17 +136,12 @@ public class AuthenticationService {
     }
 
     public void forgotPassword(){
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
         String to = "manhcat24@gmail.com";
         String subject = "Test forgot password";
         String body = String.valueOf(new Random().nextInt(100000, 999999));
-        simpleMailMessage.setTo(to);
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(body);
-        simpleMailMessage.setFrom(SENDER_EMAIL);
 
-        javaMailSender.send(simpleMailMessage);
+        emailSender.sendSixDigitOtp(to, subject, body);
     }
 
     public SignedJWT verifyToken(String token) throws ParseException, JOSEException {
