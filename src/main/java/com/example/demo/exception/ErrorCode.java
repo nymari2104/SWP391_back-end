@@ -30,6 +30,7 @@ public enum ErrorCode {
     EMAIL_OTP_INVALID("EMAIL_OTP_INVALID", "Email OTP is invalid", HttpStatus.BAD_REQUEST),
     EMAIL_OTP_EXPIRED("EMAIL_OTP_EXPIRED", "Email OTP is expired", HttpStatus.BAD_REQUEST),
     BLOG_NOT_FOUND("BLOG_NOT_FOUND", "Blog not found", HttpStatus.BAD_REQUEST),
+    BLANK_EMAIL("BLANK_EMAIL", "Email cannot be blank", HttpStatus.BAD_REQUEST),
     ;
 
      String code;
