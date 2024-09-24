@@ -20,11 +20,11 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     String cartItemId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cartId")
     Cart cart;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId")
     Product product;
 

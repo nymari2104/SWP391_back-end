@@ -101,7 +101,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public UserResponse updateMyInfo(UserUpdateRequest request){
+    public UserResponse updateMyInfo(UserUpdateRequest request) {
         var context = SecurityContextHolder.getContext();
         String email = context.getAuthentication().getName();
         log.info(email);

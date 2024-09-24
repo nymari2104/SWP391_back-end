@@ -14,15 +14,15 @@ import java.sql.SQLException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = Exception.class)
-      ResponseEntity<ApiResponse<?>> handlingException(){
-
-        return ResponseEntity.internalServerError()
-                .body(ApiResponse.builder()
-                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
-                        .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
-                        .build());
-    }
+//    @ExceptionHandler(value = Exception.class)
+//      ResponseEntity<ApiResponse<?>> handlingException(){
+//
+//        return ResponseEntity.internalServerError()
+//                .body(ApiResponse.builder()
+//                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
+//                        .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
+//                        .build());
+//    }
 
     @ExceptionHandler(value = AppException.class)
       ResponseEntity<ApiResponse<?>> handlingAppException(AppException exception){

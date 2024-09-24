@@ -1,4 +1,6 @@
 package com.example.demo.exception;
+
+
 public class AppException extends RuntimeException{
 
     private ErrorCode errorCode;

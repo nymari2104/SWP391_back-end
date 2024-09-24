@@ -45,7 +45,7 @@ public class ProductController {
                         .status(status)
                         .categoryId(id)
                         .build()))
-                .message("Create successfully")
+                .message("Create product successfully")
                 .build();
     }
 
@@ -64,5 +64,6 @@ public class ProductController {
                 .result(productService.getProduct(id))
                 .build();
     }
+
 
 }
