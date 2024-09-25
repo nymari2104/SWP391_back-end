@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VerifyEmailRequest {
-    int otp;
-    String email;
+public class ResetPasswordRequest {
+    VerifyOtpRequest verifyOtpRequest;
+    UserUpdateRequest userUpdateRequest;
 }

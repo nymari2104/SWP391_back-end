@@ -4,8 +4,10 @@ import com.example.demo.dto.request.SignUpRequest;
 import com.example.demo.dto.request.UserUpdateRequest;
 import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper
 public interface UserMapper {
@@ -14,6 +16,7 @@ public interface UserMapper {
 //    @Mapping(target = "lastname", ignore = true)  //ignore field lastname
     UserResponse toUserResponse(User user);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 
 

@@ -91,4 +91,12 @@ public class UserController {
                 .result("Delete user successfully!")
                 .build();
     }
+
+    @PostMapping("/forgot-password")
+    ApiResponse<String> forgotPassword(@RequestParam("email") String request){
+        return ApiResponse.<String>builder()
+                .message("Send mail successfully!")
+                .result(userService.forgotPassword(request))
+                .build();
+    }
 }
