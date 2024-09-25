@@ -34,6 +34,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -83,7 +84,29 @@ public class AuthenticationService {
         return SignInResponse.builder()
                 .token(token)
                 .user(userMapper.toUserResponse(user))
-                .authenticated(true)
+                .build();
+    }
+
+    public SignInResponse authenticate(String email, String fullname){
+
+        Optional<User> checkUser = userRepository.findByEmail(email);
+        User user = User.builder()
+                .fullname(fullname)
+                .email(email)
+                .role(Role.USER.name())
+                .googleAccount(true)
+                .build();
+          if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }else if (checkUser.isEmpty()){
+            userRepository.save(user);
+        }
+
+        var token = generateToken(user);
+
+        return SignInResponse.builder()
+                .user(userMapper.toUserResponse(user))
+                .token(token)
                 .build();
     }
 
@@ -111,6 +134,7 @@ public class AuthenticationService {
 
         User user = verificationMapper.toUser(verificationToken);
         user.setRole(Role.USER.toString());
+        user.setGoogleAccount(false);
         try {
             user = userRepository.save(user);
         } catch (Exception e) {
