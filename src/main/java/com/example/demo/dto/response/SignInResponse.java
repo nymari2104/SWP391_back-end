@@ -11,5 +11,4 @@ import lombok.experimental.FieldDefaults;
 public class SignInResponse {
     String token;
     UserResponse user;
-    boolean authenticated = false;
 }

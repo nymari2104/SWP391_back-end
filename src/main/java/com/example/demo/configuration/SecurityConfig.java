@@ -4,15 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,8 +25,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
-    private final String[] PUBLIC_ENDPOINTS ={"/users/**",
-            "auth/**",
+    private final String[] PUBLIC_ENDPOINTS ={
+//            "auth/**",
             "/category/list",
             "/product/**",
             "/swagger-ui/index.html"
@@ -36,6 +38,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
             httpSecurity
@@ -44,18 +47,25 @@ public class SecurityConfig implements WebMvcConfigurer {
                     request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                             .anyRequest().authenticated());
 
-
             httpSecurity.oauth2ResourceServer(oauth2 ->
                     oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer
                                 .decoder(customJwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())//redirect user when authentication failed
-            );
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                            //redirect user when authentication failed
 
-            httpSecurity.csrf(AbstractHttpConfigurer::disable);
+            )
+                    .oauth2Login(oauth2Login ->
+                            oauth2Login
+                                    .successHandler(oAuth2SuccessHandler()));
 
-        return httpSecurity.build();
+//            httpSecurity.csrf(AbstractHttpConfigurer::disable);
+
+        return httpSecurity
+                .oauth2Login(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
+                .build();
     }
 
     @Bean
@@ -91,4 +101,8 @@ public class SecurityConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder(10);
     }
 
+    @Bean
+    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
+        return new SimpleUrlAuthenticationSuccessHandler("/auth/sign-in-by-google");
+    }
 }

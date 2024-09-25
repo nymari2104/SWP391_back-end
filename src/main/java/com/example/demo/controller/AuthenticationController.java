@@ -10,6 +10,8 @@ import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -62,6 +64,21 @@ public class AuthenticationController {
         authenticationService.verifyResetPassword(request);
         return ApiResponse.<Void>builder()
                 .message("Reset password successfully!")
+                .build();
+    }
+
+    @GetMapping("/secured")
+    public String secure(){
+        return "Hello, secured!";
+    }
+
+    @GetMapping("/sign-in-by-google")
+    public ApiResponse<SignInResponse> loginSuccess(@AuthenticationPrincipal OAuth2User oAuth2User){
+        String email = oAuth2User.getAttribute("email");
+        String fullname = oAuth2User.getAttribute("name");
+        return ApiResponse.<SignInResponse>builder()
+                .message("Sign in successfully!")
+                .result(authenticationService.authenticate(email, fullname))
                 .build();
     }
 }
