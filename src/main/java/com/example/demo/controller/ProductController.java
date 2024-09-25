@@ -43,7 +43,7 @@ public class ProductController {
     }
 
     @GetMapping("/list")
-    ApiResponse<List<Product>> getAllProduct() {
+    ApiResponse<List<Product>> getAllProducts() {
         return ApiResponse.<List<Product>>builder()
                 .message("Get all products successfully")
                 .result(productService.getAllProduct())
@@ -55,6 +55,14 @@ public class ProductController {
         return ApiResponse.<Product>builder()
                 .message("Get product successfully")
                 .result(productService.getProduct(id))
+                .build();
+    }
+
+    @GetMapping("/shop")
+    ApiResponse<List<Product>> getAllActiveProducts() {
+        return ApiResponse.<List<Product>>builder()
+                .message("Get all active product successfully")
+                .result(productService.getAllActiveProduct())
                 .build();
     }
 

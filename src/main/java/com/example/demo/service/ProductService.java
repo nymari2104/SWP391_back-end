@@ -10,6 +10,7 @@ import com.example.demo.repository.ProductRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class ProductService {
                 .category(category)
                 .build());
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Product> getAllProduct() {
         return productRepository.findAll().stream().toList();
     }
@@ -45,6 +46,10 @@ public class ProductService {
     public Product getProduct(String id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+    }
+
+    public List<Product> getAllActiveProduct() {
+        return productRepository.findByStatusTrue().stream().toList();
     }
 
 }
