@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.configuration.ImageResizer;
 import com.example.demo.dto.request.ProductCreateRequest;
+import com.example.demo.dto.request.ProductUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Product;
 import com.example.demo.service.ProductService;
@@ -51,7 +52,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<Product> getProduct(@PathVariable("id") String id) {
+    ApiResponse<Product> getProduct(@PathVariable("id") int id) {
         return ApiResponse.<Product>builder()
                 .message("Get product successfully")
                 .result(productService.getProduct(id))
@@ -63,6 +64,23 @@ public class ProductController {
         return ApiResponse.<List<Product>>builder()
                 .message("Get all active product successfully")
                 .result(productService.getAllActiveProduct())
+                .build();
+    }
+
+    @PutMapping("/update/{productId}")
+    ApiResponse<Product> updateProduct(@PathVariable("productId") int productId, @RequestBody ProductUpdateRequest request) {
+        return ApiResponse.<Product>builder()
+                .message("Update product successfully")
+                .result(productService.updateProduct(productId, request))
+                .build();
+    }
+
+    @DeleteMapping("/{productId}")
+    ApiResponse<Boolean> deleteProduct(@PathVariable int productId) {
+        productService.deleteProduct(productId);
+        return ApiResponse.<Boolean>builder()
+                .message("Delete product successfully")
+                .result(true)
                 .build();
     }
 
