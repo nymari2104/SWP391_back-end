@@ -63,13 +63,15 @@ public class ProductService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
 
-        product.setProductName(request.getName());
-        product.setImage(request.getImage());
-        product.setStock(request.getStock());
-        product.setUnitPrice(request.getUnitprice());
-        product.setDescription(request.getDescription());
-        product.setStatus(request.isStatus());
-        product.setCategory(category);
+        product = Product.builder()
+                .productName(request.getName())
+                .image(request.getImage())
+                .unitPrice(request.getUnitprice())
+                .stock(request.getStock())
+                .description(request.getDescription())
+                .status(request.isStatus())
+                .category(category)
+                .build();
 
         return productRepository.save(product);
     }
