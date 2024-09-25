@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import com.example.demo.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -31,8 +32,10 @@ public class Product {
     @GenericGenerator(name = "product-id", strategy = "com.example.demo.configuration.IdGenerator")
     int productId;
 
-    @JsonBackReference
-    @ManyToOne
+//    @JsonBackReference
+
+    @JsonIgnoreProperties({"products"})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cateId")
     Category category;
 
