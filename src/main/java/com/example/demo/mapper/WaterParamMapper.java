@@ -1,0 +1,13 @@
+package com.example.demo.mapper;
+
+import com.example.demo.dto.request.WaterParamCreateRequest;
+import com.example.demo.entity.WaterParam;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+
+@Mapper(componentModel = "spring")
+public interface WaterParamMapper {
+
+    WaterParam toWaterParam(@MappingTarget WaterParam waterParam, WaterParamCreateRequest request);
+
+}

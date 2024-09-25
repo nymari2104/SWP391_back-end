@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -24,6 +25,7 @@ public class WaterParam {
     @GeneratedValue(strategy = GenerationType.UUID)
     String waterParamId;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "pondId")
     Pond pond;

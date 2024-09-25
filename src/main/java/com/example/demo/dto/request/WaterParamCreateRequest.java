@@ -26,4 +26,5 @@ public class WaterParamCreateRequest {
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;
+    int pondId;
 }

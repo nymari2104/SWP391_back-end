@@ -64,6 +64,7 @@ public class Pond {
     @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
     List<Koi> kois;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
     List<WaterParam> waterParams;
 }

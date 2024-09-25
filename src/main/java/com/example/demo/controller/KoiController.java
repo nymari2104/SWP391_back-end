@@ -1,20 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.configuration.ImageResizer;
 import com.example.demo.dto.request.KoiCreateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Koi;
-import com.example.demo.repository.KoiRepository;
 import com.example.demo.service.KoiService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/koi")
