@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.LogoutRequest;
-import com.example.demo.dto.request.VerifyEmailRequest;
+import com.example.demo.dto.request.*;
 import com.example.demo.dto.response.ApiResponse;
-import com.example.demo.dto.request.SignInRequest;
-import com.example.demo.dto.request.IntrospectRequest;
 import com.example.demo.dto.response.SignInResponse;
 import com.example.demo.dto.response.IntrospectResponse;
 import com.example.demo.dto.response.UserResponse;
@@ -52,20 +49,19 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/forgot-password")
-    ApiResponse<Void> forgotPassword(){
-        authenticationService.forgotPassword();
-        return ApiResponse.<Void>builder()
-                .message("Send mail successfully!")
+    @PostMapping("/verify-sign-up")
+    ApiResponse<UserResponse> verifySignUp(@RequestBody VerifyOtpRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .message("sign-up successfully!")
+                .result(authenticationService.verifySignUp(request))
                 .build();
     }
 
-    @PostMapping("/verify-email")
-    ApiResponse<UserResponse> verifyEmail(@RequestBody VerifyEmailRequest request){
-
-        return ApiResponse.<UserResponse>builder()
-                .message("sign-up successfully!")
-                .result(authenticationService.verifyEmail(request))
+    @PostMapping("/verify-reset-password")
+    ApiResponse<Void> verifyResetPassword(@RequestBody ResetPasswordRequest request){
+        authenticationService.verifyResetPassword(request);
+        return ApiResponse.<Void>builder()
+                .message("Reset password successfully!")
                 .build();
     }
 }

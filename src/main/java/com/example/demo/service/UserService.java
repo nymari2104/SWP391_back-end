@@ -58,9 +58,9 @@ public class UserService {
 
         //Set otp
         verificationToken.setOtp(otp);
-        //Set expiry time after 1 minute
+        //Set expiry time after 5 minute
         verificationToken.setExpiryTime(new Date(
-                Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()
+                Instant.now().plus(5, ChronoUnit.MINUTES).toEpochMilli()
         ));
 
         verificationTokenRepository.save(verificationToken);
@@ -115,9 +115,31 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-//    @PostAuthorize("returnObject.username == authentication.name")//check if username is match with who is login
     public UserResponse getUser(String Id){
         return userMapper.toUserResponse(userRepository.findById(Id).orElseThrow(() -> new AppException(ErrorCode.USER_ID_NOT_EXISTED)));
+    }
+
+    public String forgotPassword(String request){
+//         Check username
+        if (!userRepository.existsByEmail(request)) {
+            throw new AppException(ErrorCode.EMAIL_NOT_EXISTED);
+        }
+
+        String subject = "Test forgot password";
+        String body = ("Hello " + request + ",\n\n" +
+                "We have received a request to reset the password for your account. " +
+                "Please use the following 6-digit OTP to verify your identity:\n\n");
+
+        int otp = emailSender.sendSixDigitOtp(request, subject, body);
+
+        verificationTokenRepository.save(VerificationToken.builder()
+                .email(request)
+                .otp(otp)
+                .expiryTime(new Date(Instant.now()
+                        .plus(5, ChronoUnit.MINUTES).toEpochMilli()))
+                .build());
+
+        return request;
     }
 
 }

@@ -34,7 +34,7 @@ public class EmailSender {
         int otp;
 
         do {
-            //random otp 6 digits number
+            //random otp 6 digit number
             otp = random.nextInt(100000, 999999);
         }while (verificationTokenRepository.existsById(otp));//Generate new if this otp has been created
 
@@ -42,7 +42,7 @@ public class EmailSender {
 
         simpleMailMessage.setTo(to);
         simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(body + String.valueOf(otp) + "\n\nThis code is valid for the next 30 minutes. If you did not request this code, please disregard this email.\n\n" +
+        simpleMailMessage.setText(body + otp + "\n\nThis code is valid for the next 3 minutes. If you did not request this code, please disregard this email.\n\n" +
                 "Best regards,\n" +
                 "The Izumiya Team");
         simpleMailMessage.setFrom(SENDER_EMAIL);
