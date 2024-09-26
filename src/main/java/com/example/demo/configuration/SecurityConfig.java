@@ -8,6 +8,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -26,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final String[] PUBLIC_ENDPOINTS ={
-//            "auth/**",
+            "auth/**",
             "/category/list",
             "/product/**",
             "/blog/list"
@@ -60,7 +61,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             oauth2Login
                                     .successHandler(oAuth2SuccessHandler()));
 
-//            httpSecurity.csrf(AbstractHttpConfigurer::disable);
+            httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity
                 .oauth2Login(Customizer.withDefaults())
