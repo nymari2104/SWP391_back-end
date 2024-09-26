@@ -28,9 +28,14 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     private final String[] PUBLIC_ENDPOINTS ={
             "auth/**",
-            "/category/list",
+            "/category/**",
             "/product/**",
-            "/blog/list"
+            "/blog/**",
+            "/pond/**",
+            "/koi/**",
+            "/category/**",
+            "/water-param/**",
+            "/koi-growth-log/**",
     };
 
     @Value("${jwt.signerKey}")
@@ -38,7 +43,6 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
