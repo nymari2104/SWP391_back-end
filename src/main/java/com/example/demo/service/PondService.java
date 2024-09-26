@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.pondRequest.PondCreateRequest;
+import com.example.demo.dto.request.pondRequest.PondUpdateRequest;
 import com.example.demo.entity.Pond;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
+import com.example.demo.mapper.PondMapper;
 import com.example.demo.repository.PondRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.AccessLevel;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -22,6 +25,7 @@ public class PondService {
 
     PondRepository pondRepository;
     UserRepository userRepository;
+    PondMapper pondMapper;
 
     @PreAuthorize("hasRole('USER')")
     public Pond createPond(PondCreateRequest request) {
@@ -59,4 +63,14 @@ public class PondService {
         return pondRepository.findAll().stream().toList();
     }
 
+    public void deletePond(int pondId) {
+        pondRepository.deleteById(pondId);
+    }
+
+    public Pond updatePond(int pondId, PondUpdateRequest request) {
+        Pond pond = pondRepository.findById(pondId)
+                .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
+        pondMapper.updatePond(pond, request);
+        return pondRepository.save(pond);
+    }
 }
