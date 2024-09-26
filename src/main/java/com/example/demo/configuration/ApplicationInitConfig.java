@@ -34,7 +34,7 @@ public class ApplicationInitConfig {
                         .build();
 
                 userRepository.save(user);
-                log.warn("admin user has been create with default password: Admin, please change it!");
+                log.warn("admin user has been create with default password: 123456789, please change it!");
             }
         };
     }

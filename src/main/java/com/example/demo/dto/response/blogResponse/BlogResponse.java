@@ -1,6 +1,5 @@
-package com.example.demo.dto.response;
+package com.example.demo.dto.response.blogResponse;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.*;

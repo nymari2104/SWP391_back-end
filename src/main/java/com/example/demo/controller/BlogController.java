@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.blogRequest.BlogCreateRequest;
 import com.example.demo.dto.request.blogRequest.BlogUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
-import com.example.demo.dto.response.BlogResponse;
+import com.example.demo.dto.response.blogResponse.BlogResponse;
 import com.example.demo.entity.Blog;
 import com.example.demo.service.BlogService;
 import lombok.AccessLevel;
