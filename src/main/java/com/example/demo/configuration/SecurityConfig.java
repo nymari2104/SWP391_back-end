@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +26,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final String[] PUBLIC_ENDPOINTS ={
+            "/users/**",
             "auth/**",
             "/category/list",
             "/product/**",
@@ -64,8 +64,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity
-                .oauth2Login(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
+//                .oauth2Login(Customizer.withDefaults())
+//                .formLogin(Customizer.withDefaults())
                 .build();
     }
 

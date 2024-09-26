@@ -30,7 +30,7 @@ public class CategoryController {
     ApiResponse<Category> getCategory(@PathVariable int id) {
         return ApiResponse.<Category>builder()
                 .result(categoryService.getCategory(id))
-                .message("Get category sucessfully")
+                .message("Get category successfully")
                 .build();
     }
 

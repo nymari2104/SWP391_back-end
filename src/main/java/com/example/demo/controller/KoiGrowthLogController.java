@@ -24,7 +24,7 @@ public class KoiGrowthLogController {
     ApiResponse<KoiGrowthLog> createKoiGrowthLog(@RequestBody KoiGrowthLogCreateRequest request) {
 
         return ApiResponse.<KoiGrowthLog>builder()
-                .message("Create Koi's log successfullfy")
+                .message("Create Koi's log successfully")
                 .result(koiGrowthLogService.createKoiGrowthLog(request))
                 .build();
     }

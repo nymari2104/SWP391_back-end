@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
+import com.example.demo.dto.request.userRequest.UpdatePasswordRequest;
 import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
@@ -60,37 +61,31 @@ public class UserService {
         verificationToken.setOtp(otp);
         //Set expiry time after 10 minute
         verificationToken.setExpiryTime(new Date(
-                Instant.now().plus(10, ChronoUnit.MINUTES).toEpochMilli()
-        ));
+                Instant.now().plus(10, ChronoUnit.MINUTES).toEpochMilli()));
 
         verificationTokenRepository.save(verificationToken);
-
-
 
         return verificationMapper.toSignUpResponse(verificationToken);
     }
 
-
     public UserResponse getMyInfo(){
-        var context = SecurityContextHolder.getContext();//when user login success, user info will be store in SecurityContextHolder
-        String email = context.getAuthentication().getName();//get email of user
-
-        User user = userRepository.findByEmail(email)//get User object by email
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));//user not existed
-
-        return userMapper.toUserResponse(user);
+        return userMapper.toUserResponse(getCurrentUser());
     }
 
     public UserResponse updateMyInfo(UserUpdateRequest request){
-        var context = SecurityContextHolder.getContext();
-        String email = context.getAuthentication().getName();
-        log.info(email);
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
-        userMapper.updateUser(user, request);
+        User user = getCurrentUser();
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    public void updateMyPassword(UpdatePasswordRequest request){
+        User user = getCurrentUser();
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
+            throw new AppException(ErrorCode.WRONG_PASSWORD);
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
     }
 
     public UserResponse updateUser(String userId, UserUpdateRequest request){
@@ -142,4 +137,11 @@ public class UserService {
         return request;
     }
 
+    private User getCurrentUser(){
+        var context = SecurityContextHolder.getContext();//when user login success, user info will be store in SecurityContextHolder
+        String email = context.getAuthentication().getName();//get email of user
+
+        return userRepository.findByEmail(email)//get User object by email
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));//user not existed
+    }
 }
