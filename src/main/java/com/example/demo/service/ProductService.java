@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.ProductCreateRequest;
-import com.example.demo.dto.request.ProductUpdateRequest;
+import com.example.demo.dto.request.productRequest.ProductCreateRequest;
+import com.example.demo.dto.request.productRequest.ProductUpdateRequest;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Product;
 import com.example.demo.exception.AppException;

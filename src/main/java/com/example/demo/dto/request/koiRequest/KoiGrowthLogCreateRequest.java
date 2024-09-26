@@ -1,4 +1,5 @@
-package com.example.demo.dto.request;
+package com.example.demo.dto.request.koiRequest;
+
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -15,8 +16,11 @@ import java.util.Date;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BlogUpdateRequest {
-    String image;
-    String title;
-    String content;
+public class KoiGrowthLogCreateRequest {
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    Date koiLogDate;
+    float weight;
+    float size;
+    int koiId;
 }

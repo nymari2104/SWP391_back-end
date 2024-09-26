@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.WaterParamCreateRequest;
+import com.example.demo.dto.request.waterParamRequest.WaterParamCreateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.WaterParam;
 import com.example.demo.service.WaterParamService;

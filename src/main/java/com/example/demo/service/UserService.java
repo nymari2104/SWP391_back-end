@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
 import com.example.demo.configuration.EmailSender;
-import com.example.demo.dto.request.SignUpRequest;
-import com.example.demo.dto.request.UserUpdateRequest;
-import com.example.demo.dto.response.SignUpResponse;
-import com.example.demo.dto.response.UserResponse;
+import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
+import com.example.demo.dto.request.userRequest.UserUpdateRequest;
+import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
+import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.VerificationToken;
 import com.example.demo.exception.AppException;

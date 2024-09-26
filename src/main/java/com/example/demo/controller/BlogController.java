@@ -1,19 +1,15 @@
 package com.example.demo.controller;
 
-import com.example.demo.configuration.ImageResizer;
-import com.example.demo.dto.request.BlogCreateRequest;
-import com.example.demo.dto.request.BlogUpdateRequest;
+import com.example.demo.dto.request.blogRequest.BlogCreateRequest;
+import com.example.demo.dto.request.blogRequest.BlogUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Blog;
 import com.example.demo.service.BlogService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 

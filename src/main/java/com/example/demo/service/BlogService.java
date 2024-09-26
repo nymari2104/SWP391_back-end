@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.BlogCreateRequest;
-import com.example.demo.dto.request.BlogUpdateRequest;
+import com.example.demo.dto.request.blogRequest.BlogCreateRequest;
+import com.example.demo.dto.request.blogRequest.BlogUpdateRequest;
 import com.example.demo.entity.Blog;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
@@ -12,7 +12,6 @@ import com.example.demo.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

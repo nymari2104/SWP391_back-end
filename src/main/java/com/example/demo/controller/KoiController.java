@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.KoiCreateRequest;
+import com.example.demo.dto.request.koiRequest.KoiCreateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Koi;
 import com.example.demo.service.KoiService;

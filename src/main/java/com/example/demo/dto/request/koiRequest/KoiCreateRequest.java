@@ -1,27 +1,26 @@
-package com.example.demo.dto.request;
+package com.example.demo.dto.request.koiRequest;
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
 import java.util.Date;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Getter
-@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BlogCreateRequest {
+public class KoiCreateRequest {
+    String name;
     String image;
-    String title;
-    String content;
+    Boolean sex;
+    String type;
+    String origin;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;
-    String userId;
+    int pondId;
 }

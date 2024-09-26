@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.KoiGrowthLogCreateRequest;
+import com.example.demo.dto.request.koiRequest.KoiGrowthLogCreateRequest;
 import com.example.demo.entity.Koi;
 import com.example.demo.entity.KoiGrowthLog;
 import com.example.demo.exception.AppException;

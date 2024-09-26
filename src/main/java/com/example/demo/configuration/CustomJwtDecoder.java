@@ -1,6 +1,6 @@
 package com.example.demo.configuration;
 
-import com.example.demo.dto.request.IntrospectRequest;
+import com.example.demo.dto.request.authenticationRequest.IntrospectRequest;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.service.AuthenticationService;

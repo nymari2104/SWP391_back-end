@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.WaterParamCreateRequest;
+import com.example.demo.dto.request.waterParamRequest.WaterParamCreateRequest;
 import com.example.demo.entity.Pond;
 import com.example.demo.entity.WaterParam;
 import com.example.demo.exception.AppException;
