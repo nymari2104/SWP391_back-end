@@ -4,6 +4,7 @@ import com.example.demo.configuration.ImageResizer;
 import com.example.demo.dto.request.BlogCreateRequest;
 import com.example.demo.dto.request.BlogUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.BlogResponse;
 import com.example.demo.entity.Blog;
 import com.example.demo.service.BlogService;
 import lombok.AccessLevel;
@@ -43,8 +44,8 @@ public class BlogController {
     }
 
     @GetMapping("/list")
-    ApiResponse<List<Blog>> getAllBlogs() {
-        return ApiResponse.<List<Blog>>builder()
+    ApiResponse<List<BlogResponse>> getAllBlogs() {
+        return ApiResponse.<List<BlogResponse>>builder()
                 .message("Get all blogs successfully")
                 .result(blogService.getAllBlogs())
                 .build();
@@ -64,6 +65,14 @@ public class BlogController {
         return ApiResponse.<Boolean>builder()
                 .message("Delete blog successfully")
                 .result(true)
+                .build();
+    }
+
+    @GetMapping("/{blogId}")
+    ApiResponse<BlogResponse> getBlog(@PathVariable String blogId) {
+        return ApiResponse.<BlogResponse>builder()
+                .message("Get blog successfully")
+                .result(blogService.getBlog(blogId))
                 .build();
     }
 

@@ -27,7 +27,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             "auth/**",
             "/category/list",
             "/product/**",
-            "/swagger-ui/index.html"
+            "/blog/list"
     };
 
     @Value("${jwt.signerKey}")

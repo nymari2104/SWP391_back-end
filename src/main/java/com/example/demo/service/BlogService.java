@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.request.BlogCreateRequest;
 import com.example.demo.dto.request.BlogUpdateRequest;
+import com.example.demo.dto.response.BlogResponse;
 import com.example.demo.entity.Blog;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,24 +43,44 @@ public class BlogService {
 
     }
 
-    public Blog getBlog(String id) {
-        return blogRepository.findById(id)
+    public BlogResponse getBlog(String id) {
+        Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
+        return BlogResponse.builder()
+                .blogId(blog.getBlogId())
+                .image(blog.getImage())
+                .title(blog.getTitle())
+                .content(blog.getContent())
+                .createDate(blog.getCreateDate())
+                .fullname(blog.getUser().getFullname())
+                .build();
     }
 
 //    public List<Blog> getAllBlog(int page, int limit) {
 //        return blogRepository.findAll(PageRequest.of(page, limit)).getContent();
 //    }
 
-    public List<Blog> getAllBlogs() {
-        return blogRepository.findAll().stream().toList();
+    public List<BlogResponse> getAllBlogs() {
+
+        return blogRepository.findAll()
+                .stream()
+                .map(blog -> {
+                    return BlogResponse.builder()
+                            .blogId(blog.getBlogId())
+                            .image(blog.getImage())
+                            .title(blog.getTitle())
+                            .content(blog.getContent())
+                            .createDate(blog.getCreateDate())
+                            .fullname(blog.getUser().getFullname())
+                            .build();
+                }).collect(Collectors.toList());
     }
 
     public Blog updateBlog(String blogId, BlogUpdateRequest request) {
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
 
-        blogMapper.updateBlog(blog,request);
+        blogMapper.updateBlog(blog, request);
 
         return blogRepository.save(blog);
     }

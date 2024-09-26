@@ -27,7 +27,7 @@ public class User {
     String password;
     String role;
 
-    @JsonManagedReference
+//    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Blog> blogs;
 

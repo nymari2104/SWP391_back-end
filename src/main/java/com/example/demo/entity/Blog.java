@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,8 +23,8 @@ public class Blog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String blogId;
 
-    @JsonBackReference
-    @ManyToOne
+    @JsonIgnoreProperties({"blogs"})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     User user;
 
