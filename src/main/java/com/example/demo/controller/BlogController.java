@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.blogRequest.BlogCreateRequest;
 import com.example.demo.dto.request.blogRequest.BlogUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.blogResponse.BlogResponse;
 import com.example.demo.entity.Blog;
 import com.example.demo.service.BlogService;
 import lombok.AccessLevel;
@@ -39,15 +40,15 @@ public class BlogController {
     }
 
     @GetMapping("/list")
-    ApiResponse<List<Blog>> getAllBlogs() {
-        return ApiResponse.<List<Blog>>builder()
+    ApiResponse<List<BlogResponse>> getAllBlogs() {
+        return ApiResponse.<List<BlogResponse>>builder()
                 .message("Get all blogs successfully")
                 .result(blogService.getAllBlogs())
                 .build();
     }
 
     @PutMapping("/update/{blogId}")
-    ApiResponse<Blog> updateBlog(@PathVariable String blogId, @RequestBody BlogUpdateRequest request) {
+    ApiResponse<Blog> updateBlog(@PathVariable int blogId, @RequestBody BlogUpdateRequest request) {
         return ApiResponse.<Blog>builder()
                 .message("Update Blog successfully")
                 .result(blogService.updateBlog(blogId, request))
@@ -55,11 +56,19 @@ public class BlogController {
     }
 
     @DeleteMapping("/delete/{blogId}")
-    ApiResponse<Boolean> deleteBlog(@PathVariable String blogId) {
+    ApiResponse<Boolean> deleteBlog(@PathVariable int blogId) {
         blogService.deleteBlog(blogId);
         return ApiResponse.<Boolean>builder()
                 .message("Delete blog successfully")
                 .result(true)
+                .build();
+    }
+
+    @GetMapping("/{blogId}")
+    ApiResponse<BlogResponse> getBlog(@PathVariable int blogId) {
+        return ApiResponse.<BlogResponse>builder()
+                .message("Get blog successfully")
+                .result(blogService.getBlog(blogId))
                 .build();
     }
 

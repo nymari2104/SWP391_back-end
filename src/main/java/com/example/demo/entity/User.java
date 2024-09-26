@@ -28,7 +28,7 @@ public class User {
     boolean googleAccount;
     String role;
 
-    @JsonManagedReference
+//    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Blog> blogs;
 

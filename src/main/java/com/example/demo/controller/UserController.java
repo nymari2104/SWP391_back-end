@@ -6,6 +6,7 @@ import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
+import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -90,10 +91,10 @@ public class UserController {
     }
 
     @PostMapping("/forgot-password")
-    ApiResponse<String> forgotPassword(@RequestParam("email") String request){
+    ApiResponse<String> forgotPassword(@RequestBody User request){
         return ApiResponse.<String>builder()
                 .message("Send mail successfully!")
-                .result(userService.forgotPassword(request))
+                .result(userService.forgotPassword(request.getEmail()))
                 .build();
     }
 
