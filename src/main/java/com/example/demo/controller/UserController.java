@@ -1,17 +1,16 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.SignUpRequest;
+import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
 import com.example.demo.dto.response.ApiResponse;
-import com.example.demo.dto.request.UserUpdateRequest;
-import com.example.demo.dto.response.SignUpResponse;
-import com.example.demo.dto.response.UserResponse;
+import com.example.demo.dto.request.userRequest.UserUpdateRequest;
+import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
+import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,11 +35,6 @@ public class UserController {
     //Get all users
     @GetMapping
     ApiResponse<List<UserResponse>> getUsers(){
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("Username: {}", authentication.getName());
-        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
-
        return ApiResponse.<List<UserResponse>>builder()
                .message("Get all users successfully!")
                .result(userService.getUsers())
@@ -89,6 +83,14 @@ public class UserController {
         userService.deleteUser(userId);
         return  ApiResponse.<String>builder()
                 .result("Delete user successfully!")
+                .build();
+    }
+
+    @PostMapping("/forgot-password")
+    ApiResponse<String> forgotPassword(@RequestParam("email") String request){
+        return ApiResponse.<String>builder()
+                .message("Send mail successfully!")
+                .result(userService.forgotPassword(request))
                 .build();
     }
 }

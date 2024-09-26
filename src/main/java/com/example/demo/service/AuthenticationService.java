@@ -1,13 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.configuration.EmailSender;
-import com.example.demo.dto.request.SignInRequest;
-import com.example.demo.dto.request.IntrospectRequest;
-import com.example.demo.dto.request.LogoutRequest;
-import com.example.demo.dto.request.VerifyEmailRequest;
-import com.example.demo.dto.response.SignInResponse;
-import com.example.demo.dto.response.IntrospectResponse;
-import com.example.demo.dto.response.UserResponse;
+import com.example.demo.dto.request.authenticationRequest.*;
+import com.example.demo.dto.request.userRequest.UserUpdateRequest;
+import com.example.demo.dto.response.authenticationResponse.SignInResponse;
+import com.example.demo.dto.response.authenticationResponse.IntrospectResponse;
+import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.entity.InvalidatedToken;
 import com.example.demo.entity.User;
 import com.example.demo.entity.VerificationToken;
@@ -38,7 +35,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Random;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -51,8 +48,6 @@ public class AuthenticationService {
     UserMapper userMapper;
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
-    EmailSender emailSender;
-
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -81,9 +76,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
 
         //check match password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if (!authenticated)
+        if (!checkMatchPassword(request.getPassword(), user.getPassword()))
             throw new AppException(ErrorCode.LOGIN_FAIL);//no match
 
         //create token for this login time
@@ -92,7 +85,29 @@ public class AuthenticationService {
         return SignInResponse.builder()
                 .token(token)
                 .user(userMapper.toUserResponse(user))
-                .authenticated(true)
+                .build();
+    }
+
+    public SignInResponse authenticate(String email, String fullname){
+
+        Optional<User> checkUser = userRepository.findByEmail(email);
+        User user = User.builder()
+                .fullname(fullname)
+                .email(email)
+                .role(Role.USER.name())
+                .googleAccount(true)
+                .build();
+          if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }else if (checkUser.isEmpty()){
+            userRepository.save(user);
+        }
+
+        var token = generateToken(user);
+
+        return SignInResponse.builder()
+                .user(userMapper.toUserResponse(user))
+                .token(token)
                 .build();
     }
 
@@ -114,19 +129,13 @@ public class AuthenticationService {
 
     }
 
-    public UserResponse verifyEmail(VerifyEmailRequest request){
-        //get verificationToken
-        VerificationToken verificationToken = verificationTokenRepository.findById(request.getOtp())
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_OTP_INVALID));
-        //check if this otp is generated for sign-up email
-        if (!verificationToken.getEmail().equals(request.getEmail()))
-            throw new AppException(ErrorCode.EMAIL_OTP_INVALID);
-        //check if otp is expired
-        if (!verificationToken.getExpiryTime().after(new Date()))
-            throw new AppException(ErrorCode.EMAIL_OTP_EXPIRED);
+    public UserResponse verifySignUp(VerifyOtpRequest request){
+        //Verify otp
+        VerificationToken verificationToken = verifyOtp(request.getEmail(), request.getOtp());
 
         User user = verificationMapper.toUser(verificationToken);
         user.setRole(Role.USER.toString());
+        user.setGoogleAccount(false);
         try {
             user = userRepository.save(user);
         } catch (Exception e) {
@@ -135,13 +144,26 @@ public class AuthenticationService {
          return userMapper.toUserResponse(user);
     }
 
-    public void forgotPassword(){
+    public void verifyResetPassword(ResetPasswordRequest request){
+        VerifyOtpRequest verifyOtpRequest = request.getVerifyOtpRequest();
+        UserUpdateRequest userUpdateRequest = request.getUserUpdateRequest();
+        //verify otp
 
-        String to = "manhcat24@gmail.com";
-        String subject = "Test forgot password";
-        String body = String.valueOf(new Random().nextInt(100000, 999999));
+        verifyOtp(verifyOtpRequest.getEmail(), verifyOtpRequest.getOtp());
 
-        emailSender.sendSixDigitOtp(to, subject, body);
+
+        User user = userRepository.findByEmail(verifyOtpRequest.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        //Check if reset password matches the old
+        if (checkMatchPassword(userUpdateRequest.getPassword(), user.getPassword()))
+            throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
+
+        userMapper.updateUser(user, userUpdateRequest);
+        //encode password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+
+        userRepository.save(user);
     }
 
     public SignedJWT verifyToken(String token) throws ParseException, JOSEException {
@@ -164,6 +186,24 @@ public class AuthenticationService {
         if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
             throw new AppException(ErrorCode.TOKEN_INVALID);
         return signedJWT;
+    }
+
+    private boolean checkMatchPassword(String requestPassword, String userPassword){
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        return passwordEncoder.matches(requestPassword, userPassword);
+    }
+
+    private VerificationToken verifyOtp(String email, int otp){
+        //get verificationToken
+        VerificationToken verificationToken = verificationTokenRepository.findById(otp)
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_OTP_INVALID));
+        //check if this otp is generated for sign-up email
+        if (!verificationToken.getEmail().equals(email))
+            throw new AppException(ErrorCode.EMAIL_OTP_INVALID);
+        //check if otp is expired
+        if (!verificationToken.getExpiryTime().after(new Date()))
+            throw new AppException(ErrorCode.EMAIL_OTP_EXPIRED);
+        return verificationToken;
     }
 
     private String generateToken(User user){

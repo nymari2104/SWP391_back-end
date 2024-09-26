@@ -1,18 +1,17 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.LogoutRequest;
-import com.example.demo.dto.request.VerifyEmailRequest;
+import com.example.demo.dto.request.authenticationRequest.*;
 import com.example.demo.dto.response.ApiResponse;
-import com.example.demo.dto.request.SignInRequest;
-import com.example.demo.dto.request.IntrospectRequest;
-import com.example.demo.dto.response.SignInResponse;
-import com.example.demo.dto.response.IntrospectResponse;
-import com.example.demo.dto.response.UserResponse;
+import com.example.demo.dto.response.authenticationResponse.SignInResponse;
+import com.example.demo.dto.response.authenticationResponse.IntrospectResponse;
+import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -52,20 +51,34 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/forgot-password")
-    ApiResponse<Void> forgotPassword(){
-        authenticationService.forgotPassword();
-        return ApiResponse.<Void>builder()
-                .message("Send mail successfully!")
+    @PostMapping("/verify-sign-up")
+    ApiResponse<UserResponse> verifySignUp(@RequestBody VerifyOtpRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .message("sign-up successfully!")
+                .result(authenticationService.verifySignUp(request))
                 .build();
     }
 
-    @PostMapping("/verify-email")
-    ApiResponse<UserResponse> verifyEmail(@RequestBody VerifyEmailRequest request){
+    @PostMapping("/verify-reset-password")
+    ApiResponse<Void> verifyResetPassword(@RequestBody ResetPasswordRequest request){
+        authenticationService.verifyResetPassword(request);
+        return ApiResponse.<Void>builder()
+                .message("Reset password successfully!")
+                .build();
+    }
 
-        return ApiResponse.<UserResponse>builder()
-                .message("sign-up successfully!")
-                .result(authenticationService.verifyEmail(request))
+    @GetMapping("/secured")
+    public String secure(){
+        return "Hello, secured!";
+    }
+
+    @GetMapping("/sign-in-by-google")
+    public ApiResponse<SignInResponse> loginSuccess(@AuthenticationPrincipal OAuth2User oAuth2User){
+        String email = oAuth2User.getAttribute("email");
+        String fullname = oAuth2User.getAttribute("name");
+        return ApiResponse.<SignInResponse>builder()
+                .message("Sign in successfully!")
+                .result(authenticationService.authenticate(email, fullname))
                 .build();
     }
 }

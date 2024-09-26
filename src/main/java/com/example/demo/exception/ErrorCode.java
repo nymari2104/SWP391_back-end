@@ -33,6 +33,7 @@ public enum ErrorCode {
     BLANK_EMAIL("BLANK_EMAIL", "Email cannot be blank", HttpStatus.BAD_REQUEST),
     POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.BAD_REQUEST),
     KOI_NOT_FOUND("KOI_NOT_FOUND", "Koi not found", HttpStatus.BAD_REQUEST),
+    MATCH_OLD_PASSWORD("MATCHED_OLD_PASSWORD","Password matched the old", HttpStatus.BAD_REQUEST),
     ;
 
      String code;

@@ -25,6 +25,7 @@ public class User {
     String email;
 
     String password;
+    boolean googleAccount;
     String role;
 
 //    @JsonManagedReference

@@ -1,6 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.request.WaterParamCreateRequest;
+import com.example.demo.dto.request.waterParamRequest.WaterParamCreateRequest;
 import com.example.demo.entity.WaterParam;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

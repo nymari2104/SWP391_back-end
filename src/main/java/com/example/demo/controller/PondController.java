@@ -1,21 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.configuration.ImageResizer;
-import com.example.demo.dto.request.PondCreateRequest;
-import com.example.demo.dto.request.ProductCreateRequest;
+import com.example.demo.dto.request.pondRequest.PondCreateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Pond;
-import com.example.demo.entity.Product;
 import com.example.demo.service.PondService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 @RestController

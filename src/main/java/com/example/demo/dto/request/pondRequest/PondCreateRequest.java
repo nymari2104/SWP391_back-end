@@ -1,4 +1,4 @@
-package com.example.demo.dto.request;
+package com.example.demo.dto.request.pondRequest;
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -14,17 +14,16 @@ import java.util.Date;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class WaterParamCreateRequest {
-
-    float o2;
-    float temperature;
-    float nh4;
-    float salt;
-    float ph;
-    float no2;
-    float no3;
+public class PondCreateRequest {
+    String pondName;
+    float pumpPower;
+    String image;
+    float size;
+    float depth;
+    float volume;
+    int vein;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;
-    int pondId;
+    String userId;
 }
