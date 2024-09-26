@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.koiRequest.KoiCreateRequest;
+import com.example.demo.dto.request.koiRequest.KoiUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Koi;
 import com.example.demo.service.KoiService;
@@ -41,6 +42,23 @@ public class KoiController {
         return ApiResponse.<Koi>builder()
                 .message("Get koi sucessfully")
                 .result(koiService.getKoi(koiId))
+                .build();
+    }
+
+    @PutMapping("/update/{koiId}")
+    ApiResponse<Koi> updateKoi(@PathVariable int koiId, @RequestBody KoiUpdateRequest request) {
+        return ApiResponse.<Koi>builder()
+                .message("Update koi successfully")
+                .result(koiService.updateKoi(koiId, request))
+                .build();
+    }
+
+    @DeleteMapping("/delete/{koiId}")
+    ApiResponse<Boolean> deletePond(@PathVariable int koiId) {
+        koiService.deleteKoi(koiId);
+        return ApiResponse.<Boolean>builder()
+                .message("Delete pond successfully")
+                .result(true)
                 .build();
     }
 }
