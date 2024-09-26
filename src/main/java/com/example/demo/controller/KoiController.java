@@ -40,7 +40,7 @@ public class KoiController {
     @GetMapping("/{koiId}")
     ApiResponse<Koi> getKoi(@PathVariable int koiId) {
         return ApiResponse.<Koi>builder()
-                .message("Get koi sucessfully")
+                .message("Get koi successfully")
                 .result(koiService.getKoi(koiId))
                 .build();
     }
