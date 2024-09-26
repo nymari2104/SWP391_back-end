@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.configuration.ImageResizer;
 import com.example.demo.dto.request.BlogCreateRequest;
+import com.example.demo.dto.request.BlogUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Blog;
 import com.example.demo.service.BlogService;
@@ -35,7 +36,7 @@ public class BlogController {
                         .title(request.getTitle())
                         .content(request.getContent())
                         .image(request.getImage())
-                        .createDate(request.getCreateDate())
+                        .createDate(new Date())
                         .build()))
                 .build();
 
@@ -46,6 +47,23 @@ public class BlogController {
         return ApiResponse.<List<Blog>>builder()
                 .message("Get all blogs successfully")
                 .result(blogService.getAllBlogs())
+                .build();
+    }
+
+    @PutMapping("/update/{blogId}")
+    ApiResponse<Blog> updateBlog(@PathVariable String blogId, @RequestBody BlogUpdateRequest request) {
+        return ApiResponse.<Blog>builder()
+                .message("Update Blog successfully")
+                .result(blogService.updateBlog(blogId, request))
+                .build();
+    }
+
+    @DeleteMapping("/delete/{blogId}")
+    ApiResponse<Boolean> deleteBlog(@PathVariable String blogId) {
+        blogService.deleteBlog(blogId);
+        return ApiResponse.<Boolean>builder()
+                .message("Delete blog successfully")
+                .result(true)
                 .build();
     }
 

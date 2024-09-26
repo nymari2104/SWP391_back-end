@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.BlogCreateRequest;
+import com.example.demo.dto.request.BlogUpdateRequest;
 import com.example.demo.entity.Blog;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;
@@ -51,5 +52,18 @@ public class BlogService {
 
     public List<Blog> getAllBlogs() {
         return blogRepository.findAll().stream().toList();
+    }
+
+    public Blog updateBlog(String blogId, BlogUpdateRequest request) {
+        Blog blog = blogRepository.findById(blogId)
+                .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
+
+        blogMapper.updateBlog(blog,request);
+
+        return blogRepository.save(blog);
+    }
+
+    public void deleteBlog(String blogId) {
+        blogRepository.deleteById(blogId);
     }
 }
