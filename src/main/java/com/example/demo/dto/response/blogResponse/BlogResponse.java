@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BlogResponse {
-    String blogId;
+    int blogId;
     String image;
     String title;
     String content;

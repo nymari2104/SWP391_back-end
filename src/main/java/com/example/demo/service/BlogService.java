@@ -43,7 +43,7 @@ public class BlogService {
 
     }
 
-    public BlogResponse getBlog(String id) {
+    public BlogResponse getBlog(int id) {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         return BlogResponse.builder()
@@ -76,7 +76,7 @@ public class BlogService {
                 }).collect(Collectors.toList());
     }
 
-    public Blog updateBlog(String blogId, BlogUpdateRequest request) {
+    public Blog updateBlog(int blogId, BlogUpdateRequest request) {
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
 
@@ -85,7 +85,7 @@ public class BlogService {
         return blogRepository.save(blog);
     }
 
-    public void deleteBlog(String blogId) {
+    public void deleteBlog(int blogId) {
         blogRepository.deleteById(blogId);
     }
 }

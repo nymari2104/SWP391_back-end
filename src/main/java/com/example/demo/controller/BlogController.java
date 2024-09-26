@@ -48,7 +48,7 @@ public class BlogController {
     }
 
     @PutMapping("/update/{blogId}")
-    ApiResponse<Blog> updateBlog(@PathVariable String blogId, @RequestBody BlogUpdateRequest request) {
+    ApiResponse<Blog> updateBlog(@PathVariable int blogId, @RequestBody BlogUpdateRequest request) {
         return ApiResponse.<Blog>builder()
                 .message("Update Blog successfully")
                 .result(blogService.updateBlog(blogId, request))
@@ -56,7 +56,7 @@ public class BlogController {
     }
 
     @DeleteMapping("/delete/{blogId}")
-    ApiResponse<Boolean> deleteBlog(@PathVariable String blogId) {
+    ApiResponse<Boolean> deleteBlog(@PathVariable int blogId) {
         blogService.deleteBlog(blogId);
         return ApiResponse.<Boolean>builder()
                 .message("Delete blog successfully")
@@ -65,7 +65,7 @@ public class BlogController {
     }
 
     @GetMapping("/{blogId}")
-    ApiResponse<BlogResponse> getBlog(@PathVariable String blogId) {
+    ApiResponse<BlogResponse> getBlog(@PathVariable int blogId) {
         return ApiResponse.<BlogResponse>builder()
                 .message("Get blog successfully")
                 .result(blogService.getBlog(blogId))
