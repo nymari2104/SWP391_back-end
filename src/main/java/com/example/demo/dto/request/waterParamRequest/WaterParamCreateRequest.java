@@ -1,5 +1,4 @@
-package com.example.demo.dto.request;
-
+package com.example.demo.dto.request.waterParamRequest;
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -11,16 +10,21 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-
 @Builder
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class KoiGrowthLogCreateRequest {
+public class WaterParamCreateRequest {
+
+    float o2;
+    float temperature;
+    float nh4;
+    float salt;
+    float ph;
+    float no2;
+    float no3;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    Date koiLogDate;
-    float weight;
-    float size;
-    int koiId;
+    Date createDate;
+    int pondId;
 }

@@ -1,13 +1,15 @@
-package com.example.demo.dto.response;
+package com.example.demo.dto.request.authenticationRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SignUpResponse {
+public class SignInRequest {
     String email;
+    String password;
 }

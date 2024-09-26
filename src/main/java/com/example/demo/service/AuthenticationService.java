@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.*;
-import com.example.demo.dto.response.SignInResponse;
-import com.example.demo.dto.response.IntrospectResponse;
-import com.example.demo.dto.response.UserResponse;
+import com.example.demo.dto.request.authenticationRequest.*;
+import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
+import com.example.demo.dto.request.userRequest.UserUpdateRequest;
+import com.example.demo.dto.response.authenticationResponse.SignInResponse;
+import com.example.demo.dto.response.authenticationResponse.IntrospectResponse;
+import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.entity.InvalidatedToken;
 import com.example.demo.entity.User;
 import com.example.demo.entity.VerificationToken;

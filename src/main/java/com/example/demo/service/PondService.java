@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.PondCreateRequest;
+import com.example.demo.dto.request.pondRequest.PondCreateRequest;
 import com.example.demo.entity.Pond;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AppException;

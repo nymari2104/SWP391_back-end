@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.request.SignUpRequest;
-import com.example.demo.dto.response.SignUpResponse;
+import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
+import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.VerificationToken;
 import org.mapstruct.Mapper;

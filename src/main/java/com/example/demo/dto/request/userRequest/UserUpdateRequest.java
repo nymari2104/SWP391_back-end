@@ -1,4 +1,4 @@
-package com.example.demo.dto.request;
+package com.example.demo.dto.request.userRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

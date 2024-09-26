@@ -1,5 +1,6 @@
-package com.example.demo.dto.response;
+package com.example.demo.dto.response.authenticationResponse;
 
+import com.example.demo.dto.response.userResponse.UserResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
