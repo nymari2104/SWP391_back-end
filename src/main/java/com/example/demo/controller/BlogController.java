@@ -72,4 +72,12 @@ public class BlogController {
                 .build();
     }
 
+    @GetMapping("/user/{userId}")
+    ApiResponse<List<BlogResponse>> getUserBlog(@PathVariable String userId) {
+        return ApiResponse.<List<BlogResponse>>builder()
+                .message("Get blog successfully")
+                .result(blogService.getUserBlog(userId))
+                .build();
+    }
+
 }
