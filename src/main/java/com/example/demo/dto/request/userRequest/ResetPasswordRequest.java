@@ -1,7 +1,6 @@
-package com.example.demo.dto.request.authenticationRequest;
+package com.example.demo.dto.request.userRequest;
 
-
-import com.example.demo.dto.request.userRequest.UserUpdateRequest;
+import com.example.demo.dto.request.authenticationRequest.VerifyOtpRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

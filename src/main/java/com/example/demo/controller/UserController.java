@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
+import com.example.demo.dto.request.userRequest.UpdatePasswordRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
@@ -11,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,6 +55,7 @@ public class UserController {
     //get info who is login
     @GetMapping("/my-info")
     ApiResponse<UserResponse> getMyInfo(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
         return ApiResponse.<UserResponse>builder()
                 .message("Get my info successfully!")
                 .result(userService.getMyInfo())
@@ -91,6 +94,14 @@ public class UserController {
         return ApiResponse.<String>builder()
                 .message("Send mail successfully!")
                 .result(userService.forgotPassword(request))
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    ApiResponse<Void> resetPassword(@RequestBody UpdatePasswordRequest request){
+        userService.updateMyPassword(request);
+        return ApiResponse.<Void>builder()
+                .message("Update password successfully!")
                 .build();
     }
 }

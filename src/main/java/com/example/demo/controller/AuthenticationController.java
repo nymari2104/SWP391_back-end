@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.authenticationRequest.*;
+import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.authenticationResponse.SignInResponse;
 import com.example.demo.dto.response.authenticationResponse.IntrospectResponse;
