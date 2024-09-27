@@ -14,6 +14,7 @@ import com.example.demo.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -87,5 +88,23 @@ public class BlogService {
 
     public void deleteBlog(int blogId) {
         blogRepository.deleteById(blogId);
+    }
+
+    //    @PreAuthorize("hasRole('USER')")
+    public List<BlogResponse> getUserBlog(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return user.getBlogs().stream().map(
+                blog -> {
+                    return BlogResponse.builder()
+                            .blogId(blog.getBlogId())
+                            .image(blog.getImage())
+                            .title(blog.getTitle())
+                            .content(blog.getContent())
+                            .createDate(blog.getCreateDate())
+                            .fullname(blog.getUser().getFullname())
+                            .build();
+                }
+        ).toList();
     }
 }

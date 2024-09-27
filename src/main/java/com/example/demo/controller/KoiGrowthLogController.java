@@ -7,10 +7,7 @@ import com.example.demo.service.KoiGrowthLogService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/koi-growth-log")
@@ -24,8 +21,17 @@ public class KoiGrowthLogController {
     ApiResponse<KoiGrowthLog> createKoiGrowthLog(@RequestBody KoiGrowthLogCreateRequest request) {
 
         return ApiResponse.<KoiGrowthLog>builder()
-                .message("Create Koi's log successfullfy")
+                .message("Create Koi's log successfully")
                 .result(koiGrowthLogService.createKoiGrowthLog(request))
+                .build();
+    }
+
+    @DeleteMapping("/{koiLogId}")
+    ApiResponse<Boolean> deleteKoiGrowthLog(@PathVariable String koiLogId) {
+        koiGrowthLogService.deleteKoiGrowthLog(koiLogId);
+        return ApiResponse.<Boolean>builder()
+                .message("Delete Koi's log successfully")
+                .result(true)
                 .build();
     }
 }
