@@ -69,8 +69,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity
-                .oauth2Login(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
+//                .oauth2Login(Customizer.withDefaults())
+//                .formLogin(Customizer.withDefaults())
                 .build();
     }
 
