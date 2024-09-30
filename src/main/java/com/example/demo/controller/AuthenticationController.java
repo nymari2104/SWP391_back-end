@@ -61,16 +61,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify-reset-password")
-    ApiResponse<Void> verifyResetPassword(@RequestBody ResetPasswordRequest request){
-        authenticationService.verifyResetPassword(request);
-        return ApiResponse.<Void>builder()
-                .message("Reset password successfully!")
+    ApiResponse<String> verifyResetPassword(@RequestBody VerifyOtpRequest request){
+        return ApiResponse.<String>builder()
+                .message("Verify successfully!")
+                .result(authenticationService.verifyOtp(request).getEmail())
                 .build();
-    }
-
-    @GetMapping("/secured")
-    public String secure(){
-        return "Hello, secured!";
     }
 
     @GetMapping("/sign-in-by-google")

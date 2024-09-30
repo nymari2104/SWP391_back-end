@@ -98,6 +98,14 @@ public class UserController {
                 .build();
     }
 
+    @PostMapping("/reset-password")
+    ApiResponse<Void> resetPassword(@RequestBody UserUpdateRequest request){
+        userService.resetPassword(request);
+        return ApiResponse.<Void>builder()
+                .message("Reset password successfully!")
+                .build();
+    }
+
     @PostMapping("/update-password")
     ApiResponse<Void> updatePassword(@RequestBody UpdatePasswordRequest request){
         userService.updateMyPassword(request);

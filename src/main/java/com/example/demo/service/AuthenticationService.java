@@ -132,7 +132,7 @@ public class AuthenticationService {
 
     public UserResponse verifySignUp(VerifyOtpRequest request){
         //Verify otp
-        VerificationToken verificationToken = verifyOtp(request.getEmail(), request.getOtp());
+        VerificationToken verificationToken = verifyOtp(request);
 
         User user = verificationMapper.toUser(verificationToken);
         user.setRole(Role.USER.toString());
@@ -145,27 +145,26 @@ public class AuthenticationService {
          return userMapper.toUserResponse(user);
     }
 
-    public void verifyResetPassword(ResetPasswordRequest request){
-        VerifyOtpRequest verifyOtpRequest = request.getVerifyOtpRequest();
-        UserUpdateRequest userUpdateRequest = request.getUserUpdateRequest();
-        //verify otp
-
-        verifyOtp(verifyOtpRequest.getEmail(), verifyOtpRequest.getOtp());
-
-
-        User user = userRepository.findByEmail(verifyOtpRequest.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
-        //Check if reset password matches the old
-        if (checkMatchPassword(userUpdateRequest.getPassword(), user.getPassword()))
-            throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
-
-        userMapper.updateUser(user, userUpdateRequest);
-        //encode password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
-
-        userRepository.save(user);
-    }
+//    public void verifyResetPassword(ResetPasswordRequest request){
+//        VerifyOtpRequest verifyOtpRequest = request.getVerifyOtpRequest();
+//        UserUpdateRequest userUpdateRequest = request.getUserUpdateRequest();
+//        //verify otp
+//
+//        verifyOtp(verifyOtpRequest);
+//
+//        User user = userRepository.findByEmail(verifyOtpRequest.getEmail())
+//                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+//        //Check if reset password matches the old
+//        if (checkMatchPassword(userUpdateRequest.getPassword(), user.getPassword()))
+//            throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
+//
+//        userMapper.updateUser(user, userUpdateRequest);
+//        //encode password
+//        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+//        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+//
+//        userRepository.save(user);
+//    }
 
     public SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         //1. Parse jwt token to SignedJWT to access jwt component
@@ -189,17 +188,17 @@ public class AuthenticationService {
         return signedJWT;
     }
 
-    private boolean checkMatchPassword(String requestPassword, String userPassword){
+    public boolean checkMatchPassword(String requestPassword, String userPassword){
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         return passwordEncoder.matches(requestPassword, userPassword);
     }
 
-    private VerificationToken verifyOtp(String email, int otp){
+    public VerificationToken verifyOtp(VerifyOtpRequest request){
         //get verificationToken
-        VerificationToken verificationToken = verificationTokenRepository.findById(otp)
+        VerificationToken verificationToken = verificationTokenRepository.findById(request.getOtp())
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_OTP_INVALID));
         //check if this otp is generated for sign-up email
-        if (!verificationToken.getEmail().equals(email))
+        if (!verificationToken.getEmail().equals(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_OTP_INVALID);
         //check if otp is expired
         if (!verificationToken.getExpiryTime().after(new Date()))
