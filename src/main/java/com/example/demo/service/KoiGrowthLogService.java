@@ -32,4 +32,8 @@ public class KoiGrowthLogService {
         koiGrowthLog.setKoi(koi);
         return koiGrowthLogRepository.save(koiGrowthLog);
     }
+
+    public void deleteKoiGrowthLog(String koiLogId) {
+        koiGrowthLogRepository.deleteById(koiLogId);
+    }
 }
