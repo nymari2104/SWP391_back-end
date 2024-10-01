@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,6 +32,7 @@ public class WaterParamService {
         WaterParam waterParam = new WaterParam();
         waterParamMapper.toWaterParam(waterParam, request);
         waterParam.setPond(pond);
+        waterParam.setCreateDate(new Date());
 
         return waterParamRepository.save(waterParam);
     }
