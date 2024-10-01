@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.waterParamRequest.WaterParamCreateRequest;
+import com.example.demo.dto.request.waterParamRequest.WaterParamUpdateRequest;
 import com.example.demo.entity.Pond;
 import com.example.demo.entity.WaterParam;
 import com.example.demo.exception.AppException;
@@ -34,6 +35,14 @@ public class WaterParamService {
         waterParam.setPond(pond);
         waterParam.setCreateDate(new Date());
 
+        return waterParamRepository.save(waterParam);
+    }
+
+    public WaterParam updateWaterParam(String waterParamId,WaterParamUpdateRequest request) {
+        WaterParam waterParam = waterParamRepository.findById(waterParamId)
+                .orElseThrow(() -> new AppException(ErrorCode.WATER_PARAM_NOT_FOUND));
+        waterParamMapper.updateWaterParam(waterParam, request);
+        waterParam.setCreateDate(new Date());
         return waterParamRepository.save(waterParam);
     }
 }

@@ -35,7 +35,7 @@ public enum ErrorCode {
     KOI_NOT_FOUND("KOI_NOT_FOUND", "Koi not found", HttpStatus.BAD_REQUEST),
     MATCH_OLD_PASSWORD("MATCHED_OLD_PASSWORD","Password matched the old", HttpStatus.BAD_REQUEST),
     WRONG_PASSWORD("WRONG_PASSWORD", "Current password is not matched", HttpStatus.BAD_REQUEST),
-
+    WATER_PARAM_NOT_FOUND("WATER_PARAM_NOT_FOUND", "water param not found", HttpStatus.BAD_REQUEST),
     ;
 
      String code;
