@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,6 +32,7 @@ public class KoiGrowthLogService {
         KoiGrowthLog koiGrowthLog = new KoiGrowthLog();
         koiGrowthLogMapper.toKoiGrowthLog(koiGrowthLog, request);
         koiGrowthLog.setKoi(koi);
+        koiGrowthLog.setKoiLogDate(new Date());
         return koiGrowthLogRepository.save(koiGrowthLog);
     }
 

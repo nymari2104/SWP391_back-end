@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class PondController {
                         .size(request.getSize())
                         .depth(request.getDepth())
                         .volume(request.getVolume())
-                        .createDate(request.getCreateDate())
+                        .createDate(new Date())
                         .userId(request.getUserId())
                         .build()))
                 .message("Create pond successfully")
