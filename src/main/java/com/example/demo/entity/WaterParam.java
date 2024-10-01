@@ -26,8 +26,8 @@ public class WaterParam {
     String waterParamId;
 
     @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "pondId")
+    @OneToOne
+    @JoinColumn(name = "pondId", unique = true)  // unique = true để đảm bảo quan hệ 1-1
     Pond pond;
 
     @Column(name = "O2")

@@ -65,6 +65,6 @@ public class Pond {
     List<Koi> kois;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
-    List<WaterParam> waterParams;
+    @OneToOne(mappedBy = "pond", cascade = CascadeType.ALL)
+    WaterParam waterParam;
 }

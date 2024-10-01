@@ -49,14 +49,6 @@ public class PondController {
                 .build();
     }
 
-    @GetMapping("/list")
-    ApiResponse<List<Pond>> getAllPonds() {
-        return ApiResponse.<List<Pond>>builder()
-                .message("Get all ponds successfully")
-                .result(pondService.getAllPond())
-                .build();
-    }
-
     @GetMapping("/{pondId}")
     ApiResponse<Pond> getPond(@PathVariable int pondId) {
         return ApiResponse.<Pond>builder()
