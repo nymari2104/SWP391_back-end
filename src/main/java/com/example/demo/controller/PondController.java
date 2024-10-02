@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class PondController {
                         .size(request.getSize())
                         .depth(request.getDepth())
                         .volume(request.getVolume())
-                        .createDate(request.getCreateDate())
+                        .createDate(new Date())
                         .userId(request.getUserId())
                         .build()))
                 .message("Create pond successfully")
@@ -45,14 +46,6 @@ public class PondController {
     ApiResponse<List<Pond>> getPonds(@PathVariable String userId) {
         return ApiResponse.<List<Pond>>builder()
                 .result(pondService.getPonds(userId))
-                .build();
-    }
-
-    @GetMapping("/list")
-    ApiResponse<List<Pond>> getAllPonds() {
-        return ApiResponse.<List<Pond>>builder()
-                .message("Get all ponds successfully")
-                .result(pondService.getAllPond())
                 .build();
     }
 

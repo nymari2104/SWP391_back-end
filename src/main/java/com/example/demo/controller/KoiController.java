@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 
 @RestController
 @RequestMapping("/koi")
@@ -32,7 +34,7 @@ public class KoiController {
                         .sex(request.getSex())
                         .type(request.getType())
                         .origin(request.getOrigin())
-                        .createDate(request.getCreateDate())
+                        .createDate(new Date())
                         .pondId(request.getPondId())
                         .build()))
                 .build();

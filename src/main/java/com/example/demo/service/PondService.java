@@ -59,10 +59,6 @@ public class PondService {
         return user.getPonds();
     }
 
-    public List<Pond> getAllPond() {
-        return pondRepository.findAll().stream().toList();
-    }
-
     public void deletePond(int pondId) {
         pondRepository.deleteById(pondId);
     }
