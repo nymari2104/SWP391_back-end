@@ -23,7 +23,8 @@ public class User {
 
     @Column(name = "email", unique = true,  columnDefinition = "VARCHAR(255)")
     String email;
-
+    String phone;
+    String address;
     String password;
     boolean googleAccount;
     String role;

@@ -2,8 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
-import com.example.demo.dto.request.authenticationRequest.VerifyOtpRequest;
-import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
 import com.example.demo.dto.request.userRequest.UpdatePasswordRequest;
 import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
@@ -78,7 +76,9 @@ public class UserService {
 
     public UserResponse updateMyInfo(UserUpdateRequest request){
         User user = getCurrentUser();
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        userMapper.updateUser(user, request);
+//        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -108,12 +108,14 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse updateUser(String userId, UserUpdateRequest request){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         userMapper.updateUser(user, request);
         //set password after encode
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        if (request.getPassword() != null)
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
