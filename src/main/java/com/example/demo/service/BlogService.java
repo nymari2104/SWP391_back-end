@@ -54,6 +54,7 @@ public class BlogService {
                 .content(blog.getContent())
                 .createDate(blog.getCreateDate())
                 .fullname(blog.getUser().getFullname())
+                .userId(blog.getUser().getUserId())
                 .build();
     }
 
