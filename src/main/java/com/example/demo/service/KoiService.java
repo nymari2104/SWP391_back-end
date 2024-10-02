@@ -54,11 +54,14 @@ public class KoiService {
     public Koi updateKoi(int koiId, KoiUpdateRequest request) {
         Koi koi = koiRepository.findById(koiId)
                 .orElseThrow(() -> new AppException(ErrorCode.KOI_NOT_FOUND));
-        Pond pond = pondRepository.findById(request.getPondId())
-                .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
 
         koiMapper.updateKoi(koi, request);
-        koi.setPond(pond);
+
+        if (request.getPondId() != null) {
+            Pond pond = pondRepository.findById(request.getPondId())
+                    .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
+            koi.setPond(pond);
+        }
 
         return koiRepository.save(koi);
     }

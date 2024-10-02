@@ -68,7 +68,7 @@ public class ProductService {
         product.setStock(request.getStock());
         product.setUnitPrice(request.getUnitprice());
         product.setDescription(request.getDescription());
-        product.setStatus(request.isStatus());
+        product.setStatus(request.getStatus());
         product.setCategory(category);
 
         return productRepository.save(product);

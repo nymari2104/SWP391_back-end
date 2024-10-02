@@ -14,5 +14,5 @@ public class KoiUpdateRequest {
     Boolean sex;
     String type;
     String origin;
-    int pondId;
+    Integer pondId;
 }

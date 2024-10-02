@@ -12,10 +12,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PondUpdateRequest {
     String pondName;
-    float pumpPower;
+    Float pumpPower;
     String image;
-    float size;
-    float depth;
-    float volume;
-    int vein;
+    Float size;
+    Float depth;
+    Float volume;
+    Integer vein;
 }
