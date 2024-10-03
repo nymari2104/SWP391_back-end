@@ -74,6 +74,7 @@ public class BlogService {
                             .content(blog.getContent())
                             .createDate(blog.getCreateDate())
                             .fullname(blog.getUser().getFullname())
+                            .userId(blog.getUser().getUserId())
                             .build();
                 }).collect(Collectors.toList());
     }
@@ -87,6 +88,7 @@ public class BlogService {
         return blogRepository.save(blog);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public void deleteBlog(int blogId) {
         blogRepository.deleteById(blogId);
     }
