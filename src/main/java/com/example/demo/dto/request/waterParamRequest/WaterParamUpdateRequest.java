@@ -16,13 +16,13 @@ import java.util.Date;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WaterParamUpdateRequest {
-    float o2;
-    float temperature;
-    float nh4;
-    float salt;
-    float ph;
-    float no2;
-    float no3;
+    Float o2;
+    Float temperature;
+    Float nh4;
+    Float salt;
+    Float ph;
+    Float no2;
+    Float no3;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;

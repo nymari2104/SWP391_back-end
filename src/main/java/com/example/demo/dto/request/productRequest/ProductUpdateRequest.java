@@ -13,9 +13,9 @@ import lombok.experimental.FieldDefaults;
 public class ProductUpdateRequest {
     String name;
     String image;
-    float unitprice;
-    int stock;
+    Float unitprice;
+    Integer stock;
     String description;
-    boolean status;
-    int categoryId;
+    Boolean status;
+    Integer categoryId;
 }

@@ -38,14 +38,8 @@ public class Koi {
     @Column(name = "koiImage", columnDefinition = "TEXT")
     String image;
 
-//    @Column(name = "size")
-//    float size;
-
     @Column(name = "sex")
     Boolean sex;
-
-//    @Column(name = "weight")
-//    float weight;
 
     @Column(name = "type")
     String type;

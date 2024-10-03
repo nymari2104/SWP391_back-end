@@ -37,6 +37,9 @@ public class KoiGrowthLogService {
     }
 
     public void deleteKoiGrowthLog(String koiLogId) {
-        koiGrowthLogRepository.deleteById(koiLogId);
+        if (koiGrowthLogRepository.existsById(koiLogId))
+            koiGrowthLogRepository.deleteById(koiLogId);
+        else
+            throw new AppException(ErrorCode.LOG_NOT_FOUND);
     }
 }

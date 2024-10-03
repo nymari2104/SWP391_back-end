@@ -21,5 +21,6 @@ public class BlogResponse {
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     Date createDate;
+    String userId;
     String fullname;
 }

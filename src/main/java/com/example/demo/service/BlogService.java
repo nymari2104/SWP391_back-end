@@ -54,6 +54,7 @@ public class BlogService {
                 .content(blog.getContent())
                 .createDate(blog.getCreateDate())
                 .fullname(blog.getUser().getFullname())
+                .userId(blog.getUser().getUserId())
                 .build();
     }
 
@@ -73,6 +74,7 @@ public class BlogService {
                             .content(blog.getContent())
                             .createDate(blog.getCreateDate())
                             .fullname(blog.getUser().getFullname())
+                            .userId(blog.getUser().getUserId())
                             .build();
                 }).collect(Collectors.toList());
     }
@@ -86,8 +88,12 @@ public class BlogService {
         return blogRepository.save(blog);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public void deleteBlog(int blogId) {
-        blogRepository.deleteById(blogId);
+        if (blogRepository.existsById(blogId))
+            blogRepository.deleteById(blogId);
+        else
+            throw new AppException(ErrorCode.BLOG_NOT_FOUND);
     }
 
     //    @PreAuthorize("hasRole('USER')")
