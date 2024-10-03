@@ -21,6 +21,7 @@ import java.text.ParseException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
@@ -69,7 +70,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/sign-in-by-google")
-    public ApiResponse<SignInResponse> loginSuccess(@AuthenticationPrincipal OAuth2User oAuth2User){
+    public ApiResponse<SignInResponse> loginSuccess(@AuthenticationPrincipal OAuth2User oAuth2User, @RequestBody SignInRequest request){
         String email = oAuth2User.getAttribute("email");
         String fullname = oAuth2User.getAttribute("name");
         return ApiResponse.<SignInResponse>builder()

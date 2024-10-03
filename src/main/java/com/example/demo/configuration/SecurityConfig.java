@@ -39,8 +39,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/koi-growth-log/**",
     };
 
-    @Value("${jwt.signerKey}")
-    private String signerKey;
+//    @Value("${jwt.signerKey}")
+//    private String signerKey;
 
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
@@ -62,9 +62,10 @@ public class SecurityConfig implements WebMvcConfigurer {
                             //redirect user when authentication failed
 
             )
-                    .oauth2Login(oauth2Login ->
-                            oauth2Login
-                                    .successHandler(oAuth2SuccessHandler()));
+//                    .oauth2Login(oauth2Login ->
+//                            oauth2Login
+//                                    .successHandler(oAuth2SuccessHandler()))
+            ;
 
             httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
@@ -78,7 +79,6 @@ public class SecurityConfig implements WebMvcConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:5173");
-        configuration.addAllowedOrigin("http://localhost:8080/swagger-ui/index.html");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
@@ -107,8 +107,8 @@ public class SecurityConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
-    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
-        return new SimpleUrlAuthenticationSuccessHandler("/auth/sign-in-by-google");
-    }
+//    @Bean
+//    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
+//        return new SimpleUrlAuthenticationSuccessHandler("http://localhost:5173");
+//    }
 }
