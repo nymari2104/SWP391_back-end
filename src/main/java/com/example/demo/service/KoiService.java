@@ -67,7 +67,10 @@ public class KoiService {
     }
 
     public void deleteKoi(int koiId) {
-        koiRepository.deleteById(koiId);
+        if (koiRepository.existsById(koiId))
+            koiRepository.deleteById(koiId);
+        else
+            throw new AppException(ErrorCode.KOI_NOT_FOUND);
     }
 
 }

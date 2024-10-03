@@ -90,7 +90,10 @@ public class BlogService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public void deleteBlog(int blogId) {
-        blogRepository.deleteById(blogId);
+        if (blogRepository.existsById(blogId))
+            blogRepository.deleteById(blogId);
+        else
+            throw new AppException(ErrorCode.BLOG_NOT_FOUND);
     }
 
     //    @PreAuthorize("hasRole('USER')")

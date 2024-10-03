@@ -60,7 +60,10 @@ public class PondService {
     }
 
     public void deletePond(int pondId) {
-        pondRepository.deleteById(pondId);
+        if (pondRepository.existsById(pondId))
+            pondRepository.deleteById(pondId);
+        else
+            throw new AppException(ErrorCode.POND_NOT_FOUND);
     }
 
     public Pond updatePond(int pondId, PondUpdateRequest request) {

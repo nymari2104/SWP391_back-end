@@ -31,11 +31,12 @@ public enum ErrorCode {
     EMAIL_OTP_EXPIRED("EMAIL_OTP_EXPIRED", "Email OTP is expired", HttpStatus.BAD_REQUEST),
     BLOG_NOT_FOUND("BLOG_NOT_FOUND", "Blog not found", HttpStatus.BAD_REQUEST),
     BLANK_EMAIL("BLANK_EMAIL", "Email cannot be blank", HttpStatus.BAD_REQUEST),
-    POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.BAD_REQUEST),
     KOI_NOT_FOUND("KOI_NOT_FOUND", "Koi not found", HttpStatus.BAD_REQUEST),
     MATCH_OLD_PASSWORD("MATCHED_OLD_PASSWORD","Password matched the old", HttpStatus.BAD_REQUEST),
     WRONG_PASSWORD("WRONG_PASSWORD", "Current password is not matched", HttpStatus.BAD_REQUEST),
-    WATER_PARAM_NOT_FOUND("WATER_PARAM_NOT_FOUND", "water param not found", HttpStatus.BAD_REQUEST),
+    WATER_PARAM_NOT_FOUND("WATER_PARAM_NOT_FOUND", "Water param not found", HttpStatus.BAD_REQUEST),
+    POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.BAD_REQUEST),
+    LOG_NOT_FOUND("LOG_NOT_FOUND", "Log not found", HttpStatus.BAD_REQUEST),
     ;
 
      String code;
