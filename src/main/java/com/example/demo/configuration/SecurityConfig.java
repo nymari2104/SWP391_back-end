@@ -25,6 +25,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     private final String[] PUBLIC_ENDPOINTS ={
             "/users/**",
             "auth/**",
+            "users/**",
             "/category/**",
             "/product/**",
             "/blog/**",

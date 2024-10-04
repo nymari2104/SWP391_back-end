@@ -71,7 +71,7 @@ public class ProductController {
                 .build();
     }
 
-    @DeleteMapping("/{productId}")
+    @DeleteMapping("/delete/{productId}")
     ApiResponse<Boolean> deleteProduct(@PathVariable int productId) {
         productService.deleteProduct(productId);
         return ApiResponse.<Boolean>builder()
