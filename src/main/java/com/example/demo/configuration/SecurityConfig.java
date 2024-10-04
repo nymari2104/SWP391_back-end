@@ -45,8 +45,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .authorizeHttpRequests(request ->
                     request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                             .anyRequest().authenticated())
-                    .csrf(AbstractHttpConfigurer::disable);;
-            httpSecurity
+                    .csrf(AbstractHttpConfigurer::disable)
                     .oauth2ResourceServer(oauth2 ->
                     oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer

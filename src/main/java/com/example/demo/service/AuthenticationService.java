@@ -148,26 +148,6 @@ public class AuthenticationService {
          return userMapper.toUserResponse(user);
     }
 
-//    public void verifyResetPassword(ResetPasswordRequest request){
-//        VerifyOtpRequest verifyOtpRequest = request.getVerifyOtpRequest();
-//        UserUpdateRequest userUpdateRequest = request.getUserUpdateRequest();
-//        //verify otp
-//
-//        verifyOtp(verifyOtpRequest);
-//
-//        User user = userRepository.findByEmail(verifyOtpRequest.getEmail())
-//                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
-//        //Check if reset password matches the old
-//        if (checkMatchPassword(userUpdateRequest.getPassword(), user.getPassword()))
-//            throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
-//
-//        userMapper.updateUser(user, userUpdateRequest);
-//        //encode password
-//        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-//        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
-//
-//        userRepository.save(user);
-//    }
 
     public SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         //1. Parse jwt token to SignedJWT to access jwt component
