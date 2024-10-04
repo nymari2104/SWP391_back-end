@@ -34,7 +34,7 @@ public class KoiController {
                         .sex(request.getSex())
                         .type(request.getType())
                         .origin(request.getOrigin())
-                        .createDate(new Date())
+                        .createDate(request.getCreateDate())
                         .pondId(request.getPondId())
                         .build()))
                 .build();
