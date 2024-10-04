@@ -28,15 +28,7 @@ public class KoiController {
 
         return ApiResponse.<Koi>builder()
                 .message("Create Koi successfully")
-                .result(koiService.createKoi(KoiCreateRequest.builder()
-                        .name(request.getName())
-                        .image(request.getImage())
-                        .sex(request.getSex())
-                        .type(request.getType())
-                        .origin(request.getOrigin())
-                        .createDate(request.getCreateDate())
-                        .pondId(request.getPondId())
-                        .build()))
+                .result(koiService.createKoi(request))
                 .build();
     }
     @GetMapping("/{koiId}")
