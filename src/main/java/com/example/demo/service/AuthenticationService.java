@@ -54,7 +54,7 @@ public class AuthenticationService {
     protected String SECRET_KEY;
 
     @NonFinal
-    @Value("${GOOGLE_CLIENT_ID}")
+    @Value("347176202843-s8aa50994aqeuhovpeauc35buo5bj0uv.apps.googleusercontent.com")
     protected String CLIENT_ID;
 
 

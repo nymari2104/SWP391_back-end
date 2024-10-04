@@ -34,6 +34,7 @@ public class User {
     List<Blog> blogs;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     Cart cart;
 
     @OneToMany(mappedBy = "user")

@@ -37,6 +37,10 @@ public enum ErrorCode {
     WATER_PARAM_NOT_FOUND("WATER_PARAM_NOT_FOUND", "Water param not found", HttpStatus.NOT_FOUND),
     POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.NOT_FOUND),
     LOG_NOT_FOUND("LOG_NOT_FOUND", "Log not found", HttpStatus.NOT_FOUND),
+    CART_NOT_FOUND("CART_NOT_FOUND", "Cart not found", HttpStatus.NOT_FOUND),
+    CARTITEM_NOT_FOUND("CARTITEM_NOT_FOUND", "Cart item not found", HttpStatus.NOT_FOUND),
+    QUANTITY_GREATER_THAN_0("QUANTITY_GREATER_THAN_0", "Quantity must equal or greater than 0", HttpStatus.BAD_REQUEST),
+
     ;
 
      String code;

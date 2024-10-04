@@ -1,6 +1,7 @@
 package com.example.demo.exception;
 
 import com.example.demo.dto.response.ApiResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
 //    }
 
     @ExceptionHandler(value = AppException.class)
-      ResponseEntity<ApiResponse<?>> handlingAppException(AppException exception){
+    ResponseEntity<ApiResponse<?>> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
         return ResponseEntity.status(errorCode.getStatusCode())
                 .body(ApiResponse.builder()
@@ -35,7 +36,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiResponse<?>> handlingAccessDeniedException(){
+    ResponseEntity<ApiResponse<?>> handlingAccessDeniedException() {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         return ResponseEntity.status(errorCode.getStatusCode())//Use status code in errorCode
@@ -43,17 +44,33 @@ public class GlobalExceptionHandler {
                         .code(errorCode.getCode())//Set code
                         .message(errorCode.getMessage())//Set message
                         .build()
-        );
+                );
 
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse<?>> handlingValidation(MethodArgumentNotValidException exception){
+    ResponseEntity<ApiResponse<?>> handlingValidation(MethodArgumentNotValidException exception) {
         String enumKey = exception.getFieldError().getDefaultMessage();
         ErrorCode errorCode = ErrorCode.INVALID_MESSAGE_KEY;
         try {
             errorCode = ErrorCode.valueOf(enumKey);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
+            log.error("IllegalArgumentException{}", e.getMessage());
+        }
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    ResponseEntity<ApiResponse<?>> handlingConstraintViolationException(ConstraintViolationException exception) {
+        String enumKey = exception.getMessage();
+        ErrorCode errorCode = ErrorCode.INVALID_MESSAGE_KEY;
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+        } catch (IllegalArgumentException e) {
             log.error("IllegalArgumentException{}", e.getMessage());
         }
         return ResponseEntity.badRequest()
@@ -64,7 +81,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = SQLException.class)
-    ResponseEntity<ApiResponse<?>> handlingSQLServerException(SQLException exception){
+    ResponseEntity<ApiResponse<?>> handlingSQLServerException(SQLException exception) {
         return ResponseEntity.badRequest()
                 .body(ApiResponse.builder()
                         .code(exception.getSQLState())

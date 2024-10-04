@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,8 +21,10 @@ import java.util.List;
 public class Cart {
     @Id
     @Column(name = "cartId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     String cartId;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "userId")
     User user;
@@ -30,6 +34,7 @@ public class Cart {
     @Column(name = "createDate")
     Date createDate;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     List<CartItem> cartItems;
 }
