@@ -1,8 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.authenticationRequest.*;
-import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
-import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignInResponse;
 import com.example.demo.dto.response.authenticationResponse.IntrospectResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
@@ -50,9 +48,14 @@ public class AuthenticationService {
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
 
+
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SECRET_KEY;
+
+    @NonFinal
+    @Value("${GOOGLE_CLIENT_ID}")
+    protected String CLIENT_ID;
 
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
@@ -90,9 +93,9 @@ public class AuthenticationService {
     }
 
     public SignInResponse authenticate(String email, String fullname){
-
         Optional<User> checkUser = userRepository.findByEmail(email);
         User user = User.builder()
+                .userId(checkUser.map(User::getUserId).orElse(null))
                 .fullname(fullname)
                 .email(email)
                 .role(Role.USER.name())

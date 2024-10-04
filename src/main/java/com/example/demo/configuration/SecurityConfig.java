@@ -1,10 +1,8 @@
 package com.example.demo.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,8 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,9 +35,6 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/koi-growth-log/**",
     };
 
-//    @Value("${jwt.signerKey}")
-//    private String signerKey;
-
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
@@ -51,9 +44,10 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeHttpRequests(request ->
                     request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                            .anyRequest().authenticated());
-
-            httpSecurity.oauth2ResourceServer(oauth2 ->
+                            .anyRequest().authenticated())
+                    .csrf(AbstractHttpConfigurer::disable);;
+            httpSecurity
+                    .oauth2ResourceServer(oauth2 ->
                     oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer
                                 .decoder(customJwtDecoder)
@@ -61,17 +55,11 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                             //redirect user when authentication failed
 
-            )
-//                    .oauth2Login(oauth2Login ->
-//                            oauth2Login
-//                                    .successHandler(oAuth2SuccessHandler()))
-            ;
+            );
 
-            httpSecurity.csrf(AbstractHttpConfigurer::disable);
+
 
         return httpSecurity
-//                .oauth2Login(Customizer.withDefaults())
-//                .formLogin(Customizer.withDefaults())
                 .build();
     }
 
@@ -107,8 +95,4 @@ public class SecurityConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder(10);
     }
 
-//    @Bean
-//    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
-//        return new SimpleUrlAuthenticationSuccessHandler("http://localhost:5173");
-//    }
 }

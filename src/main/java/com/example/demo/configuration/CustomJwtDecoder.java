@@ -20,6 +20,7 @@ import java.util.Objects;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
+    private static final String ALGORITHM = "HS512";
 
     @Value("${jwt.signerKey}")
     private String signerKey;
@@ -27,29 +28,29 @@ public class CustomJwtDecoder implements JwtDecoder {
     @Autowired
     private AuthenticationService authenticationService;
 
-    private NimbusJwtDecoder nimbusJwtDecoder = null;
+    private NimbusJwtDecoder jwtDecoder = null;
 
     @Override
     public Jwt decode(String token) throws JwtException {
-
         try {
-            var response = authenticationService.introspect(
-                    IntrospectRequest.builder()
-                            .token(token)
-                            .build());
-
-            if (!response.isValid()) throw new AppException(ErrorCode.TOKEN_INVALID);
+            if (!authenticationService.introspect(IntrospectRequest.builder().token(token).build()).isValid()) {
+                throw new AppException(ErrorCode.TOKEN_INVALID);
+            }
         } catch (JOSEException | ParseException e) {
-            throw new  AppException(ErrorCode.TOKEN_INVALID);
+            throw new AppException(ErrorCode.TOKEN_INVALID);
         }
 
-        if (Objects.isNull(nimbusJwtDecoder)) {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-            nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                    .macAlgorithm(MacAlgorithm.HS512)
-                    .build();
+        if (Objects.isNull(jwtDecoder)) {
+            jwtDecoder = initializeNimbusJwtDecoder();
         }
 
-        return nimbusJwtDecoder.decode(token);
+        return jwtDecoder.decode(token);
+    }
+
+    private NimbusJwtDecoder initializeNimbusJwtDecoder() {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), ALGORITHM);
+        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
+                .macAlgorithm(MacAlgorithm.HS512)
+                .build();
     }
 }
