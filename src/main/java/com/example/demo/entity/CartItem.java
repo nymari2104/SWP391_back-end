@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
@@ -28,8 +29,8 @@ public class CartItem {
     @JoinColumn(name = "cartId")
     Cart cart;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"cartItems"})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "productId")
     Product product;
 

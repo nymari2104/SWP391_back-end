@@ -135,7 +135,7 @@ public class CartService {
                 .build();
     }
 
-    public CartResponse getCartByUser(String userId) {
+    public Cart getCartByUser(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
@@ -143,19 +143,21 @@ public class CartService {
 
         if(cart == null) throw new AppException(ErrorCode.CART_NOT_FOUND);
 
-        List<CartItemResponse> itemResponses = cart.getCartItems().stream()
-                .map(item -> CartItemResponse.builder()
-                        .cartItemId(item.getCartItemId())
-                        .productId(item.getProduct().getProductId())
-                        .quantity(item.getQuantity())
-                        .build())
-                .collect(Collectors.toList());
+        return cart;
 
-        return CartResponse.builder()
-                .cartId(cart.getCartId())
-                .userId(cart.getUser().getUserId())
-                .createDate(cart.getCreateDate())
-                .items(itemResponses) // Thêm danh sách các item đã chuyển đổi
-                .build();
+//        List<CartItemResponse> itemResponses = cart.getCartItems().stream()
+//                .map(item -> CartItemResponse.builder()
+//                        .cartItemId(item.getCartItemId())
+//                        .productId(item.getProduct().getProductId())
+//                        .quantity(item.getQuantity())
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//        return CartResponse.builder()
+//                .cartId(cart.getCartId())
+//                .userId(cart.getUser().getUserId())
+//                .createDate(cart.getCreateDate())
+//                .items(itemResponses) // Thêm danh sách các item đã chuyển đổi
+//                .build();
     }
 }

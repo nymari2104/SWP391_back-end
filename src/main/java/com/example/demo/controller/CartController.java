@@ -74,9 +74,9 @@ public class CartController {
 //    }
 
     @GetMapping("/user/{userId}")
-    ApiResponse<CartResponse> getCartByUser(@PathVariable String userId) {
+    ApiResponse<Cart> getCartByUser(@PathVariable String userId) {
 
-        return ApiResponse.<CartResponse>builder()
+        return ApiResponse.<Cart>builder()
                 .message("Get cart successfully")
                 .result(cartService.getCartByUser(userId))
                 .build();
