@@ -107,8 +107,9 @@ public class CartService {
     }
 
     public void removeCartItem(String cartItemId) {
-        if(cartItemRepository.existsById(cartItemId))
-            cartItemRepository.deleteById(cartItemId);
+        if(cartItemRepository.existsById(cartItemId)){
+            cartItemRepository.deleteCartItemById(cartItemId);
+        }
         else
             throw new AppException(ErrorCode.CARTITEM_NOT_FOUND);
     }
