@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.cartRequest.AddToCartRequest;
+import com.example.demo.dto.request.cartRequest.CreateCartRequest;
 import com.example.demo.dto.request.cartRequest.UpdateQuantityRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.cartResponse.CartResponse;
@@ -21,12 +22,12 @@ public class CartController {
 
     CartService cartService;
 
-    @PostMapping("/create/{userId}")
-    ApiResponse<CartResponse> createCart(@PathVariable String userId) {
+    @PostMapping("/create")
+    ApiResponse<CartResponse> createCart(@RequestBody CreateCartRequest request) {
 
         return ApiResponse.<CartResponse>builder()
                 .message("Create cart successfully")
-                .result(cartService.createCart(userId))
+                .result(cartService.createCart(request.getUserId()))
                 .build();
     }
 
@@ -63,14 +64,14 @@ public class CartController {
                 .build();
     }
 
-    @GetMapping("/{cartId}")
-    ApiResponse<CartResponse> getCart(@PathVariable String cartId) {
-
-        return ApiResponse.<CartResponse>builder()
-                .message("Get cart Successfully")
-                .result(cartService.getCart(cartId))
-                .build();
-    }
+//    @GetMapping("/{cartId}")
+//    ApiResponse<CartResponse> getCart(@PathVariable String cartId) {
+//
+//        return ApiResponse.<CartResponse>builder()
+//                .message("Get cart Successfully")
+//                .result(cartService.getCart(cartId))
+//                .build();
+//    }
 
     @GetMapping("/user/{userId}")
     ApiResponse<CartResponse> getCartByUser(@PathVariable String userId) {
