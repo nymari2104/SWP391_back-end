@@ -48,14 +48,9 @@ public class AuthenticationService {
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
 
-
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SECRET_KEY;
-
-    @NonFinal
-    @Value("347176202843-s8aa50994aqeuhovpeauc35buo5bj0uv.apps.googleusercontent.com")
-    protected String CLIENT_ID;
 
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
