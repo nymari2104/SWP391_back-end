@@ -36,10 +36,14 @@ public class CartService {
     public CartResponse createCart(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        if(cartRepository.existsByUser(user))
+            throw new AppException(ErrorCode.CART_ALREADY_EXISTED);
+
         Cart cart = cartRepository.save(Cart.builder()
                 .user(user)
                 .createDate(new Date())
                 .build());
+
         return CartResponse.builder()
                 .cartId(cart.getCartId())
                 .userId(cart.getUser().getUserId())

@@ -31,6 +31,7 @@ public class KoiController {
                 .result(koiService.createKoi(request))
                 .build();
     }
+
     @GetMapping("/{koiId}")
     ApiResponse<Koi> getKoi(@PathVariable int koiId) {
         return ApiResponse.<Koi>builder()
