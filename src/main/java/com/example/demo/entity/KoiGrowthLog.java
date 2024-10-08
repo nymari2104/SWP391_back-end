@@ -32,6 +32,10 @@ public class KoiGrowthLog {
     @Column(name = "koiLogDate", nullable = false)
     Date koiLogDate;
 
+    @Column(name = "logTime", nullable = false)
+    @DateTimeFormat(pattern = "HH:mm:ss")
+    java.sql.Time logTime;  // Cột lưu giờ
+
     @Column(name = "weight")
     float weight;
 

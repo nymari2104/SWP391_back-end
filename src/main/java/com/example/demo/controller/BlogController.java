@@ -25,8 +25,6 @@ public class BlogController {
     @PostMapping("/create")
     ApiResponse<Blog> createBlog(@RequestBody BlogCreateRequest request) {
 
-//        String image = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
-
         return ApiResponse.<Blog>builder()
                 .result(blogService.createBlog(BlogCreateRequest.builder()
                         .userId(request.getUserId())
