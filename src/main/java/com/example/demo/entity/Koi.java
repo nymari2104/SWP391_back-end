@@ -54,6 +54,6 @@ public class Koi {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "koi", cascade = CascadeType.ALL)
-    @OrderBy("koiLogDate DESC, logTime DESC")
+    @OrderBy("koiLogDate ASC, logTime ASC")
     List<KoiGrowthLog> koiGrowthLogs;
 }
