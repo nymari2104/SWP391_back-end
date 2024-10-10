@@ -60,6 +60,7 @@ public class Product {
     private Boolean status;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<OrderDetail> orderDetails;
 
     @JsonIgnoreProperties({"product"})

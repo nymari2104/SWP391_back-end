@@ -32,6 +32,11 @@ public class KoiService {
         Pond pond = pondRepository.findById(request.getPondId())
                 .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
 
+//        boolean check = koiRepository.findByName(request.getName());
+//
+//        if (check)
+//            throw new AppException(ErrorCode.KOI_EXISTED);
+
         return koiRepository.save(Koi.builder()
                 .name(request.getName())
                 .image(request.getImage())
