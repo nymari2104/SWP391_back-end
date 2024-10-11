@@ -20,7 +20,7 @@ public class ApplicationInitConfig {
 
     PasswordEncoder passwordEncoder;
 
-    //Auto create an account Admin
+    //Auto createOrderDetail an account Admin
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository){
         return args -> {
@@ -34,7 +34,7 @@ public class ApplicationInitConfig {
                         .build();
 
                 userRepository.save(user);
-                log.warn("admin user has been create with default password: 123456789, please change it!");
+                log.warn("admin user has been createOrderDetail with default password: 123456789, please change it!");
             }
         };
     }

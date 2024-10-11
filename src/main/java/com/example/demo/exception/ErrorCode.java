@@ -38,7 +38,7 @@ public enum ErrorCode {
     POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.NOT_FOUND),
     LOG_NOT_FOUND("LOG_NOT_FOUND", "Log not found", HttpStatus.NOT_FOUND),
     CART_NOT_FOUND("CART_NOT_FOUND", "Cart not found", HttpStatus.NOT_FOUND),
-    CARTITEM_NOT_FOUND("CARTITEM_NOT_FOUND", "Cart item not found", HttpStatus.NOT_FOUND),
+    CART_ITEM_NOT_FOUND("CART_ITEM_NOT_FOUND", "Cart item not found", HttpStatus.NOT_FOUND),
     QUANTITY_GREATER_THAN_0("QUANTITY_GREATER_THAN_0", "Quantity must equal or greater than 0", HttpStatus.BAD_REQUEST),
     CART_ALREADY_EXISTED("CART_ALREADY_EXISTED", "Cart is already existed", HttpStatus.BAD_REQUEST),
 

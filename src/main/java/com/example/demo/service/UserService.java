@@ -78,7 +78,6 @@ public class UserService {
         User user = getCurrentUser();
 
         userMapper.updateUser(user, request);
-//        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -159,7 +158,15 @@ public class UserService {
         return request;
     }
 
-    private User getCurrentUser(){
+//    public String getMyId(){
+//        try {
+//            return getCurrentUser().getUserId();
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
+
+    public User getCurrentUser(){
         var context = SecurityContextHolder.getContext();//when user login success, user info will be store in SecurityContextHolder
         String email = context.getAuthentication().getName();//get email of user
 
