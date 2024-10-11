@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.util.Date;
 
 @Service
@@ -33,6 +34,7 @@ public class KoiGrowthLogService {
         koiGrowthLogMapper.toKoiGrowthLog(koiGrowthLog, request);
         koiGrowthLog.setKoi(koi);
         koiGrowthLog.setKoiLogDate(new Date());
+        koiGrowthLog.setLogTime(new Time(System.currentTimeMillis()));
         return koiGrowthLogRepository.save(koiGrowthLog);
     }
 

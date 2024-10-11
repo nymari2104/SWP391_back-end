@@ -28,11 +28,14 @@ public class Order {
     String paymentId;
 
     @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "id")
+    @ManyToOne(optional = true)  // Cho phép null
+    @JoinColumn(name = "id", nullable = true)  // nullable=true để cho phép giá trị null
     User user;
 
-    @Column(name = "phone", length = 20)
+    @Column(name = "name")
+    String name;
+
+    @Column(name = "phone", length = 10)
     String phone;
 
     @Column(name = "address")

@@ -27,15 +27,16 @@ public class PaypalController {
             "A21AAIIJnTVqWx0KythuKE_18Q6oqa8TaBYrUDeBB-3jQLWei1z9Ijpl2ppt3W8k-dSdwe4uyGtc13cGUzPImThp6gFp7yjzw";
 
     @GetMapping("/create")
-    public RedirectView createPayment(
-//            @RequestBody CheckoutRequest request
-    ){
-        CheckoutRequest request = new CheckoutRequest();
+    public RedirectView createPayment(@RequestParam("cartId") String cartId, @RequestParam("total") float total) {
+
         try {
             String cancelUrl = "http://localhost:8080/payment/cancel";
             String successUrl = "http://localhost:8080/payment/success";
             Payment payment = paypalService.createPayment(
-                    request,
+                    CheckoutRequest.builder()
+                            .cartId(cartId)
+                            .total(total)
+                            .build(),
                     "USD",
                     "paypal",
                     "authorize",
