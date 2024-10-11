@@ -55,6 +55,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<optional>true</optional>
 			<version>${projectlombok-lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -111,12 +112,12 @@
 		<dependency>
 			<groupId>com.google.api-client</groupId>
 			<artifactId>google-api-client</artifactId>
-			<version>1.33.0</version>
+			<version>2.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.oauth-client</groupId>
 			<artifactId>google-oauth-client</artifactId>
-			<version>1.33.0</version>
+			<version>1.36.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.http-client</groupId>
@@ -126,12 +127,22 @@
 		<dependency>
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client-gson</artifactId>
-			<version>1.42.0</version> <!-- hoặc phiên bản mới hơn nếu cần -->
+			<version>1.42.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.15.0</version> <!-- Phiên bản mới nhất có thể thay đổi, hãy kiểm tra phiên bản mới nhất -->
+			<version>2.15.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.paypal.sdk</groupId>
+			<artifactId>paypal-core</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.paypal.sdk</groupId>
+			<artifactId>rest-api-sdk</artifactId>
+			<version>1.14.0</version>
 		</dependency>
 	</dependencies>
 

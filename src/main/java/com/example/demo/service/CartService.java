@@ -57,7 +57,6 @@ public class CartService {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-
         boolean productExistsInCart = false;
         if (!cart.getCartId().isEmpty()) {
             for (CartItem item : cart.getCartItems()) {
@@ -99,7 +98,7 @@ public class CartService {
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new AppException(ErrorCode.CARTITEM_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
 
         cartItem.setQuantity(request.getQuantity());
         cartItemRepository.save(cartItem);
@@ -111,7 +110,7 @@ public class CartService {
             cartItemRepository.deleteCartItemById(cartItemId);
         }
         else
-            throw new AppException(ErrorCode.CARTITEM_NOT_FOUND);
+            throw new AppException(ErrorCode.CART_ITEM_NOT_FOUND);
     }
 
     public CartResponse getCart(String cartId) {
