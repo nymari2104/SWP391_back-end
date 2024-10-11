@@ -57,8 +57,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                             //redirect user when authentication failed
 
-            )
-                    .cors(AbstractHttpConfigurer::disable);
+            );
 
         return httpSecurity
                 .build();

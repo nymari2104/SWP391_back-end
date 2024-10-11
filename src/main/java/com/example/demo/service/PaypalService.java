@@ -56,25 +56,25 @@ public class PaypalService {
         amount.setCurrency(currency);
         amount.setTotal(String.format(Locale.forLanguageTag(currency), "%.2f", request.getTotal()));
 
-
         Item item = new Item();
         List<Item> items = new ArrayList<>();
+
+        ItemList itemList = new ItemList();
 
         Cart cart = cartRepository.findById(request.getCartId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
 
         for(CartItem cartItem : cart.getCartItems()) {
+            item = new Item();
             item.setName(cartItem.getProduct().getProductName());
             item.setCurrency(currency);
             item.setPrice(String.format(Locale.forLanguageTag(currency), "%.2f", cartItem.getProduct().getUnitPrice()));
             item.setQuantity(String.valueOf(cartItem.getQuantity()));
 
             items.add(item);
+
         }
-
-        ItemList itemList = new ItemList();
         itemList.setItems(items);
-
         Transaction transaction = new Transaction();
         transaction.setDescription(description);
         transaction.setAmount(amount);
