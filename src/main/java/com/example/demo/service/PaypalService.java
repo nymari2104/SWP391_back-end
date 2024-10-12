@@ -41,6 +41,8 @@ public class PaypalService {
     protected String PAYPAL_REFUND_API = "https://api-m.sandbox.paypal.com/v1/payments/capture/";
     @NonFinal
     protected String PAYPAL_CAPTURE_API = "https://api-m.sandbox.paypal.com/v1/payments/authorization/";
+    @NonFinal
+    protected  String PAYPAL_VOID_API = "https://api-m.sandbox.paypal.com/v1/payments/authorization/";
 
     public Payment createPayment(
             CheckoutRequest request,
@@ -56,7 +58,7 @@ public class PaypalService {
         amount.setCurrency(currency);
         amount.setTotal(String.format(Locale.forLanguageTag(currency), "%.2f", request.getTotal()));
 
-        Item item = new Item();
+        Item item;
         List<Item> items = new ArrayList<>();
 
         ItemList itemList = new ItemList();
@@ -113,36 +115,47 @@ public class PaypalService {
         return payment.execute(apiContext, paymentExecution);
     }
 
-    public void refund(String paymentId, String accessToken){
+    public void refundPayment(String paymentId, String accessToken){
         JsonNode payment = getPayment(paymentId, accessToken);
-            String captureId = payment.path("transactions").get(0)
+        String captureId = payment.path("transactions").get(0)
                     .path("related_resources").get(0)
                     .path("capture").path("id").asText();
-
         // Trả về phản hồi từ PayPal API
-        ResponseEntity<Capture> response = restTemplate.exchange(
+        restTemplate.exchange(
                 PAYPAL_REFUND_API + captureId + "/refund",
                 HttpMethod.GET,
-                setBody(accessToken, payment, captureId),
+                setBody(accessToken, payment),
                 Capture.class);
     }
 
 
 
-    public void capture(String paymentId, String accessToken){
+    public void capturePayment(String paymentId, String accessToken){
         JsonNode payment = getPayment(paymentId, accessToken);
-            String authorizationId = payment.path("transactions").get(0)
+        String authorizationId = payment.path("transactions").get(0)
                     .path("related_resources").get(0)
                     .path("authorization").path("id").asText();
-
-        setBody(accessToken, payment, authorizationId);
         // Trả về phản hồi từ PayPal API
-        ResponseEntity<JsonNode> response = restTemplate.exchange(
+        restTemplate.exchange(
                 PAYPAL_CAPTURE_API + authorizationId + "/capture",
                 HttpMethod.POST,
-                setBody(accessToken, payment, authorizationId),
+                setBody(accessToken, payment),
                 JsonNode.class);
-        log.info("capture{}",response.getBody());
+
+    }
+
+    public void voidPayment(String paymentId, String accessToken){
+        JsonNode payment = getPayment(paymentId, accessToken);
+        String authorizationId = payment.path("transactions").get(0)
+                .path("related_resources").get(0)
+                .path("authorization").path("id").asText();
+        HttpEntity<String> entity = new HttpEntity<>(setHeader(accessToken));
+        // Trả về phản hồi từ PayPal API
+        restTemplate.exchange(
+                PAYPAL_VOID_API + authorizationId + "/void",
+                HttpMethod.POST,
+                entity,
+                String.class);
     }
 
     public JsonNode getPayment(String paymentId, String accessToken){
@@ -156,7 +169,7 @@ public class PaypalService {
         return response.getBody();
     }
 
-    private  HttpEntity<Map<String, Object>> setBody(String accessToken, JsonNode payment, String captureId) {
+    private  HttpEntity<Map<String, Object>> setBody(String accessToken, JsonNode payment) {
         Map<String, Object> body = new HashMap<>();
         Map<String, String> amount = new HashMap<>();
         amount.put("currency", "USD");

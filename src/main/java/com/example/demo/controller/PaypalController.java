@@ -14,7 +14,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,43 +28,42 @@ public class PaypalController {
 
     @NonFinal
     protected String ACCESS_TOKEN =
-            "A21AAIIJnTVqWx0KythuKE_18Q6oqa8TaBYrUDeBB-3jQLWei1z9Ijpl2ppt3W8k-dSdwe4uyGtc13cGUzPImThp6gFp7yjzw";
+            "A21AAJtHm3IvMEGmW174nPDhSSwRLg5jNB49ENTL4vOdEVz0_LQhWr2csUWJkIjuswXaf41J8l_UwH7rib-e4YIwSp43DFSkA";
 
-    @CrossOrigin
-        @PostMapping("/create")
-        public ApiResponse<Map<String, String>> createPayment(
+    @PostMapping("/create")
+    ApiResponse<Map<String, String>> createPayment(
                 @RequestBody CheckoutRequest request
-        ) {
-            try {
-                String cancelUrl = "http://localhost:8080/payment/cancel";
-                String successUrl = "http://localhost:8080/payment/success";
-                Payment payment = paypalService.createPayment(
-                        request,
-                        "USD",
-                        "paypal",
-                        "authorize",
-                        "Payment description",
-                        cancelUrl,
-                        successUrl
-                );
-                Map<String, String> response = new HashMap<>();
-                for (Links link : payment.getLinks()) {
-                    if (link.getRel().equals("approval_url")) {
-                        response.put("approval_url", link.getHref());
-                        break;
-                    }
+    ) {
+        try {
+            String cancelUrl = "http://localhost:8080/payment/cancel";
+            String successUrl = "http://localhost:8080/payment/success";
+            Payment payment = paypalService.createPayment(
+                    request,
+                    "USD",
+                    "paypal",
+                    "authorize",
+                    "Payment description",
+                    cancelUrl,
+                    successUrl
+            );
+            Map<String, String> response = new HashMap<>();
+            for (Links link : payment.getLinks()) {
+                if (link.getRel().equals("approval_url")) {
+                    response.put("approval_url", link.getHref());
+                    break;
                 }
-                return ApiResponse.<Map<String, String>>builder()
-                        .message("Approved URL")
-                        .result(response)
-                        .build();
-            } catch (PayPalRESTException e) {
-                throw new AppException(ErrorCode.PAYMENT_FAILED);
             }
+            return ApiResponse.<Map<String, String>>builder()
+                    .message("Approved URL")
+                    .result(response)
+                    .build();
+        } catch (PayPalRESTException e) {
+            throw new AppException(ErrorCode.PAYMENT_FAILED);
         }
+    }
 
     @GetMapping("/success")
-    public ApiResponse<String> paymentSuccess(
+    ApiResponse<String> paymentSuccess(
             @RequestParam("paymentId") String paymentId,
             @RequestParam("PayerID") String payerId
     ) throws PayPalRESTException{
@@ -81,24 +79,37 @@ public class PaypalController {
     }
 
     @PostMapping("/capture")
-    public String capture(@RequestBody CheckoutRequest request){
-        paypalService.capture(request.getPaymentId(), ACCESS_TOKEN);
-        return "Capture successfully!";
+    ApiResponse<Void> capture(@RequestBody CheckoutRequest request){
+        paypalService.capturePayment(request.getPaymentId(), ACCESS_TOKEN);
+        return ApiResponse.<Void>builder()
+                .message("Capture payment successfully!")
+                .build();
+    }
+
+    @PostMapping("/void")
+    ApiResponse<Void> voidPayment(@RequestBody CheckoutRequest request){
+        paypalService.voidPayment(request.getPaymentId(), ACCESS_TOKEN);
+        return ApiResponse.<Void>builder()
+                .message("Void payment successfully!")
+                .build();
     }
 
     @PostMapping("/refund")
-    public String refund(@RequestBody String request){
-        paypalService.refund(request, ACCESS_TOKEN);
-        return "Refund successfully";
+    ApiResponse<Void> refund(@RequestBody String request){
+        paypalService.refundPayment(request, ACCESS_TOKEN);
+        return ApiResponse.<Void>builder()
+                .message("Refund payment successfully!")
+                .build();
     }
 
+
     @GetMapping("/cancel")
-    public String paymentCancel(){
+    String paymentCancel(){
         return "cancel";
     }
 
     @GetMapping("/error")
-    public String paymentError(){
+    String paymentError(){
         return "error";
     }
 }
