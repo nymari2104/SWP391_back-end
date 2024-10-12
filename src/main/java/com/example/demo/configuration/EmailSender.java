@@ -52,7 +52,7 @@ public class EmailSender {
         try {
             javaMailSender.send(simpleMailMessage);
         } catch (MailException e) {
-            throw new AppException(ErrorCode.EMAIL_NOT_EXISTED);
+            throw new AppException(ErrorCode.SENDER_EMAIL_IS_NOT_PERMITTED);
         }
         return otp;
     }

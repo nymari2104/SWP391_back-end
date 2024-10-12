@@ -5,6 +5,7 @@ import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -18,6 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
     private static final String ALGORITHM = "HS512";
@@ -33,18 +35,28 @@ public class CustomJwtDecoder implements JwtDecoder {
     @Override
     public Jwt decode(String token) throws JwtException {
         try {
-            if (!authenticationService.introspect(IntrospectRequest.builder().token(token).build()).isValid()) {
+            if (!authenticationService.introspect(IntrospectRequest.builder()
+                    .token(token)
+                    .build()).isValid()) {
                 throw new AppException(ErrorCode.TOKEN_INVALID);
             }
         } catch (JOSEException | ParseException e) {
+            log.error(e.getMessage());
             throw new AppException(ErrorCode.TOKEN_INVALID);
         }
 
-        if (Objects.isNull(jwtDecoder)) {
-            jwtDecoder = initializeNimbusJwtDecoder();
-        }
+        try {
+            // Khởi tạo NimbusJwtDecoder nếu chưa có
+            if (Objects.isNull(jwtDecoder)) {
+                jwtDecoder = initializeNimbusJwtDecoder();
+            }
 
-        return jwtDecoder.decode(token);
+            // Decode JWT
+            return jwtDecoder.decode(token);
+        } catch (JwtException e) {
+            log.error("Lỗi khi giải mã token: {}", e.getMessage());
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
     }
 
     private NimbusJwtDecoder initializeNimbusJwtDecoder() {

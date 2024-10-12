@@ -135,11 +135,9 @@ public class AuthenticationService {
         User user = verificationMapper.toUser(verificationToken);
         user.setRole(Role.USER.toString());
         user.setGoogleAccount(false);
-        try {
+
             user = userRepository.save(user);
-        } catch (Exception e) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }
+
          return userMapper.toUserResponse(user);
     }
 

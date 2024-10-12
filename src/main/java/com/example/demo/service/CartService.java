@@ -160,4 +160,12 @@ public class CartService {
 //                .items(itemResponses) // Thêm danh sách các item đã chuyển đổi
 //                .build();
     }
+
+    public void deleteCart(String cartId) {
+        try {
+            cartRepository.deleteById(cartId);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CART_NOT_FOUND);
+        }
+    }
 }

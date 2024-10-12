@@ -60,6 +60,6 @@ public class Product {
     private List<OrderDetail> orderDetails;
 
     @JsonIgnoreProperties({"product"})
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<CartItem> cartItems;
 }

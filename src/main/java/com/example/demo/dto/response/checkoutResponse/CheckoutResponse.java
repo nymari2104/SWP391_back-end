@@ -1,6 +1,6 @@
 package com.example.demo.dto.response.checkoutResponse;
 
-import com.example.demo.entity.Order;
+import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,5 +12,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)//not show field which is null
 public class CheckoutResponse {
-    Order order;
+    OrderResponse orders;
 }
