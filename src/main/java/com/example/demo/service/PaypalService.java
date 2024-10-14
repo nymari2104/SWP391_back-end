@@ -3,9 +3,12 @@ package com.example.demo.service;
 import com.example.demo.dto.request.checkoutRequest.CheckoutRequest;
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.CartItem;
+import com.example.demo.entity.Order;
+import com.example.demo.enums.Status;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.CartRepository;
+import com.example.demo.repository.OrderRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
@@ -31,6 +34,7 @@ import java.util.*;
 public class PaypalService {
     APIContext apiContext;
     CartRepository cartRepository;
+    OrderRepository orderRepository;
 
     @NonFinal
     protected RestTemplate restTemplate = new RestTemplate();
@@ -116,6 +120,9 @@ public class PaypalService {
     }
 
     public void refundPayment(String paymentId, String accessToken){
+        //Find Order by paymentId
+        Order order = orderRepository.findByPaymentId(paymentId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         JsonNode payment = getPayment(paymentId, accessToken);
         String captureId = payment.path("transactions").get(0)
                     .path("related_resources").get(0)
@@ -126,11 +133,17 @@ public class PaypalService {
                 HttpMethod.GET,
                 setBody(accessToken, payment),
                 Capture.class);
+        //Set status before refunded
+        order.setStatus(Status.REFUNDED.name());
+        orderRepository.save(order);
     }
 
 
 
     public void capturePayment(String paymentId, String accessToken){
+        //Find Order by paymentId
+        Order order = orderRepository.findByPaymentId(paymentId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         JsonNode payment = getPayment(paymentId, accessToken);
         String authorizationId = payment.path("transactions").get(0)
                     .path("related_resources").get(0)
@@ -141,10 +154,15 @@ public class PaypalService {
                 HttpMethod.POST,
                 setBody(accessToken, payment),
                 JsonNode.class);
-
+        //Set status before capture
+        order.setStatus(Status.APPROVED.name());
+        orderRepository.save(order);
     }
 
     public void voidPayment(String paymentId, String accessToken){
+        //Find Order by paymentId
+        Order order = orderRepository.findByPaymentId(paymentId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         JsonNode payment = getPayment(paymentId, accessToken);
         String authorizationId = payment.path("transactions").get(0)
                 .path("related_resources").get(0)
@@ -156,6 +174,9 @@ public class PaypalService {
                 HttpMethod.POST,
                 entity,
                 String.class);
+        //Set status before Void
+        order.setStatus(Status.REJECTED.name());
+        orderRepository.save(order);
     }
 
     public JsonNode getPayment(String paymentId, String accessToken){

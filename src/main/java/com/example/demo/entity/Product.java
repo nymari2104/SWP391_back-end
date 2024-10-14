@@ -56,10 +56,10 @@ public class Product {
     private Boolean status;
 
     @JsonIgnoreProperties({"product"})
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product")
     private List<OrderDetail> orderDetails;
 
     @JsonIgnoreProperties({"product"})
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CartItem> cartItems;
 }

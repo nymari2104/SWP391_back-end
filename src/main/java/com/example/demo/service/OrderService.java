@@ -6,6 +6,7 @@ import com.example.demo.dto.request.checkoutRequest.UpdateOrderRequest;
 import com.example.demo.dto.response.checkoutResponse.CheckoutResponse;
 import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.example.demo.entity.*;
+import com.example.demo.enums.Status;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.OrderMapper;
@@ -149,7 +150,7 @@ public class OrderService {
         }
 
         request.setCreateDate(new Date(Instant.now().toEpochMilli()));
-        request.setStatus("PROCESSING");
+        request.setStatus(Status.PENDING.name());
         request.setUser(user);
         try {
             return orderRepository.save(request);
