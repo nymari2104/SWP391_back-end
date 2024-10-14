@@ -48,14 +48,9 @@ public class AuthenticationService {
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
 
-
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SECRET_KEY;
-
-    @NonFinal
-    @Value("347176202843-s8aa50994aqeuhovpeauc35buo5bj0uv.apps.googleusercontent.com")
-    protected String CLIENT_ID;
 
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
@@ -83,7 +78,7 @@ public class AuthenticationService {
         if (!checkMatchPassword(request.getPassword(), user.getPassword()))
             throw new AppException(ErrorCode.LOGIN_FAIL);//no match
 
-        //create token for this login time
+        //createOrderDetail token for this login time
         var token = generateToken(user);
 
         return SignInResponse.builder()
@@ -140,11 +135,9 @@ public class AuthenticationService {
         User user = verificationMapper.toUser(verificationToken);
         user.setRole(Role.USER.toString());
         user.setGoogleAccount(false);
-        try {
+
             user = userRepository.save(user);
-        } catch (Exception e) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }
+
          return userMapper.toUserResponse(user);
     }
 
@@ -204,7 +197,7 @@ public class AuthenticationService {
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", user.getRole())
                 .build();
-        //convert jwt claims to JSON to create a payload
+        //convert jwt claims to JSON to createOrderDetail a payload
         Payload payload = new Payload(claimsSet.toJSONObject());
 
         //3. Create jws(consist of jwt header and jwt payload)
@@ -214,7 +207,7 @@ public class AuthenticationService {
             jwsObject.sign(new MACSigner(SECRET_KEY.getBytes()));
             return jwsObject.serialize();//convert jws to jwt
         } catch (JOSEException e) {
-            log.error("Cannot create token", e);
+            log.error("Cannot createOrderDetail token", e);
             throw new RuntimeException(e);
         }
     }

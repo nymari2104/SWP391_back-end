@@ -35,6 +35,6 @@ public class Cart {
     Date createDate;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CartItem> cartItems;
 }

@@ -1,12 +1,11 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -20,13 +19,16 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order {
     @Id
-    @Column(name = "orderId", nullable = false)
+    @Column(name = "orderId")
     @GeneratedValue(strategy = GenerationType.UUID)
     String orderId;
 
+    @Column(name = "PaymentId", nullable = false, unique = true)
+    String paymentId;
+
     @JsonBackReference
-    @ManyToOne(optional = true)  // Cho phép null
-    @JoinColumn(name = "id", nullable = true)  // nullable=true để cho phép giá trị null
+    @ManyToOne  // Cho phép null
+    @JoinColumn(name = "id")  // nullable=true để cho phép giá trị null
     User user;
 
     @Column(name = "name")
@@ -41,11 +43,18 @@ public class Order {
     @Column(name = "email")
     String email;
 
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "fullname")
+    String fullname;
+
+    @Column(name = "status")
+    String status;
+
+//    @Temporal(TemporalType.DATE)
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "createDate")
     Date createDate;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderDetail> orderDetails;
 }

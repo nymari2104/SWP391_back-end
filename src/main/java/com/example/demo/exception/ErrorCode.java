@@ -38,10 +38,14 @@ public enum ErrorCode {
     POND_NOT_FOUND("POND_NOT_FOUND", "Pond not found", HttpStatus.NOT_FOUND),
     LOG_NOT_FOUND("LOG_NOT_FOUND", "Log not found", HttpStatus.NOT_FOUND),
     CART_NOT_FOUND("CART_NOT_FOUND", "Cart not found", HttpStatus.NOT_FOUND),
-    CARTITEM_NOT_FOUND("CARTITEM_NOT_FOUND", "Cart item not found", HttpStatus.NOT_FOUND),
+    CART_ITEM_NOT_FOUND("CART_ITEM_NOT_FOUND", "Cart item not found", HttpStatus.NOT_FOUND),
     QUANTITY_GREATER_THAN_0("QUANTITY_GREATER_THAN_0", "Quantity must equal or greater than 0", HttpStatus.BAD_REQUEST),
     CART_ALREADY_EXISTED("CART_ALREADY_EXISTED", "Cart is already existed", HttpStatus.BAD_REQUEST),
-
+    PAYMENT_FAILED("PAYMENT_FAILED", "Payment failed", HttpStatus.BAD_REQUEST),
+    PAYMENT_ID_EXISTED("PAYMENT_ID_EXISTED", "Payment id existed", HttpStatus.BAD_REQUEST),
+    SENDER_EMAIL_IS_NOT_PERMITTED("SENDER_EMAIL_IS_NOT_PERMITTED","Sender email is not permitted", HttpStatus.BAD_REQUEST),
+    DID_NOT_OWN_CART("DID_NOT_OWN_CART", "You not own this cart", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND("ORDER_NOT_FOUND","Order not found",HttpStatus.NOT_FOUND),
     ;
 
      String code;

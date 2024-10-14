@@ -8,6 +8,7 @@ import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.VerificationToken;
+import com.example.demo.enums.Role;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.UserMapper;
@@ -78,7 +79,6 @@ public class UserService {
         User user = getCurrentUser();
 
         userMapper.updateUser(user, request);
-//        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -106,6 +106,22 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createAdminAccount(SignUpRequest request){
+        //Map request to User
+        User user = userMapper.toUser(request);
+        //Encode password
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        //Set role Admin for account
+        user.setRole(Role.ADMIN.name());
+        try {
+            user = userRepository.save(user);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+        return userMapper.toUserResponse(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -159,7 +175,7 @@ public class UserService {
         return request;
     }
 
-    private User getCurrentUser(){
+    public User getCurrentUser(){
         var context = SecurityContextHolder.getContext();//when user login success, user info will be store in SecurityContextHolder
         String email = context.getAuthentication().getName();//get email of user
 
