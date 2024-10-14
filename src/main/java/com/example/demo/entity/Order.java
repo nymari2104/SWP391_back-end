@@ -49,6 +49,9 @@ public class Order {
     @Column(name = "status")
     String status;
 
+    @Column(name = "total")
+    String total;
+
 //    @Temporal(TemporalType.DATE)
 //    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "createDate")

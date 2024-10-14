@@ -44,8 +44,9 @@ public enum ErrorCode {
     PAYMENT_FAILED("PAYMENT_FAILED", "Payment failed", HttpStatus.BAD_REQUEST),
     PAYMENT_ID_EXISTED("PAYMENT_ID_EXISTED", "Payment id existed", HttpStatus.BAD_REQUEST),
     SENDER_EMAIL_IS_NOT_PERMITTED("SENDER_EMAIL_IS_NOT_PERMITTED","Sender email is not permitted", HttpStatus.BAD_REQUEST),
-    DID_NOT_OWN_CART("DID_NOT_OWN_CART", "You not own this cart", HttpStatus.BAD_REQUEST),
+    DID_NOT_OWN_CART("DID_NOT_OWN_CART", "You did not own this cart", HttpStatus.BAD_REQUEST),
     ORDER_NOT_FOUND("ORDER_NOT_FOUND","Order not found",HttpStatus.NOT_FOUND),
+    DID_NOT_OWN_ORDER("DID_NOT_OWN_ORDER", "You did not own this order", HttpStatus.BAD_REQUEST),
     ;
 
      String code;

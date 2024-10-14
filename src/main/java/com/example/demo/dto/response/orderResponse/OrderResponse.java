@@ -17,11 +17,12 @@ public class OrderResponse {
     String orderId;
     String paymentId;
     String userId;
-    String status;
     String phone;
     String address;
     String fullname;
     String email;
+    String total;
+    String status;
     Date createDate;
     List<OrderDetailResponse> orderDetails;
 }

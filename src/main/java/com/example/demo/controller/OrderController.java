@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.checkoutRequest.BuyNowRequest;
 import com.example.demo.dto.request.checkoutRequest.CheckoutRequest;
-import com.example.demo.dto.request.checkoutRequest.UpdateOrderRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.checkoutResponse.CheckoutResponse;
+import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.example.demo.service.OrderService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -52,12 +52,19 @@ public class OrderController {
                 .build();
     }
 
-    @PutMapping("/update-order-status")
-    ApiResponse<CheckoutResponse> updateOrderStatus(@RequestBody UpdateOrderRequest request) {
-            return ApiResponse.<CheckoutResponse>builder()
-                    .message("Update order status successfully!")
-                    .result(orderService.updateOrderStatus(request))
-                    .build();
-        }
+//    @PutMapping("/update-order-status")
+//    ApiResponse<CheckoutResponse> updateOrderStatus(@RequestBody UpdateOrderRequest request) {
+//        return ApiResponse.<CheckoutResponse>builder()
+//                .message("Update order status successfully!")
+//                .result(orderService.updateOrderStatus(request))
+//                .build();
+//    }
+
+    @GetMapping("/{orderId}")
+    ApiResponse<OrderResponse> getOrderById(@PathVariable String orderId) {
+        return ApiResponse.<OrderResponse>builder()
+                .result(orderService.getOrder(orderId))
+                .build();
     }
+}
 

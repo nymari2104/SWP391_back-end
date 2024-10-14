@@ -2,10 +2,10 @@ package com.example.demo.service;
 
 import com.example.demo.dto.request.checkoutRequest.BuyNowRequest;
 import com.example.demo.dto.request.checkoutRequest.CheckoutRequest;
-import com.example.demo.dto.request.checkoutRequest.UpdateOrderRequest;
 import com.example.demo.dto.response.checkoutResponse.CheckoutResponse;
 import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.example.demo.entity.*;
+import com.example.demo.enums.Role;
 import com.example.demo.enums.Status;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
@@ -63,7 +63,7 @@ public class OrderService {
         //Remove relation between cart and user in user before delete cart
         user.setCart(null);
         userRepository.save(user);
-        cartRepository.delete(cart);
+//        cartRepository.delete(cart);
 
         return CheckoutResponse.builder()
                 .orders(OrderMapper.INSTANCE.toOrderResponse(order))
@@ -112,16 +112,28 @@ public class OrderService {
         }).collect(Collectors.toList());
     }
 
-    public CheckoutResponse updateOrderStatus(UpdateOrderRequest request){
-        //Find order
-        Order order = orderRepository.findById(request.getOrderId())
+    public OrderResponse getOrder(String orderId) {
+        //Check if Order exist
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        //Change order status
-        order.setStatus(request.getStatus());
-        return CheckoutResponse.builder()
-                .orders(OrderMapper.INSTANCE.toOrderResponse(orderRepository.save(order)))//Save the change and Map to CheckoutResponse
-                .build();
+        User user = userService.getCurrentUser();
+        //Check if user is Member and not his/her order
+        if (!user.getUserId().equals(order.getUser().getUserId())
+                && user.getRole().equals(Role.USER.name()))
+            throw new AppException(ErrorCode.DID_NOT_OWN_ORDER);
+        return OrderMapper.INSTANCE.toOrderResponse(order);
     }
+
+//    public CheckoutResponse updateOrderStatus(UpdateOrderRequest request){
+//        //Find order
+//        Order order = orderRepository.findById(request.getOrderId())
+//                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+//        //Change order status
+//        order.setStatus(request.getStatus());
+//        return CheckoutResponse.builder()
+//                .orders(OrderMapper.INSTANCE.toOrderResponse(orderRepository.save(order)))//Save the change and Map to CheckoutResponse
+//                .build();
+//    }
 
     private Order createOrderObject(CheckoutRequest request) {
         return getOrder(orderMapper.toOrder(request), request.getCartId());
