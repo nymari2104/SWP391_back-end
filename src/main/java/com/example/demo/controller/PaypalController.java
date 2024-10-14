@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.checkoutRequest.CheckoutRequest;
+import com.example.demo.dto.request.orderRequest.CheckoutRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
@@ -28,7 +28,7 @@ public class PaypalController {
 
     @NonFinal
     protected String ACCESS_TOKEN =
-            "A21AAJtHm3IvMEGmW174nPDhSSwRLg5jNB49ENTL4vOdEVz0_LQhWr2csUWJkIjuswXaf41J8l_UwH7rib-e4YIwSp43DFSkA";
+            "A21AAKI24BLo6m4g7KGtPPuVmwGiu6cRMvFjdLwJa-Xyt2aJ2nTEvJqJcUejnVDCPiDL9b4LTGhLfVnHywQtrvMFNIqJiC0pg";
 
     @PostMapping("/create")
     ApiResponse<Map<String, String>> createPayment(

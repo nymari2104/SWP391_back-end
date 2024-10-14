@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.request.checkoutRequest.BuyNowRequest;
-import com.example.demo.dto.request.checkoutRequest.CheckoutRequest;
+import com.example.demo.dto.request.orderRequest.BuyNowRequest;
+import com.example.demo.dto.request.orderRequest.CheckoutRequest;
 import com.example.demo.dto.response.orderResponse.OrderDetailResponse;
 import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.example.demo.entity.Order;

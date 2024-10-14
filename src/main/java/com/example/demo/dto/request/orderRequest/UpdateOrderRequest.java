@@ -1,4 +1,4 @@
-package com.example.demo.dto.request.checkoutRequest;
+package com.example.demo.dto.request.orderRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

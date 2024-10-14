@@ -1,14 +1,16 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.checkoutRequest.CheckoutRequest;
+import com.example.demo.dto.request.orderRequest.CheckoutRequest;
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.CartItem;
 import com.example.demo.entity.Order;
+import com.example.demo.entity.Product;
 import com.example.demo.enums.Status;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.ProductRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
@@ -35,6 +37,7 @@ public class PaypalService {
     APIContext apiContext;
     CartRepository cartRepository;
     OrderRepository orderRepository;
+    ProductRepository productRepository;
 
     @NonFinal
     protected RestTemplate restTemplate = new RestTemplate();
@@ -67,18 +70,32 @@ public class PaypalService {
 
         ItemList itemList = new ItemList();
 
-        Cart cart = cartRepository.findById(request.getCartId())
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+        if (request.getCartId() == null) {
+            Product product;
+            for (CheckoutRequest.GuestCartItemRequest cartItem : request.getCartItems()){
+                item = new Item();
+                product = productRepository.findById(cartItem.getProductId())
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                item.setName(product.getProductName());
+                item.setCurrency(currency);
+                item.setPrice(String.format(Locale.forLanguageTag(currency),
+                        "%.2f", product.getUnitPrice()));
+                item.setQuantity(String.valueOf(cartItem.getQuantity()));
+                items.add(item);
+            }
+        }else {
+            Cart cart = cartRepository.findById(request.getCartId())
+                    .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
 
-        for(CartItem cartItem : cart.getCartItems()) {
-            item = new Item();
-            item.setName(cartItem.getProduct().getProductName());
-            item.setCurrency(currency);
-            item.setPrice(String.format(Locale.forLanguageTag(currency), "%.2f", cartItem.getProduct().getUnitPrice()));
-            item.setQuantity(String.valueOf(cartItem.getQuantity()));
+            for (CartItem cartItem : cart.getCartItems()) {
+                item = new Item();
+                item.setName(cartItem.getProduct().getProductName());
+                item.setCurrency(currency);
+                item.setPrice(String.format(Locale.forLanguageTag(currency), "%.2f", cartItem.getProduct().getUnitPrice()));
+                item.setQuantity(String.valueOf(cartItem.getQuantity()));
 
-            items.add(item);
-
+                items.add(item);
+            }
         }
         itemList.setItems(items);
         Transaction transaction = new Transaction();

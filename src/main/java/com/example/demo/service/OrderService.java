@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.checkoutRequest.BuyNowRequest;
-import com.example.demo.dto.request.checkoutRequest.CheckoutRequest;
+import com.example.demo.dto.request.orderRequest.BuyNowRequest;
+import com.example.demo.dto.request.orderRequest.CheckoutRequest;
 import com.example.demo.dto.response.checkoutResponse.CheckoutResponse;
 import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.example.demo.entity.*;
@@ -22,6 +22,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -42,28 +43,45 @@ public class OrderService {
     public CheckoutResponse checkout(CheckoutRequest request) {
         //create new order
         Order order = createOrderObject(request);
-        //get cart
-        Cart cart = cartRepository.findById(request.getCartId())
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
-        //Map quantity, product of List<CartItem> into List<OrderDetail>
-        List<OrderDetail> orderDetails = cart.getCartItems().stream()
-                .map(cartItem -> OrderDetail.builder()
-                        .order(order)
-                        .product(cartItem.getProduct())
-                        .quantity(cartItem.getQuantity())
-                        .total(cartItem.getProduct().getUnitPrice() * cartItem.getQuantity())
-                        .build())
-                .collect(Collectors.toList());
-
+        Cart cart;
+        List<OrderDetail> orderDetails;
+        if (request.getCartId() == null) {
+            Product product;
+            OrderDetail orderDetail;
+            orderDetails = new ArrayList<>();
+            for(CheckoutRequest.GuestCartItemRequest cartItemRequest : request.getCartItems()){
+                product = productRepository.findById(cartItemRequest.getProductId()).orElseThrow(() ->
+                        new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                orderDetail = OrderDetail.builder()
+                        .product(product)
+                        .quantity(cartItemRequest.getQuantity())
+                        .total(product.getUnitPrice() * cartItemRequest.getQuantity())
+                        .build();
+                orderDetails.add(orderDetail);
+            }
+        }else {
+            //get cart
+            cart = cartRepository.findById(request.getCartId())
+                    .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+            //Map quantity, product of List<CartItem> into List<OrderDetail>
+            orderDetails = cart.getCartItems().stream()
+                    .map(cartItem -> OrderDetail.builder()
+                            .order(order)
+                            .product(cartItem.getProduct())
+                            .quantity(cartItem.getQuantity())
+                            .total(cartItem.getProduct().getUnitPrice() * cartItem.getQuantity())
+                            .build())
+                    .collect(Collectors.toList());
+            //Delete Cart
+            User user = cart.getUser();
+            //Remove relation between cart and user in user before delete cart
+            user.setCart(null);
+            userRepository.save(user);
+            cartRepository.delete(cart);
+        }
         order.setOrderDetails(orderDetails);
         //Save Order
         orderRepository.save(order);
-        //Delete Cart
-        User user = cart.getUser();
-        //Remove relation between cart and user in user before delete cart
-        user.setCart(null);
-        userRepository.save(user);
-//        cartRepository.delete(cart);
 
         return CheckoutResponse.builder()
                 .orders(OrderMapper.INSTANCE.toOrderResponse(order))
@@ -145,7 +163,12 @@ public class OrderService {
 
     private Order getOrder(Order request, String cartId) {
         //Get user who is login
-        User user = userService.getCurrentUser();
+        User user;
+        try {
+            user = userService.getCurrentUser();
+        } catch (Exception e) {
+            user = null;
+        }
         //Create userId for Guest
         if (user == null)
             user = userRepository.save(User.builder()
