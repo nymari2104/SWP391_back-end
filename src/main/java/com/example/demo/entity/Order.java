@@ -31,9 +31,6 @@ public class Order {
     @JoinColumn(name = "id")  // nullable=true để cho phép giá trị null
     User user;
 
-    @Column(name = "name")
-    String name;
-
     @Column(name = "phone", length = 10)
     String phone;
 

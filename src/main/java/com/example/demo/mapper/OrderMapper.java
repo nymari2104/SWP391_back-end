@@ -4,6 +4,7 @@ import com.example.demo.dto.request.orderRequest.BuyNowRequest;
 import com.example.demo.dto.request.orderRequest.CheckoutRequest;
 import com.example.demo.dto.response.orderResponse.OrderDetailResponse;
 import com.example.demo.dto.response.orderResponse.OrderResponse;
+import com.example.demo.entity.CartItem;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
 import org.mapstruct.*;
@@ -20,7 +21,13 @@ public interface OrderMapper {
     @Mapping(source = "orderDetails", target = "orderDetails")
     OrderResponse toOrderResponse(Order order);
 
-    @Mapping(source = "product.productId", target = "productId")
-    OrderDetailResponse toOrderDetailResponse(OrderDetail orderDetail);
+//    @Mapping(source = "product.productId", target = "productId")
+//    OrderDetailResponse toOrderDetailResponse(OrderDetail orderDetail);
+
+    @Mapping(source = "product.productName", target = "productName")
+    @Mapping(source = "product.unitPrice", target = "unitPrice")
+    @Mapping(source = "product.description", target = "description")
+    @Mapping(expression = "java(cartItem.getProduct().getUnitPrice() * cartItem.getQuantity())" , target = "total")
+    OrderDetail toOrderDetail(CartItem cartItem);
 
 }

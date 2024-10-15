@@ -32,9 +32,22 @@ public class OrderDetail {
     @JoinColumn(name = "productId", nullable = false)
     Product product;
 
+    String productName;
+    float unitPrice;
+    String description;
+
     @Column(name = "total", nullable = false)
     float total;
 
     @Column(name = "quantity", nullable = false)
     int quantity;
+
+    public void snapshotProduct(Product product) {
+        this.productName = product.getProductName();
+        this.unitPrice = product.getUnitPrice();
+        this.description = product.getDescription();
+    }
+
 }
+
+

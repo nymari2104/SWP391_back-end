@@ -12,7 +12,9 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDetailResponse {
     String orderDetailId;
-    String productId;
+    String productName;
+    float unitPrice;
+    String description;
     float total;
     int quantity;
 }

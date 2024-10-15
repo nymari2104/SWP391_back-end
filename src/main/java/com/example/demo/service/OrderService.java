@@ -53,10 +53,10 @@ public class OrderService {
                 product = productRepository.findById(cartItemRequest.getProductId()).orElseThrow(() ->
                         new AppException(ErrorCode.PRODUCT_NOT_FOUND));
                 orderDetail = OrderDetail.builder()
-                        .product(product)
                         .quantity(cartItemRequest.getQuantity())
                         .total(product.getUnitPrice() * cartItemRequest.getQuantity())
                         .build();
+                orderDetail.snapshotProduct(product);
                 orderDetails.add(orderDetail);
             }
         }else {
@@ -64,14 +64,22 @@ public class OrderService {
             cart = cartRepository.findById(request.getCartId())
                     .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
             //Map quantity, product of List<CartItem> into List<OrderDetail>
+//            orderDetails = cart.getCartItems().stream()
+//                    .map(cartItem -> OrderDetail.builder()
+//                            .order(order)
+//                            .quantity(cartItem.getQuantity())
+//                            .total(cartItem.getProduct().getUnitPrice() * cartItem.getQuantity())
+//                            .productName(cartItem.getProduct().getProductName())
+//                            .build())
+//                    .collect(Collectors.toList());
             orderDetails = cart.getCartItems().stream()
-                    .map(cartItem -> OrderDetail.builder()
-                            .order(order)
-                            .product(cartItem.getProduct())
-                            .quantity(cartItem.getQuantity())
-                            .total(cartItem.getProduct().getUnitPrice() * cartItem.getQuantity())
-                            .build())
+                    .map(cartItem -> {
+                        OrderDetail orderDetail = orderMapper.toOrderDetail(cartItem);
+                        orderDetail.setOrder(order);
+                        return orderDetail;
+                    })
                     .collect(Collectors.toList());
+
             //Delete Cart
             User user = cart.getUser();
             //Remove relation between cart and user in user before delete cart
@@ -161,7 +169,7 @@ public class OrderService {
         return getOrder(orderMapper.toOrder(request), null);
     }
 
-    private Order getOrder(Order request, String cartId) {
+    private Order getOrder(Order order, String cartId) {
         //Get user who is login
         User user;
         try {
@@ -183,12 +191,11 @@ public class OrderService {
                 }
             }//If member, check this cart is his/her own
         }
-
-        request.setCreateDate(new Date(Instant.now().toEpochMilli()));
-        request.setStatus(Status.PENDING.name());
-        request.setUser(user);
+        order.setCreateDate(new Date(Instant.now().toEpochMilli()));
+        order.setStatus(Status.PENDING.name());
+        order.setUser(user);
         try {
-            return orderRepository.save(request);
+            return orderRepository.save(order);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.PAYMENT_ID_EXISTED);
         }
