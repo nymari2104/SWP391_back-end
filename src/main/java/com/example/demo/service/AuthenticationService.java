@@ -197,15 +197,14 @@ public class AuthenticationService {
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", user.getRole())
                 .build();
-        //convert jwt claims to JSON to createOrderDetail a payload
+        //convert jwt claims to JSON to create a payload
         Payload payload = new Payload(claimsSet.toJSONObject());
-
         //3. Create jws(consist of jwt header and jwt payload)
         JWSObject jwsObject = new JWSObject(header, payload);
         try {
             //Sign this jws by using MACSigner with SECRET_KEY
             jwsObject.sign(new MACSigner(SECRET_KEY.getBytes()));
-            return jwsObject.serialize();//convert jws to jwt
+            return jwsObject.serialize();//serialize jws to jwt
         } catch (JOSEException e) {
             log.error("Cannot createOrderDetail token", e);
             throw new RuntimeException(e);

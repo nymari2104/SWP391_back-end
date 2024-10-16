@@ -21,7 +21,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +39,6 @@ public class UserService {
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
     EmailSender emailSender;
-    AuthenticationService authenticationService;
 
     public SignUpResponse createUser(SignUpRequest request){
         // Check username
@@ -86,27 +84,12 @@ public class UserService {
     public void updateMyPassword(UpdatePasswordRequest request){
         User user = getCurrentUser();
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
-            throw new AppException(ErrorCode.WRONG_PASSWORD);
+            throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
     }
 
-    public void resetPassword(UserUpdateRequest request){
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
-        //Check if reset password matches the old
-        if (authenticationService.checkMatchPassword(request.getPassword(), user.getPassword()))
-            throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
-
-        userMapper.updateUser(user, request);
-        //encode password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        userRepository.save(user);
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse createAdminAccount(SignUpRequest request){
