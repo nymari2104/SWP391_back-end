@@ -53,7 +53,8 @@ public class AuthenticationService {
     protected String SECRET_KEY;
 
 
-    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
+    public IntrospectResponse introspect(IntrospectRequest request)
+            throws JOSEException{
         //get token
         var token = request.getToken();
         //check token
@@ -140,7 +141,6 @@ public class AuthenticationService {
 
          return userMapper.toUserResponse(user);
     }
-
 
     public SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         //1. Parse jwt token to SignedJWT to access jwt component

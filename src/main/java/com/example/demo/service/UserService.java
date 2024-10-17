@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
+import com.example.demo.dto.request.userRequest.ForgotPasswordRequest;
+import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
 import com.example.demo.dto.request.userRequest.UpdatePasswordRequest;
 import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
@@ -84,12 +86,25 @@ public class UserService {
     public void updateMyPassword(UpdatePasswordRequest request){
         User user = getCurrentUser();
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
+            throw new AppException(ErrorCode.WRONG_PASSWORD);
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword()))
             throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
     }
 
+    public void resetPassword(ResetPasswordRequest request){
+        //Get user who has been verified forgot password
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        //Check if reset password matches the old
+        if (passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
+        //encode password
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse createAdminAccount(SignUpRequest request){
@@ -135,27 +150,28 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.findById(Id).orElseThrow(() -> new AppException(ErrorCode.USER_ID_NOT_EXISTED)));
     }
 
-    public String forgotPassword(String request){
+    public String forgotPassword(ForgotPasswordRequest request){
 //         Check username
-        if (!userRepository.existsByEmail(request)) {
+        String email = request.getEmail();
+        if (!userRepository.existsByEmail(email)) {
             throw new AppException(ErrorCode.EMAIL_NOT_EXISTED);
         }
 
         String subject = "Test forgot password";
-        String body = ("Hello " + request + ",\n\n" +
+        String body = ("Hello " + email + ",\n\n" +
                 "We have received a request to reset the password for your account. " +
                 "Please use the following 6-digit OTP to verify your identity:\n\n");
 
-        int otp = emailSender.sendSixDigitOtp(request, subject, body);
+        int otp = emailSender.sendSixDigitOtp(email, subject, body);
 
         verificationTokenRepository.save(VerificationToken.builder()
-                .email(request)
+                .email(email)
                 .otp(otp)
                 .expiryTime(new Date(Instant.now()
                         .plus(5, ChronoUnit.MINUTES).toEpochMilli()))
                 .build());
 
-        return request;
+        return email;
     }
 
     public User getCurrentUser(){

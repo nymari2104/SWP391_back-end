@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.text.ParseException;
 import java.util.Objects;
 
 @Slf4j
@@ -40,7 +39,7 @@ public class CustomJwtDecoder implements JwtDecoder {
                     .build()).isValid()) {
                 throw new AppException(ErrorCode.TOKEN_INVALID);
             }
-        } catch (JOSEException | ParseException e) {
+        } catch (JOSEException e) {
             log.error(e.getMessage());
             throw new AppException(ErrorCode.TOKEN_INVALID);
         }
@@ -54,7 +53,6 @@ public class CustomJwtDecoder implements JwtDecoder {
             // Decode JWT
             return jwtDecoder.decode(token);
         } catch (JwtException e) {
-            log.error("Lỗi khi giải mã token: {}", e.getMessage());
             throw new AppException(ErrorCode.TOKEN_INVALID);
         }
     }

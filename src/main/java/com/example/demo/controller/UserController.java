@@ -1,12 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
+import com.example.demo.dto.request.userRequest.ForgotPasswordRequest;
+import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
 import com.example.demo.dto.request.userRequest.UpdatePasswordRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
-import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -89,14 +90,22 @@ public class UserController {
     }
 
     @PostMapping("/forgot-password")
-    ApiResponse<String> forgotPassword(@RequestBody User request){
+    ApiResponse<String> forgotPassword(@RequestBody ForgotPasswordRequest request){
         return ApiResponse.<String>builder()
                 .message("Send mail successfully!")
-                .result(userService.forgotPassword(request.getEmail()))
+                .result(userService.forgotPassword(request))
                 .build();
     }
 
-    @PostMapping("/update-password")
+    @PostMapping("/reset-password")
+    ApiResponse<Void> resetPassword(@RequestBody ResetPasswordRequest request){
+        userService.resetPassword(request);
+        return ApiResponse.<Void>builder()
+                .message("Reset password successfully!")
+                .build();
+    }
+
+    @PutMapping("/update-password")
     ApiResponse<Void> updatePassword(@RequestBody UpdatePasswordRequest request){
         userService.updateMyPassword(request);
         return ApiResponse.<Void>builder()

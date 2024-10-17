@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.text.ParseException;
 
 @RestController
@@ -42,7 +41,7 @@ public class AuthenticationController {
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
-            throws ParseException, JOSEException {
+            throws JOSEException {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
                 .message("Authenticate successfully!")
@@ -76,7 +75,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign-in-by-google")
-    public ApiResponse<SignInResponse> loginSuccess(@RequestBody String request) throws GeneralSecurityException, IOException {
+    public ApiResponse<SignInResponse> loginSuccess(@RequestBody String request) throws IOException {
         String userInfoEndpoint = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + request;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity(userInfoEndpoint, String.class);
