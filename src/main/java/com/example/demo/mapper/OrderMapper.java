@@ -21,8 +21,8 @@ public interface OrderMapper {
     @Mapping(source = "orderDetails", target = "orderDetails")
     OrderResponse toOrderResponse(Order order);
 
-//    @Mapping(source = "product.productId", target = "productId")
-//    OrderDetailResponse toOrderDetailResponse(OrderDetail orderDetail);
+    @Mapping(source = "product.productId", target = "productId")
+    OrderDetailResponse toOrderDetailResponse(OrderDetail orderDetail);
 
     @Mapping(source = "product.productName", target = "productName")
     @Mapping(source = "product.unitPrice", target = "unitPrice")

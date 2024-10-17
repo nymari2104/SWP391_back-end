@@ -21,7 +21,6 @@ import java.util.Random;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EmailSender {
-
     JavaMailSender javaMailSender;
     VerificationTokenRepository verificationTokenRepository;
 

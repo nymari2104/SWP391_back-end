@@ -152,6 +152,12 @@ public class PaypalService {
                 Capture.class);
         //Set status before refunded
         order.setStatus(Status.REFUNDED.name());
+        //Return stock if order is refunded
+        order.getOrderDetails().forEach(orderDetail -> {
+            Product product = orderDetail.getProduct();
+            product.setStock(product.getStock() + orderDetail.getQuantity());
+            productRepository.save(product);
+        });
         orderRepository.save(order);
     }
 
@@ -193,6 +199,12 @@ public class PaypalService {
                 String.class);
         //Set status before Void
         order.setStatus(Status.REJECTED.name());
+        //Return product stock if order is rejected
+        order.getOrderDetails().forEach(orderDetail -> {
+            Product product = orderDetail.getProduct();
+            product.setStock(product.getStock() + orderDetail.getQuantity());
+            productRepository.save(product);
+        });
         orderRepository.save(order);
     }
 

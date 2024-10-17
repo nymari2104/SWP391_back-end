@@ -4,5 +4,5 @@ public enum Status {
     PENDING,
     APPROVED,
     REJECTED,
-    REFUNDED
+    REFUNDED,
 }

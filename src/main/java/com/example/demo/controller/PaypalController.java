@@ -28,7 +28,7 @@ public class PaypalController {
 
     @NonFinal
     protected String ACCESS_TOKEN =
-            "A21AAKI24BLo6m4g7KGtPPuVmwGiu6cRMvFjdLwJa-Xyt2aJ2nTEvJqJcUejnVDCPiDL9b4LTGhLfVnHywQtrvMFNIqJiC0pg";
+            "A21AAIXy-UKnpZXcq8pmIxdwYmOx-TogSEj9nPvXxvnnOqMeQUqmW5UkHF5e-ch4brhAWLDjym10DcxApN3ePFy8FILjEDu-Q";
 
     @PostMapping("/create")
     ApiResponse<Map<String, String>> createPayment(
@@ -71,7 +71,6 @@ public class PaypalController {
             if(!payment.getState().equals("approved")) {
                  throw new RuntimeException("Payment failed");
             }
-            log.info("Payment successful{}",payment);
         return ApiResponse.<String>builder()
                 .message("Pay successfully!")
                 .result(paymentId)

@@ -45,41 +45,47 @@ public class OrderService {
         Order order = createOrderObject(request);
         Cart cart;
         List<OrderDetail> orderDetails;
+        //If Guest buy or not have cart
         if (request.getCartId() == null) {
             Product product;
             OrderDetail orderDetail;
             orderDetails = new ArrayList<>();
+            //Check all product he/she buys
             for(CheckoutRequest.GuestCartItemRequest cartItemRequest : request.getCartItems()){
+                //Check exist product
                 product = productRepository.findById(cartItemRequest.getProductId()).orElseThrow(() ->
                         new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                //Decrease stock of product
+                decreaseProductStock(product, cartItemRequest.getQuantity());
+                //Snapshot product into order detail
                 orderDetail = OrderDetail.builder()
+                        .order(order)
+                        .product(product)
                         .quantity(cartItemRequest.getQuantity())
                         .total(product.getUnitPrice() * cartItemRequest.getQuantity())
                         .build();
                 orderDetail.snapshotProduct(product);
                 orderDetails.add(orderDetail);
             }
+            //If Member or admin buy and have cart
         }else {
             //get cart
             cart = cartRepository.findById(request.getCartId())
                     .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
             //Map quantity, product of List<CartItem> into List<OrderDetail>
-//            orderDetails = cart.getCartItems().stream()
-//                    .map(cartItem -> OrderDetail.builder()
-//                            .order(order)
-//                            .quantity(cartItem.getQuantity())
-//                            .total(cartItem.getProduct().getUnitPrice() * cartItem.getQuantity())
-//                            .productName(cartItem.getProduct().getProductName())
-//                            .build())
-//                    .collect(Collectors.toList());
             orderDetails = cart.getCartItems().stream()
                     .map(cartItem -> {
                         OrderDetail orderDetail = orderMapper.toOrderDetail(cartItem);
                         orderDetail.setOrder(order);
+                        //Snapshot product
+                        orderDetail.snapshotProduct(cartItem.getProduct());
+                        //Get product
+                        Product product = cartItem.getProduct();
+                        //Check if product has enough stock
+                        decreaseProductStock(product, cartItem.getQuantity());
                         return orderDetail;
                     })
                     .collect(Collectors.toList());
-
             //Delete Cart
             User user = cart.getUser();
             //Remove relation between cart and user in user before delete cart
@@ -100,9 +106,10 @@ public class OrderService {
         //Check exist Product
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        //Check if product has enough stock
+        decreaseProductStock(product, request.getQuantity());
         //Create Order
         Order order = createOrderObject(request);
-        order.setOrderId(request.getPaymentId());
         order.getOrderDetails()
                 .add(OrderDetail.builder()
                         .order(order)
@@ -110,6 +117,7 @@ public class OrderService {
                         .quantity(request.getQuantity())
                         .total(request.getQuantity())
                         .build());
+        order.setPaymentId(request.getPaymentId());
         //Save Order
         orderRepository.save(order);
         //Map Order to OrderResponse
@@ -160,6 +168,18 @@ public class OrderService {
 //                .orders(OrderMapper.INSTANCE.toOrderResponse(orderRepository.save(order)))//Save the change and Map to CheckoutResponse
 //                .build();
 //    }
+    private void decreaseProductStock(Product product, int quantity) {
+        //Check if product has enough stock
+        int productStockRemaining = product.getStock() - quantity;
+        if (productStockRemaining < 0)
+            throw new AppException(ErrorCode.PRODUCT_NOT_ENOUGH_STOCK);
+        //If stock remaining is 0, set status unavailable
+        if(productStockRemaining == 0)
+            product.setStatus(false);
+        //Decrease stock of product
+        product.setStock(productStockRemaining);
+        productRepository.save(product);
+    }
 
     private Order createOrderObject(CheckoutRequest request) {
         return getOrder(orderMapper.toOrder(request), request.getCartId());

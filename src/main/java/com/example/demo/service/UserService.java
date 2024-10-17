@@ -151,13 +151,13 @@ public class UserService {
     }
 
     public String forgotPassword(ForgotPasswordRequest request){
-//         Check username
+        //Check username
         String email = request.getEmail();
         if (!userRepository.existsByEmail(email)) {
             throw new AppException(ErrorCode.EMAIL_NOT_EXISTED);
         }
 
-        String subject = "Test forgot password";
+        String subject = "Forgot password";
         String body = ("Hello " + email + ",\n\n" +
                 "We have received a request to reset the password for your account. " +
                 "Please use the following 6-digit OTP to verify your identity:\n\n");
