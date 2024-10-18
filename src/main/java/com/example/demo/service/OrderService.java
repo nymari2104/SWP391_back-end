@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.orderRequest.BuyNowRequest;
 import com.example.demo.dto.request.orderRequest.CheckoutRequest;
 import com.example.demo.dto.response.checkoutResponse.CheckoutResponse;
@@ -14,6 +15,7 @@ import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -39,8 +41,9 @@ public class OrderService {
     UserService userService;
     OrderMapper orderMapper;
     ProductRepository productRepository;
+    EmailSender emailSender;
 
-    public CheckoutResponse checkout(CheckoutRequest request) {
+    public CheckoutResponse checkout(CheckoutRequest request) throws MessagingException {
         //create new order
         Order order = createOrderObject(request);
         Cart cart;
@@ -96,6 +99,7 @@ public class OrderService {
         order.setOrderDetails(orderDetails);
         //Save Order
         orderRepository.save(order);
+        emailSender.sendOrderEmail(order);
 
         return CheckoutResponse.builder()
                 .orders(OrderMapper.INSTANCE.toOrderResponse(order))
@@ -110,13 +114,15 @@ public class OrderService {
         decreaseProductStock(product, request.getQuantity());
         //Create Order
         Order order = createOrderObject(request);
+        OrderDetail orderDetail =OrderDetail.builder()
+                .order(order)
+                .product(product)
+                .quantity(request.getQuantity())
+                .total(request.getQuantity())
+                .build();
+        orderDetail.snapshotProduct(product);
         order.getOrderDetails()
-                .add(OrderDetail.builder()
-                        .order(order)
-                        .product(product)
-                        .quantity(request.getQuantity())
-                        .total(request.getQuantity())
-                        .build());
+                .add(orderDetail);
         order.setPaymentId(request.getPaymentId());
         //Save Order
         orderRepository.save(order);

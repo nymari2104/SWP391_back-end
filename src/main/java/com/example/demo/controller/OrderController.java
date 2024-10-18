@@ -6,6 +6,7 @@ import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.checkoutResponse.CheckoutResponse;
 import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.example.demo.service.OrderService;
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,7 +22,7 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping("/create/checkout")
-    ApiResponse<CheckoutResponse> checkout(@RequestBody CheckoutRequest request) {
+    ApiResponse<CheckoutResponse> checkout(@RequestBody CheckoutRequest request) throws MessagingException {
         return ApiResponse.<CheckoutResponse>builder()
                 .message("Checkout successfully!")
                 .result(orderService.checkout(request))

@@ -103,7 +103,6 @@ public class PaypalService {
         transaction.setAmount(amount);
         transaction.setItemList(itemList);
 
-
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
 
