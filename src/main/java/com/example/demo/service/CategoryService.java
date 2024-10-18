@@ -19,12 +19,11 @@ public class CategoryService {
 
     CategoryRepository categoryRepository;
 
-    @PreAuthorize("permitAll()")
     public List<Category> getAllCategories() {
         return categoryRepository.findAll().stream().toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+
     public Category getCategory(int id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
