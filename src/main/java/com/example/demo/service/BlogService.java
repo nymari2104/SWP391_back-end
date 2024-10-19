@@ -17,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class BlogService {
                 .title(request.getTitle())
                 .image(request.getImage())
                 .content(request.getContent())
-                .createDate(request.getCreateDate())
+                .createDate(new Date())
                 .user(user)
                 .build());
 

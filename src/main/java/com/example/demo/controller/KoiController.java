@@ -24,8 +24,6 @@ public class KoiController {
     @PostMapping("/create")
     ApiResponse<Koi> createKoi(@RequestBody KoiCreateRequest request) {
 
-//        String image = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
-
         return ApiResponse.<Koi>builder()
                 .message("Create Koi successfully")
                 .result(koiService.createKoi(request))

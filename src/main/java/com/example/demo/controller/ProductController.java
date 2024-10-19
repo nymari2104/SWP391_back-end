@@ -23,18 +23,8 @@ public class ProductController {
     @PostMapping("/create")
     ApiResponse<Product> createProduct(@RequestBody ProductCreateRequest request){
 
-//        String resizedImageBase64 = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
-
         return ApiResponse.<Product>builder()
-                .result(productService.createProduct(ProductCreateRequest.builder()
-                        .name(request.getName())
-                        .image(request.getImage())
-                        .description(request.getDescription())
-                        .stock(request.getStock())
-                        .unitprice(request.getUnitprice())
-                        .status(request.isStatus())
-                        .categoryId(request.getCategoryId())
-                        .build()))
+                .result(productService.createProduct(request))
                 .message("Create product successfully")
                 .build();
     }

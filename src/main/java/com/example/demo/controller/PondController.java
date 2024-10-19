@@ -25,19 +25,8 @@ public class PondController {
     @PostMapping("/create")
     ApiResponse<Pond> createPond(@RequestBody PondCreateRequest request){
 
-//        String resizedImageBase64 = ImageResizer.resizeAndConvertImageToBase64(imageFile, 200, 200);
         return ApiResponse.<Pond>builder()
-                .result(pondService.createPond(PondCreateRequest.builder()
-                        .pondName(request.getPondName())
-                        .image(request.getImage())
-                        .pumpPower(request.getPumpPower())
-                        .vein(request.getVein())
-                        .size(request.getSize())
-                        .depth(request.getDepth())
-                        .volume(request.getVolume())
-                        .createDate(new Date())
-                        .userId(request.getUserId())
-                        .build()))
+                .result(pondService.createPond(request))
                 .message("Create pond successfully")
                 .build();
     }

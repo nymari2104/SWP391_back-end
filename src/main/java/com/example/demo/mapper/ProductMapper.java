@@ -7,8 +7,9 @@ import org.mapstruct.*;
 
 @Mapper
 public interface ProductMapper {
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Product toProduct(@MappingTarget Product product, ProductCreateRequest request);
+//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "category", ignore = true)
+    Product toProduct(ProductCreateRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "productName", source = "name")

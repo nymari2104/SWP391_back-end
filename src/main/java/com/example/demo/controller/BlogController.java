@@ -26,13 +26,8 @@ public class BlogController {
     ApiResponse<Blog> createBlog(@RequestBody BlogCreateRequest request) {
 
         return ApiResponse.<Blog>builder()
-                .result(blogService.createBlog(BlogCreateRequest.builder()
-                        .userId(request.getUserId())
-                        .title(request.getTitle())
-                        .content(request.getContent())
-                        .image(request.getImage())
-                        .createDate(new Date())
-                        .build()))
+                .message("Create blog successfully")
+                .result(blogService.createBlog(request))
                 .build();
 
     }
