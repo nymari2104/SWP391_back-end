@@ -91,7 +91,6 @@ public class AuthenticationService {
     public SignInResponse authenticate(String email, String fullname){
         Optional<User> checkUser = userRepository.findByEmail(email);
         User user = User.builder()
-                .userId(checkUser.map(User::getUserId).orElse(null))
                 .fullname(fullname)
                 .email(email)
                 .role(Role.USER.name())

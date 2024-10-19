@@ -25,6 +25,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -141,14 +142,18 @@ public class PaypalService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         JsonNode payment = getPayment(paymentId, accessToken);
         String captureId = payment.path("transactions").get(0)
-                    .path("related_resources").get(0)
+                    .path("related_resources").get(1)
                     .path("capture").path("id").asText();
         // Trả về phản hồi từ PayPal API
-        restTemplate.exchange(
-                PAYPAL_REFUND_API + captureId + "/refund",
-                HttpMethod.GET,
-                setBody(accessToken, payment),
-                Capture.class);
+        try {
+            restTemplate.exchange(
+                    PAYPAL_REFUND_API + captureId + "/refund",
+                    HttpMethod.POST,
+                    setBody(accessToken, payment),
+                    Void.class);
+        } catch (RestClientException e) {
+            throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
+        }
         //Set status before refunded
         order.setStatus(Status.REFUNDED.name());
         //Return stock if order is refunded
@@ -159,8 +164,6 @@ public class PaypalService {
         });
         orderRepository.save(order);
     }
-
-
 
     public void capturePayment(String paymentId, String accessToken){
         //Find Order by paymentId
@@ -175,7 +178,7 @@ public class PaypalService {
                 PAYPAL_CAPTURE_API + authorizationId + "/capture",
                 HttpMethod.POST,
                 setBody(accessToken, payment),
-                JsonNode.class);
+                Void.class);
         //Set status before capture
         order.setStatus(Status.APPROVED.name());
         orderRepository.save(order);
@@ -191,11 +194,15 @@ public class PaypalService {
                 .path("authorization").path("id").asText();
         HttpEntity<String> entity = new HttpEntity<>(setHeader(accessToken));
         // Trả về phản hồi từ PayPal API
-        restTemplate.exchange(
-                PAYPAL_VOID_API + authorizationId + "/void",
-                HttpMethod.POST,
-                entity,
-                String.class);
+        try {
+            restTemplate.exchange(
+                    PAYPAL_VOID_API + authorizationId + "/void",
+                    HttpMethod.POST,
+                    entity,
+                    Void.class);
+        } catch (RestClientException e) {
+            throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
+        }
         //Set status before Void
         order.setStatus(Status.REJECTED.name());
         //Return product stock if order is rejected
@@ -207,14 +214,19 @@ public class PaypalService {
         orderRepository.save(order);
     }
 
-    public JsonNode getPayment(String paymentId, String accessToken){
+    private JsonNode getPayment(String paymentId, String accessToken){
         HttpEntity<JsonNode> entity = new HttpEntity<>(setHeader(accessToken));
         // Trả về phản hồi từ PayPal API
-        ResponseEntity<JsonNode> response = restTemplate.exchange(
-                PAYPAL_PAYMENTS_API + paymentId,
-                HttpMethod.GET,
-                entity,
-                JsonNode.class);
+        ResponseEntity<JsonNode> response;
+        try {
+            response = restTemplate.exchange(
+                    PAYPAL_PAYMENTS_API + paymentId,
+                    HttpMethod.GET,
+                    entity,
+                    JsonNode.class);
+        } catch (RestClientException e) {
+            throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
+        }
         return response.getBody();
     }
 

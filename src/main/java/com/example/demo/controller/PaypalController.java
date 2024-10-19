@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,15 +29,15 @@ public class PaypalController {
 
     @NonFinal
     protected String ACCESS_TOKEN =
-            "A21AAIXy-UKnpZXcq8pmIxdwYmOx-TogSEj9nPvXxvnnOqMeQUqmW5UkHF5e-ch4brhAWLDjym10DcxApN3ePFy8FILjEDu-Q";
+            "A21AAKRjuL2hUqijer9Lv11UuHQx2vIFy-DTRUt38eeBE4N6BT3Rib5p8oZcFlX5M4ePcjEaiu8_eRDfGYexoaBXoIqGg3TUw";
 
     @PostMapping("/create")
     ApiResponse<Map<String, String>> createPayment(
                 @RequestBody CheckoutRequest request
     ) {
         try {
-            String cancelUrl = "http://localhost:5173/payment/cancel";
-            String successUrl = "http://localhost:5173/payment/success";
+            String cancelUrl = "http://localhost:8080/payment/cancel";
+            String successUrl = "http://localhost:8080/payment/success";
             Payment payment = paypalService.createPayment(
                     request,
                     "USD",
@@ -63,7 +64,7 @@ public class PaypalController {
     }
 
     @GetMapping("/success")
-    ApiResponse<String> paymentSuccess(
+    RedirectView paymentSuccess(
             @RequestParam("paymentId") String paymentId,
             @RequestParam("PayerID") String payerId
     ) throws PayPalRESTException{
@@ -71,10 +72,8 @@ public class PaypalController {
             if(!payment.getState().equals("approved")) {
                  throw new RuntimeException("Payment failed");
             }
-        return ApiResponse.<String>builder()
-                .message("Pay successfully!")
-                .result(paymentId)
-                .build();
+        return new RedirectView(
+                "http://localhost:5173/payment/success?paymentId=" + paymentId);
     }
 
     @PostMapping("/capture")
@@ -93,9 +92,9 @@ public class PaypalController {
                 .build();
     }
 
-    @PostMapping("/refund")
-    ApiResponse<Void> refund(@RequestBody String request){
-        paypalService.refundPayment(request, ACCESS_TOKEN);
+    @GetMapping("/refund")
+    ApiResponse<Void> refund(@RequestParam("paymentId") String paymentId){
+        paypalService.refundPayment(paymentId, ACCESS_TOKEN);
         return ApiResponse.<Void>builder()
                 .message("Refund payment successfully!")
                 .build();

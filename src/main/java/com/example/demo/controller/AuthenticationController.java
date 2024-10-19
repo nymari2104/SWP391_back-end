@@ -26,7 +26,6 @@ import java.text.ParseException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
@@ -84,7 +83,6 @@ public class AuthenticationController {
             throw new AppException(ErrorCode.TOKEN_INVALID);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode userInfoJson = objectMapper.readTree(response.getBody());
-
         // Lấy các trường cụ thể từ JsonNode
         String email = userInfoJson.get("email").asText();
         String name = userInfoJson.get("name").asText();

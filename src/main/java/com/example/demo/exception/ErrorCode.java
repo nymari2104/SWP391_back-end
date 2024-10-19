@@ -48,6 +48,10 @@ public enum ErrorCode {
     ORDER_NOT_FOUND("ORDER_NOT_FOUND","Order not found",HttpStatus.NOT_FOUND),
     DID_NOT_OWN_ORDER("DID_NOT_OWN_ORDER", "You did not own this order", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_ENOUGH_STOCK("PRODUCT_NOT_ENOUGH_STOCK","Product not enough stock", HttpStatus.BAD_REQUEST),
+    ALREADY_REQUEST_REFUNDED("ALREADY_REQUEST_REFUNDED","Order already be request refunded", HttpStatus.BAD_REQUEST),
+    REFUND_REQUEST_NOT_FOUND("REFUND_REQUEST_NOT_FOUND","Refund request not found", HttpStatus.NOT_FOUND),
+    ALREADY_HANDLE_REFUND_REQUEST("ALREADY_HANDLE_REFUND_REQUEST","Refund request already be handled", HttpStatus.BAD_REQUEST),
+    PAYMENT_ID_INVALID("PAYMENT_ID_INVALID","Payment id is invalid", HttpStatus.BAD_REQUEST),
     ;
 
      String code;

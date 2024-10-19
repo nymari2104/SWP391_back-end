@@ -57,4 +57,7 @@ public class Order {
     @JsonManagedReference
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderDetail> orderDetails;
+
+    @OneToOne(mappedBy = "order")
+    RefundRequest refundRequest;
 }

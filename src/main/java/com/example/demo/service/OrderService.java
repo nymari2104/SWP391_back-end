@@ -174,6 +174,7 @@ public class OrderService {
 //                .orders(OrderMapper.INSTANCE.toOrderResponse(orderRepository.save(order)))//Save the change and Map to CheckoutResponse
 //                .build();
 //    }
+
     private void decreaseProductStock(Product product, int quantity) {
         //Check if product has enough stock
         int productStockRemaining = product.getStock() - quantity;
