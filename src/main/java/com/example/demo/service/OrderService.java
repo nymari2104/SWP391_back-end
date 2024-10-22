@@ -102,7 +102,7 @@ public class OrderService {
         emailSender.sendOrderEmail(order);
 
         return CheckoutResponse.builder()
-                .orders(OrderMapper.INSTANCE.toOrderResponse(order))
+                .order(OrderMapper.INSTANCE.toOrderResponse(order))
                 .build();
     }
 
@@ -128,7 +128,7 @@ public class OrderService {
         orderRepository.save(order);
         //Map Order to OrderResponse
         return CheckoutResponse.builder()
-                .orders(OrderMapper.INSTANCE.toOrderResponse(order))
+                .order(OrderMapper.INSTANCE.toOrderResponse(order))
                 .build();
     }
 
@@ -138,7 +138,7 @@ public class OrderService {
         return  orders.stream().map(order -> {
             OrderResponse orderResponse = OrderMapper.INSTANCE.toOrderResponse(order);
             CheckoutResponse checkoutResponse = new CheckoutResponse();
-            checkoutResponse.setOrders(orderResponse);
+            checkoutResponse.setOrder(orderResponse);
             return checkoutResponse;
         }).collect(Collectors.toList());
     }
@@ -147,7 +147,7 @@ public class OrderService {
         return orderRepository.findAll().stream().map(order -> {
             OrderResponse orderResponse = OrderMapper.INSTANCE.toOrderResponse(order);
             CheckoutResponse checkoutResponse = new CheckoutResponse();
-            checkoutResponse.setOrders(orderResponse);
+            checkoutResponse.setOrder(orderResponse);
             return checkoutResponse;
         }).collect(Collectors.toList());
     }

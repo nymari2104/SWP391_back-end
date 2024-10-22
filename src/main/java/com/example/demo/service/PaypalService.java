@@ -20,11 +20,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.http.HttpHeaders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -51,6 +50,8 @@ public class PaypalService {
     protected String PAYPAL_CAPTURE_API = "https://api-m.sandbox.paypal.com/v1/payments/authorization/";
     @NonFinal
     protected  String PAYPAL_VOID_API = "https://api-m.sandbox.paypal.com/v1/payments/authorization/";
+    @NonFinal
+    protected String PAYPAL_ACCESS_TOKEN_API = "https://api-m.sandbox.paypal.com/v1/oauth2/token";
 
     public Payment createPayment(
             CheckoutRequest request,
@@ -136,11 +137,11 @@ public class PaypalService {
         return payment.execute(apiContext, paymentExecution);
     }
 
-    public void refundPayment(String paymentId, String accessToken){
+    public void refundPayment(String paymentId){
         //Find Order by paymentId
         Order order = orderRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = getPayment(paymentId, accessToken);
+        JsonNode payment = getPayment(paymentId);
         String captureId = payment.path("transactions").get(0)
                     .path("related_resources").get(1)
                     .path("capture").path("id").asText();
@@ -149,7 +150,7 @@ public class PaypalService {
             restTemplate.exchange(
                     PAYPAL_REFUND_API + captureId + "/refund",
                     HttpMethod.POST,
-                    setBody(accessToken, payment),
+                    setBody(payment),
                     Void.class);
         } catch (RestClientException e) {
             throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
@@ -165,11 +166,11 @@ public class PaypalService {
         orderRepository.save(order);
     }
 
-    public void capturePayment(String paymentId, String accessToken){
+    public void capturePayment(String paymentId){
         //Find Order by paymentId
         Order order = orderRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = getPayment(paymentId, accessToken);
+        JsonNode payment = getPayment(paymentId);
         String authorizationId = payment.path("transactions").get(0)
                     .path("related_resources").get(0)
                     .path("authorization").path("id").asText();
@@ -177,22 +178,22 @@ public class PaypalService {
         restTemplate.exchange(
                 PAYPAL_CAPTURE_API + authorizationId + "/capture",
                 HttpMethod.POST,
-                setBody(accessToken, payment),
+                setBody(payment),
                 Void.class);
         //Set status before capture
         order.setStatus(Status.APPROVED.name());
         orderRepository.save(order);
     }
 
-    public void voidPayment(String paymentId, String accessToken){
+    public void voidPayment(String paymentId){
         //Find Order by paymentId
         Order order = orderRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = getPayment(paymentId, accessToken);
+        JsonNode payment = getPayment(paymentId);
         String authorizationId = payment.path("transactions").get(0)
                 .path("related_resources").get(0)
                 .path("authorization").path("id").asText();
-        HttpEntity<String> entity = new HttpEntity<>(setHeader(accessToken));
+        HttpEntity<String> entity = new HttpEntity<>(setHeader());
         // Trả về phản hồi từ PayPal API
         try {
             restTemplate.exchange(
@@ -214,8 +215,8 @@ public class PaypalService {
         orderRepository.save(order);
     }
 
-    private JsonNode getPayment(String paymentId, String accessToken){
-        HttpEntity<JsonNode> entity = new HttpEntity<>(setHeader(accessToken));
+    private JsonNode getPayment(String paymentId){
+        HttpEntity<JsonNode> entity = new HttpEntity<>(setHeader());
         // Trả về phản hồi từ PayPal API
         ResponseEntity<JsonNode> response;
         try {
@@ -230,22 +231,40 @@ public class PaypalService {
         return response.getBody();
     }
 
-    private  HttpEntity<Map<String, Object>> setBody(String accessToken, JsonNode payment) {
+    private  HttpEntity<Map<String, Object>> setBody(JsonNode payment) {
         Map<String, Object> body = new HashMap<>();
         Map<String, String> amount = new HashMap<>();
         amount.put("currency", "USD");
         amount.put("total", payment.path("transactions").get(0).path("amount").path("total").asText());
         body.put("amount", amount);
         body.put("is_final_capture", true);
-        return new HttpEntity<>(body ,setHeader(accessToken));
+        return new HttpEntity<>(body ,setHeader());
     }
 
-    private HttpHeaders setHeader(String accessToken){
+    private String getAccessToken(){
+        String credentials = apiContext.getClientID() + ":" + apiContext.getClientSecret();
+        String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        httpHeaders.set("Authorization", "Basic " + encodedCredentials);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "client_credentials");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
+
+        ResponseEntity<JsonNode> response = restTemplate.postForEntity(PAYPAL_ACCESS_TOKEN_API, request, JsonNode.class);
+
+        if (!(response.getStatusCode() == HttpStatus.OK))
+            throw new AppException(ErrorCode.FAIL_TO_RETRIEVE_TOKEN);
+        return Objects.requireNonNull(response.getBody()).path("access_token").asText();
+    }
+
+    private HttpHeaders setHeader(){
         //createOrderDetail headers with Bearer token
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Authorization", "Bearer " + accessToken);
+        httpHeaders.set("Authorization", "Bearer " + getAccessToken());
         httpHeaders.set("Content-Type", "application/json");
-
        return httpHeaders;
     }
 }

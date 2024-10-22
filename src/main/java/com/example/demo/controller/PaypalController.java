@@ -11,7 +11,6 @@ import com.paypal.base.rest.PayPalRESTException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -26,10 +25,6 @@ import java.util.Map;
 @Slf4j
 public class PaypalController {
     PaypalService paypalService;
-
-    @NonFinal
-    protected String ACCESS_TOKEN =
-            "A21AAKRjuL2hUqijer9Lv11UuHQx2vIFy-DTRUt38eeBE4N6BT3Rib5p8oZcFlX5M4ePcjEaiu8_eRDfGYexoaBXoIqGg3TUw";
 
     @PostMapping("/create")
     ApiResponse<Map<String, String>> createPayment(
@@ -78,7 +73,7 @@ public class PaypalController {
 
     @PostMapping("/capture")
     ApiResponse<Void> capture(@RequestBody CheckoutRequest request){
-        paypalService.capturePayment(request.getPaymentId(), ACCESS_TOKEN);
+        paypalService.capturePayment(request.getPaymentId());
         return ApiResponse.<Void>builder()
                 .message("Capture payment successfully!")
                 .build();
@@ -86,7 +81,7 @@ public class PaypalController {
 
     @PostMapping("/void")
     ApiResponse<Void> voidPayment(@RequestBody CheckoutRequest request){
-        paypalService.voidPayment(request.getPaymentId(), ACCESS_TOKEN);
+        paypalService.voidPayment(request.getPaymentId());
         return ApiResponse.<Void>builder()
                 .message("Void payment successfully!")
                 .build();
@@ -94,7 +89,7 @@ public class PaypalController {
 
     @GetMapping("/refund")
     ApiResponse<Void> refund(@RequestParam("paymentId") String paymentId){
-        paypalService.refundPayment(paymentId, ACCESS_TOKEN);
+        paypalService.refundPayment(paymentId);
         return ApiResponse.<Void>builder()
                 .message("Refund payment successfully!")
                 .build();

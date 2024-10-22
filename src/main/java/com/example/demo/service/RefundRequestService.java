@@ -74,9 +74,15 @@ public class RefundRequestService {
                 .collect(Collectors.toList());
     }
 
+    public RefundRequestResponse getRefundRequestById(String refundRequestId) {
+        return refundRequestMapper.toRefundRequestResponse(refundRequestRepository.findById(refundRequestId)
+                .orElseThrow(() -> new AppException(ErrorCode.REFUND_REQUEST_NOT_FOUND)));
+    }
+
     private void callPayPalRefundApi(String paymentId){
         String refundEndpoint = "http://localhost:8080/payment/refund?paymentId=" + paymentId;
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getForEntity(refundEndpoint, Void.class);
     }
+
 }

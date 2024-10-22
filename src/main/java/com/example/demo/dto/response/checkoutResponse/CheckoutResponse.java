@@ -12,5 +12,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)//not show field which is null
 public class CheckoutResponse {
-    OrderResponse orders;
+    OrderResponse order;
 }

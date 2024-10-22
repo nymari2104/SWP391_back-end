@@ -51,4 +51,13 @@ public class RefundRequestController {
                 .result(refundRequestService.getAllRefundRequests())
                 .build();
     }
+
+    @GetMapping("/{refundRequestId}")
+    ApiResponse<RefundRequestResponse> getRefundRequest(@PathVariable String refundRequestId) {
+        return ApiResponse.<RefundRequestResponse>builder()
+                .message("Get refund request Successfully!")
+                .result(refundRequestService.getRefundRequestById(refundRequestId))
+                .build();
+    }
+
 }

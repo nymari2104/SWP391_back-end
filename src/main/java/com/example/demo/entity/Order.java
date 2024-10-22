@@ -27,8 +27,8 @@ public class Order {
     String paymentId;
 
     @JsonBackReference
-    @ManyToOne  // Cho phép null
-    @JoinColumn(name = "id")  // nullable=true để cho phép giá trị null
+    @ManyToOne
+    @JoinColumn(name = "id")
     User user;
 
     @Column(name = "phone", length = 10)
@@ -47,7 +47,7 @@ public class Order {
     String status;
 
     @Column(name = "total")
-    String total;
+    float total;
 
 //    @Temporal(TemporalType.DATE)
 //    @DateTimeFormat(pattern = "yyyy-MM-dd")

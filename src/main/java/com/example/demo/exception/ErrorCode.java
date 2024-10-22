@@ -52,6 +52,7 @@ public enum ErrorCode {
     REFUND_REQUEST_NOT_FOUND("REFUND_REQUEST_NOT_FOUND","Refund request not found", HttpStatus.NOT_FOUND),
     ALREADY_HANDLE_REFUND_REQUEST("ALREADY_HANDLE_REFUND_REQUEST","Refund request already be handled", HttpStatus.BAD_REQUEST),
     PAYMENT_ID_INVALID("PAYMENT_ID_INVALID","Payment id is invalid", HttpStatus.BAD_REQUEST),
+    FAIL_TO_RETRIEVE_TOKEN("FAIL_TO_RETRIEVE_TOKEN","Fail to retrieve token", HttpStatus.BAD_REQUEST),
     ;
 
      String code;

@@ -21,7 +21,7 @@ public class OrderResponse {
     String address;
     String fullname;
     String email;
-    String total;
+    float total;
     String status;
     Date createDate;
     List<OrderDetailResponse> orderDetails;
