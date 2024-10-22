@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.request.orderRequest.BuyNowRequest;
 import com.example.demo.dto.request.orderRequest.CheckoutRequest;
+import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.CartItem;
 import com.example.demo.entity.Order;
@@ -53,7 +55,7 @@ public class PaypalService {
     @NonFinal
     protected String PAYPAL_ACCESS_TOKEN_API = "https://api-m.sandbox.paypal.com/v1/oauth2/token";
 
-    public Payment createPayment(
+    public Payment createPaymentForCart(
             CheckoutRequest request,
             String currency,
             String method,
@@ -69,8 +71,6 @@ public class PaypalService {
 
         Item item;
         List<Item> items = new ArrayList<>();
-
-        ItemList itemList = new ItemList();
 
         if (request.getCartId() == null) {
             Product product;
@@ -99,7 +99,51 @@ public class PaypalService {
                 items.add(item);
             }
         }
+        return createPayment(method, intent, description, cancelUrl, successUrl, amount, items);
+    }
+
+    public Payment createPaymentForBuyNow(
+            BuyNowRequest request,
+            String currency,
+            String method,
+            String intent,
+            String description,
+            String cancelUrl,
+            String successUrl
+    )
+            throws PayPalRESTException {
+        Amount amount = new Amount();
+        amount.setCurrency(currency);
+        amount.setTotal(String.format(Locale.forLanguageTag(currency), "%.2f", request.getTotal()));
+
+        Item item;
+        List<Item> items = new ArrayList<>();
+
+
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        item = new Item();
+        item.setName(product.getProductName());
+        item.setCurrency(currency);
+        item.setPrice(String.format(Locale.forLanguageTag(currency), "%.2f", product.getUnitPrice()));
+        item.setQuantity(String.valueOf(request.getQuantity()));
+
+        items.add(item);
+
+        return createPayment(method, intent, description, cancelUrl, successUrl, amount, items);
+    }
+
+    private Payment createPayment(String method,
+                                  String intent,
+                                  String description,
+                                  String cancelUrl,
+                                  String successUrl,
+                                  Amount amount,
+                                  List<Item> items)
+            throws PayPalRESTException {
+        ItemList itemList = new ItemList();
         itemList.setItems(items);
+
         Transaction transaction = new Transaction();
         transaction.setDescription(description);
         transaction.setAmount(amount);
@@ -127,6 +171,20 @@ public class PaypalService {
         return payment.create(apiContext);
     }
 
+    public ApiResponse<Map<String, String>> getApprovalUrl(Payment payment) {
+        Map<String, String> response = new HashMap<>();
+        for (Links link : payment.getLinks()) {
+            if (link.getRel().equals("approval_url")) {
+                response.put("approval_url", link.getHref());
+                break;
+            }
+        }
+        return ApiResponse.<Map<String, String>>builder()
+                .message("Approved URL")
+                .result(response)
+                .build();
+    }
+
     public Payment executePayment(String paymentId, String payerId) throws PayPalRESTException {
         Payment payment = new Payment();
         payment.setId(paymentId);
@@ -141,7 +199,7 @@ public class PaypalService {
         //Find Order by paymentId
         Order order = orderRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = getPayment(paymentId);
+        JsonNode payment = createPayment(paymentId);
         String captureId = payment.path("transactions").get(0)
                     .path("related_resources").get(1)
                     .path("capture").path("id").asText();
@@ -170,7 +228,7 @@ public class PaypalService {
         //Find Order by paymentId
         Order order = orderRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = getPayment(paymentId);
+        JsonNode payment = createPayment(paymentId);
         String authorizationId = payment.path("transactions").get(0)
                     .path("related_resources").get(0)
                     .path("authorization").path("id").asText();
@@ -189,7 +247,7 @@ public class PaypalService {
         //Find Order by paymentId
         Order order = orderRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = getPayment(paymentId);
+        JsonNode payment = createPayment(paymentId);
         String authorizationId = payment.path("transactions").get(0)
                 .path("related_resources").get(0)
                 .path("authorization").path("id").asText();
@@ -215,7 +273,7 @@ public class PaypalService {
         orderRepository.save(order);
     }
 
-    private JsonNode getPayment(String paymentId){
+    private JsonNode createPayment(String paymentId){
         HttpEntity<JsonNode> entity = new HttpEntity<>(setHeader());
         // Trả về phản hồi từ PayPal API
         ResponseEntity<JsonNode> response;
