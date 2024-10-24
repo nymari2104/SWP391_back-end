@@ -1,3 +1,4 @@
+
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.orderRequest.BuyNowRequest;
@@ -10,6 +11,8 @@ import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,29 +40,22 @@ public class OrderController {
                 .build();
     }
 
-    @GetMapping("/get-my-order")
+    @GetMapping("/get-my-orders")
     ApiResponse<List<CheckoutResponse>> getMyOrder() {
         return ApiResponse.<List<CheckoutResponse>>builder()
                 .message("Get my order successfully!")
-                .result(orderService.getMyOrder())
+                .result(orderService.getMyOrders())
                 .build();
     }
 
-    @GetMapping("/get-all-order")
+    @GetMapping("/get-all-orders")
     ApiResponse<List<CheckoutResponse>> getAllOrder() {
         return ApiResponse.<List<CheckoutResponse>>builder()
                 .message("Get all order successfully!")
-                .result(orderService.getAllOrder())
+                .result(orderService.getAllOrders())
                 .build();
-    }
 
-//    @PutMapping("/update-order-status")
-//    ApiResponse<CheckoutResponse> updateOrderStatus(@RequestBody UpdateOrderRequest request) {
-//        return ApiResponse.<CheckoutResponse>builder()
-//                .message("Update order status successfully!")
-//                .result(orderService.updateOrderStatus(request))
-//                .build();
-//    }
+    }
 
     @GetMapping("/{orderId}")
     ApiResponse<OrderResponse> getOrderById(@PathVariable String orderId) {

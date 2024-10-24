@@ -74,7 +74,8 @@ public class AuthenticationService {
         //check username
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
-
+        if (!user.isStatus())
+            throw new AppException(ErrorCode.LOGIN_FAIL);
         //check match password
         if (!checkMatchPassword(request.getPassword(), user.getPassword()))
             throw new AppException(ErrorCode.LOGIN_FAIL);//no match
@@ -91,6 +92,7 @@ public class AuthenticationService {
     public SignInResponse authenticate(String email, String fullname){
         Optional<User> checkUser = userRepository.findByEmail(email);
         User user = User.builder()
+                .userId(checkUser.map(User::getUserId).orElse(null))
                 .fullname(fullname)
                 .email(email)
                 .role(Role.USER.name())
@@ -125,7 +127,6 @@ public class AuthenticationService {
                 .build();
 
         invalidatedTokenRepository.save(invalidatedToken);
-
     }
 
     public UserResponse verifySignUp(VerifyOtpRequest request){
@@ -188,7 +189,7 @@ public class AuthenticationService {
         //2.1 Set jwt claims
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getEmail())
-                .issuer("demo.com")
+                .issuer("izumiya.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(365, ChronoUnit.DAYS).toEpochMilli()

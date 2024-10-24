@@ -28,6 +28,7 @@ public class User {
     String password;
     boolean googleAccount;
     String role;
+    boolean status;
 
 //    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -44,4 +45,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Pond> ponds;
 
+    @PrePersist
+    protected void onCreate(){
+        if (!this.status)
+            this.status = true;
+    }
 }

@@ -16,6 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Table(name = "VerificationTokens")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class VerificationToken {
     @Id
     int otp;

@@ -48,7 +48,7 @@ public class EmailSender {
 
         simpleMailMessage.setTo(to);
         simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(body + otp + "\n\nThis code is valid for the next 3 minutes. If you did not request this code, please disregard this email.\n\n" +
+        simpleMailMessage.setText(body + otp + "\n\nThis code is valid for the next 10 minutes. If you did not request this code, please disregard this email.\n\n" +
                 "Best regards,\n" +
                 "The Izumiya Team");
         simpleMailMessage.setFrom(SENDER_EMAIL);

@@ -23,7 +23,6 @@ public class KoiController {
 
     @PostMapping("/create")
     ApiResponse<Koi> createKoi(@RequestBody KoiCreateRequest request) {
-
         return ApiResponse.<Koi>builder()
                 .message("Create Koi successfully")
                 .result(koiService.createKoi(request))

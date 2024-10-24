@@ -44,7 +44,6 @@ public class GlobalExceptionHandler {
                         .message(errorCode.getMessage())//Set message
                         .build()
                 );
-
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

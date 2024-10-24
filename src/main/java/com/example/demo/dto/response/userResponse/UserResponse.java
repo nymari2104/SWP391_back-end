@@ -16,4 +16,5 @@ public class UserResponse {
     String address;
     String role;
     boolean googleAccount;
+    boolean status;
 }

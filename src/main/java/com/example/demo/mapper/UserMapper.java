@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
+import com.example.demo.dto.request.userRequest.UpdateMyInfoRequest;
 import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.entity.User;
@@ -18,6 +19,6 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
-
-
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateUser(@MappingTarget User user, UpdateMyInfoRequest request);
 }

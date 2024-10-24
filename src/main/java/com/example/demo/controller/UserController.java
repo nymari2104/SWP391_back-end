@@ -1,11 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
-import com.example.demo.dto.request.userRequest.ForgotPasswordRequest;
-import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
-import com.example.demo.dto.request.userRequest.UpdatePasswordRequest;
+import com.example.demo.dto.request.userRequest.*;
 import com.example.demo.dto.response.ApiResponse;
-import com.example.demo.dto.request.userRequest.UserUpdateRequest;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.service.UserService;
@@ -64,7 +61,7 @@ public class UserController {
 
     //Update my info
     @PutMapping("/update-my-info")
-    ApiResponse<UserResponse> updateMyInfo(@RequestBody UserUpdateRequest request){
+    ApiResponse<UserResponse> updateMyInfo(@RequestBody UpdateMyInfoRequest request){
         return ApiResponse.<UserResponse>builder()
                 .message("Update info successfully!")
                 .result(userService.updateMyInfo(request))

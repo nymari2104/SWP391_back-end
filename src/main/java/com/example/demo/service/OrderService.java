@@ -132,7 +132,7 @@ public class OrderService {
                 .build();
     }
 
-    public List<CheckoutResponse> getMyOrder(){
+    public List<CheckoutResponse> getMyOrders(){
         User user = userService.getCurrentUser();
         List<Order> orders = user.getOrders();
         return  orders.stream().map(order -> {
@@ -143,7 +143,7 @@ public class OrderService {
         }).collect(Collectors.toList());
     }
 
-    public List<CheckoutResponse> getAllOrder(){
+    public List<CheckoutResponse> getAllOrders(){
         return orderRepository.findAll().stream().map(order -> {
             OrderResponse orderResponse = OrderMapper.INSTANCE.toOrderResponse(order);
             CheckoutResponse checkoutResponse = new CheckoutResponse();
@@ -151,6 +151,7 @@ public class OrderService {
             return checkoutResponse;
         }).collect(Collectors.toList());
     }
+
 
     public OrderResponse getOrder(String orderId) {
         //Check if Order exist
@@ -163,17 +164,6 @@ public class OrderService {
             throw new AppException(ErrorCode.DID_NOT_OWN_ORDER);
         return OrderMapper.INSTANCE.toOrderResponse(order);
     }
-
-//    public CheckoutResponse updateOrderStatus(UpdateOrderRequest request){
-//        //Find order
-//        Order order = orderRepository.findById(request.getOrderId())
-//                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-//        //Change order status
-//        order.setStatus(request.getStatus());
-//        return CheckoutResponse.builder()
-//                .orders(OrderMapper.INSTANCE.toOrderResponse(orderRepository.save(order)))//Save the change and Map to CheckoutResponse
-//                .build();
-//    }
 
     private void decreaseProductStock(Product product, int quantity) {
         //Check if product has enough stock

@@ -44,15 +44,16 @@ public enum ErrorCode {
     PAYMENT_FAILED("PAYMENT_FAILED", "Payment failed", HttpStatus.BAD_REQUEST),
     PAYMENT_ID_EXISTED("PAYMENT_ID_EXISTED", "Payment id existed", HttpStatus.BAD_REQUEST),
     SENDER_EMAIL_IS_NOT_PERMITTED("SENDER_EMAIL_IS_NOT_PERMITTED","Sender email is not permitted", HttpStatus.BAD_REQUEST),
-    DID_NOT_OWN_CART("DID_NOT_OWN_CART", "You did not own this cart", HttpStatus.BAD_REQUEST),
+    DID_NOT_OWN_CART("DID_NOT_OWN_CART", "You did not own this cart", HttpStatus.FORBIDDEN),
     ORDER_NOT_FOUND("ORDER_NOT_FOUND","Order not found",HttpStatus.NOT_FOUND),
-    DID_NOT_OWN_ORDER("DID_NOT_OWN_ORDER", "You did not own this order", HttpStatus.BAD_REQUEST),
+    DID_NOT_OWN_ORDER("DID_NOT_OWN_ORDER", "You did not own this order", HttpStatus.FORBIDDEN),
     PRODUCT_NOT_ENOUGH_STOCK("PRODUCT_NOT_ENOUGH_STOCK","Product not enough stock", HttpStatus.BAD_REQUEST),
     ALREADY_REQUEST_REFUNDED("ALREADY_REQUEST_REFUNDED","Order already be request refunded", HttpStatus.BAD_REQUEST),
     REFUND_REQUEST_NOT_FOUND("REFUND_REQUEST_NOT_FOUND","Refund request not found", HttpStatus.NOT_FOUND),
     ALREADY_HANDLE_REFUND_REQUEST("ALREADY_HANDLE_REFUND_REQUEST","Refund request already be handled", HttpStatus.BAD_REQUEST),
     PAYMENT_ID_INVALID("PAYMENT_ID_INVALID","Payment id is invalid", HttpStatus.BAD_REQUEST),
     FAIL_TO_RETRIEVE_TOKEN("FAIL_TO_RETRIEVE_TOKEN","Fail to retrieve token", HttpStatus.BAD_REQUEST),
+    USER_INACTIVE("USER_INACTIVE","User is inactive", HttpStatus.FORBIDDEN),
     ;
 
      String code;

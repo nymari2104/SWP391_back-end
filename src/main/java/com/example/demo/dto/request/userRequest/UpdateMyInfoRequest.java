@@ -9,9 +9,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
-     String fullname;
-     String phone;
-     String address;
-     boolean status;
+public class UpdateMyInfoRequest {
+    String fullname;
+    String phone;
+    String address;
 }

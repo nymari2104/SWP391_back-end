@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
 
+@Component
 @Entity
 @Getter
 @Setter

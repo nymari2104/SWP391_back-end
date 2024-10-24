@@ -2,10 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
-import com.example.demo.dto.request.userRequest.ForgotPasswordRequest;
-import com.example.demo.dto.request.userRequest.ResetPasswordRequest;
-import com.example.demo.dto.request.userRequest.UpdatePasswordRequest;
-import com.example.demo.dto.request.userRequest.UserUpdateRequest;
+import com.example.demo.dto.request.userRequest.*;
 import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.entity.User;
@@ -41,6 +38,7 @@ public class UserService {
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
     EmailSender emailSender;
+    AuthenticationService authenticationService;
 
     public SignUpResponse createUser(SignUpRequest request){
         // Check username
@@ -75,11 +73,9 @@ public class UserService {
         return userMapper.toUserResponse(getCurrentUser());
     }
 
-    public UserResponse updateMyInfo(UserUpdateRequest request){
+    public UserResponse updateMyInfo(UpdateMyInfoRequest request){
         User user = getCurrentUser();
-
         userMapper.updateUser(user, request);
-
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -128,14 +124,14 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         userMapper.updateUser(user, request);
         //set password after encode
-        if (request.getPassword() != null)
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         return userMapper.toUserResponse(userRepository.save(user));
     }
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String userId){
-        userRepository.deleteById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setStatus(false);
+        userRepository.save(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
