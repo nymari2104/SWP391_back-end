@@ -96,16 +96,16 @@ public class PaypalController {
     }
 
     @PostMapping("/capture")
-    ApiResponse<Void> capture(@RequestBody CheckoutRequest request){
-        paypalService.capturePayment(request.getPaymentId());
+    ApiResponse<Void> capture(@RequestBody String  paymentId){
+        paypalService.capturePayment(paymentId);
         return ApiResponse.<Void>builder()
                 .message("Capture payment successfully!")
                 .build();
     }
 
     @PostMapping("/void")
-    ApiResponse<Void> voidPayment(@RequestBody CheckoutRequest request){
-        paypalService.voidPayment(request.getPaymentId());
+    ApiResponse<Void> voidPayment(@RequestBody String paymentId){
+        paypalService.voidPayment(paymentId);
         return ApiResponse.<Void>builder()
                 .message("Void payment successfully!")
                 .build();
