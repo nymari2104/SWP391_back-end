@@ -15,6 +15,9 @@ import com.example.demo.mapper.VerificationMapper;
 import com.example.demo.repository.InvalidatedTokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.VerificationTokenRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -26,9 +29,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -89,12 +95,25 @@ public class AuthenticationService {
                 .build();
     }
 
-    public SignInResponse authenticate(String email, String fullname){
+    public SignInResponse authenticate(String accessToken) throws JsonProcessingException {
+        //Get user info from access token
+        String userInfoEndpoint = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + accessToken;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.getForEntity(userInfoEndpoint, String.class);
+        //Check if access token is valid
+        if (response.getStatusCode() != HttpStatus.OK)
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        //Convert response to JsonNode to get field of info
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode userInfoJson = objectMapper.readTree(response.getBody());
+        // Lấy các trường cụ thể từ JsonNode
+        String email = userInfoJson.get("email").asText();
+        String name = userInfoJson.get("name").asText();
         //Check if user exist
         Optional<User> checkUser = userRepository.findByEmail(email);
         User user = User.builder()
                 .userId(checkUser.map(User::getUserId).orElse(null))
-                .fullname(fullname)
+                .fullname(name)
                 .email(email)
                 .role(Role.USER.name())
                 .googleAccount(true)

@@ -55,6 +55,8 @@ public enum ErrorCode {
     FAIL_TO_RETRIEVE_TOKEN("FAIL_TO_RETRIEVE_TOKEN","Fail to retrieve token", HttpStatus.BAD_REQUEST),
     USER_INACTIVE("USER_INACTIVE","User is inactive", HttpStatus.FORBIDDEN),
     LOGGED_BY_GOOGLE("LOGGED_BY_GOOGLE","Email is logged by google cannot change password", HttpStatus.BAD_REQUEST),
+    ORDER_IS_NOT_PENDING("ORDER_IS_NOT_PENDING","THe order is not pending yet", HttpStatus.BAD_REQUEST),
+    PAYMENT_ID_NOT_FOUND("PAYMENT_ID_NOT_FOUND","Payment id not found", HttpStatus.NOT_FOUND),
     ;
 
      String code;

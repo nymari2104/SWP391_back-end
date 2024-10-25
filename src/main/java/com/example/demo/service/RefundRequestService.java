@@ -33,9 +33,12 @@ public class RefundRequestService {
     UserService userService;
 
     public RefundRequestResponse makeARefund(RefundRequestRequest request) {
-        //Check exist order
+        //Check if order exist
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        //Check if order is approved
+        if(order.getStatus().equals(Status.PENDING.name()))
+            throw new AppException(ErrorCode.ORDER_IS_NOT_PENDING);
         //Check if already refund
         if(order.getRefundRequest() != null)
             throw new AppException(ErrorCode.ALREADY_REQUEST_REFUNDED);
@@ -48,9 +51,16 @@ public class RefundRequestService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public RefundRequestResponse handleRefund(HandleRefundRequestRequest request, String status) {
+        //Check if order exist
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+//        //Check if order is approved
+//        if(order.getStatus().equals(Status.PENDING.name()))
+//            throw new AppException(ErrorCode.ORDER_IS_NOT_PENDING);
         //Check refund request exist
-        RefundRequest refundRequest = refundRequestRepository.findById(request.getRefundRequestId())
-                .orElseThrow(() -> new AppException(ErrorCode.REFUND_REQUEST_NOT_FOUND));
+        RefundRequest refundRequest = order.getRefundRequest();
+        if(refundRequest == null)
+            throw new AppException(ErrorCode.REFUND_REQUEST_NOT_FOUND);
         //Check if refund request already be handled
         if (!refundRequest.getStatus().equals(Status.PENDING.name()))
             throw new AppException(ErrorCode.ALREADY_HANDLE_REFUND_REQUEST);
@@ -91,5 +101,4 @@ public class RefundRequestService {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getForEntity(refundEndpoint, Void.class);
     }
-
 }

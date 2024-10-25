@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,11 +26,12 @@ public class UserController {
 
     //Create a user
     @PostMapping("/sign-up")
-    ApiResponse<SignUpResponse> createUser(@Valid @RequestBody SignUpRequest request){
-        return ApiResponse.<SignUpResponse>builder()
-                .message("Please check your email!")
-                .result(userService.createUser(request))
-                .build();
+    ResponseEntity<ApiResponse<SignUpResponse>> createUser(@Valid @RequestBody SignUpRequest request){
+        return ResponseEntity.accepted()
+                .body(ApiResponse.<SignUpResponse>builder()
+                        .message("Please check your email!")
+                        .result(userService.createUser(request))
+                        .build());
     }
 
     //Get all users

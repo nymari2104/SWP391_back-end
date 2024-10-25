@@ -5,19 +5,13 @@ import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.dto.response.authenticationResponse.SignInResponse;
 import com.example.demo.dto.response.authenticationResponse.IntrospectResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
-import com.example.demo.exception.AppException;
-import com.example.demo.exception.ErrorCode;
 import com.example.demo.service.AuthenticationService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -30,12 +24,13 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/sign-in")
-    ApiResponse<SignInResponse> signIn(@RequestBody SignInRequest request){
+    ResponseEntity<ApiResponse<SignInResponse>> signIn(@RequestBody SignInRequest request){
         var result = authenticationService.authenticate(request);
-        return ApiResponse.<SignInResponse>builder()
-                .message("Sign in successfully!")
-                .result(result)
-                .build();
+        return ResponseEntity.ok()
+                .body(ApiResponse.<SignInResponse>builder()
+                        .message("Sign in successfully!")
+                        .result(result)
+                        .build());
     }
 
     @PostMapping("/introspect")
@@ -49,12 +44,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+    ResponseEntity<ApiResponse<Void>> logout(@RequestBody LogoutRequest request)
             throws ParseException, JOSEException {
         authenticationService.Logout(request);
-        return ApiResponse.<Void>builder()
-                .message("Logout")
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/verify-sign-up")
@@ -75,20 +68,9 @@ public class AuthenticationController {
 
     @PostMapping("/sign-in-by-google")
     public ApiResponse<SignInResponse> loginSuccess(@RequestBody String request) throws IOException {
-        String userInfoEndpoint = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + request;
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(userInfoEndpoint, String.class);
-
-        if (response.getStatusCode() != HttpStatus.OK)
-            throw new AppException(ErrorCode.TOKEN_INVALID);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode userInfoJson = objectMapper.readTree(response.getBody());
-        // Lấy các trường cụ thể từ JsonNode
-        String email = userInfoJson.get("email").asText();
-        String name = userInfoJson.get("name").asText();
         return ApiResponse.<SignInResponse>builder()
                 .message("Sign in successfully!")
-                .result(authenticationService.authenticate(email, name))
+                .result(authenticationService.authenticate(request))
                 .build();
     }
 }

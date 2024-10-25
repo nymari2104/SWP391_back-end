@@ -9,9 +9,10 @@ import com.example.demo.service.BlogService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -23,12 +24,12 @@ public class BlogController {
     BlogService blogService;
 
     @PostMapping("/create")
-    ApiResponse<Blog> createBlog(@RequestBody BlogCreateRequest request) {
-
-        return ApiResponse.<Blog>builder()
+    ResponseEntity<ApiResponse<Blog>> createBlog(@RequestBody BlogCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Blog>builder()
                 .message("Create blog successfully")
                 .result(blogService.createBlog(request))
-                .build();
+                .build());
 
     }
 
@@ -41,20 +42,15 @@ public class BlogController {
     }
 
     @PutMapping("/update/{blogId}")
-    ApiResponse<Blog> updateBlog(@PathVariable int blogId, @RequestBody BlogUpdateRequest request) {
-        return ApiResponse.<Blog>builder()
-                .message("Update Blog successfully")
-                .result(blogService.updateBlog(blogId, request))
-                .build();
+    ResponseEntity<Void> updateBlog(@PathVariable int blogId, @RequestBody BlogUpdateRequest request) {
+        blogService.updateBlog(blogId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/delete/{blogId}")
-    ApiResponse<Boolean> deleteBlog(@PathVariable int blogId) {
+    ResponseEntity<Void> deleteBlog(@PathVariable int blogId) {
         blogService.deleteBlog(blogId);
-        return ApiResponse.<Boolean>builder()
-                .message("Delete blog successfully")
-                .result(true)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{blogId}")

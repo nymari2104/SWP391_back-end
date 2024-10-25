@@ -25,7 +25,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     String orderId;
 
-    @Column(name = "PaymentId", nullable = false, unique = true)
+    @Column(name = "paymentId", nullable = false, unique = true)
     String paymentId;
 
     @JsonBackReference

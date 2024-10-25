@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,25 +43,17 @@ public class CartController {
     }
 
     @PutMapping("/{cartId}/update/{cartItemId}")
-    ApiResponse<Cart> updateQuantity(@PathVariable String cartId,
-                                     @PathVariable String cartItemId,
-                                     @Valid @RequestBody UpdateQuantityRequest request) {
-
-        return ApiResponse.<Cart>builder()
-                .message("Update quantity successfully")
-                .result(cartService.updateCartItemQuantity(cartId, cartItemId, request))
-                .build();
+    ResponseEntity<Void> updateQuantity(@PathVariable String cartId,
+                                  @PathVariable String cartItemId,
+                                  @Valid @RequestBody UpdateQuantityRequest request) {
+        cartService.updateCartItemQuantity(cartId, cartItemId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("delete/{cartItemId}")
-    ApiResponse<Boolean> deleteCartItem(@PathVariable String cartItemId) {
-
+    ResponseEntity<Void> deleteCartItem(@PathVariable String cartItemId) {
         cartService.removeCartItem(cartItemId);
-
-        return ApiResponse.<Boolean>builder()
-                .message("Delete cart item successfully")
-                .result(true)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/delete-cart")

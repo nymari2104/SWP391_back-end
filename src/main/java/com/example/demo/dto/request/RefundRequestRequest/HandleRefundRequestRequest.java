@@ -11,6 +11,6 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HandleRefundRequestRequest {
-        String refundRequestId;
+    String orderId;
     String refundResponse;
 }

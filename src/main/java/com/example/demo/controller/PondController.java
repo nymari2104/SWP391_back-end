@@ -2,16 +2,15 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.pondRequest.PondCreateRequest;
 import com.example.demo.dto.request.pondRequest.PondUpdateRequest;
-import com.example.demo.dto.request.productRequest.ProductUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Pond;
 import com.example.demo.service.PondService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -47,19 +46,14 @@ public class PondController {
     }
 
     @PutMapping("/update/{pondId}")
-    ApiResponse<Pond> updatePond(@PathVariable int pondId, @RequestBody PondUpdateRequest request) {
-        return ApiResponse.<Pond>builder()
-                .message("Update pond successfully")
-                .result(pondService.updatePond(pondId, request))
-                .build();
+    ResponseEntity<Void> updatePond(@PathVariable int pondId, @RequestBody PondUpdateRequest request) {
+        pondService.updatePond(pondId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/delete/{pondId}")
-    ApiResponse<Boolean> deletePond(@PathVariable int pondId) {
+    ResponseEntity<Void> deletePond(@PathVariable int pondId) {
         pondService.deletePond(pondId);
-        return ApiResponse.<Boolean>builder()
-                .message("Delete pond successfully")
-                .result(true)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 }

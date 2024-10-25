@@ -9,6 +9,7 @@ import com.example.demo.service.RefundRequestService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,11 +30,12 @@ public class RefundRequestController {
     }
 
     @PostMapping("/approved")
-    ApiResponse<RefundRequestResponse> approveRefund(@RequestBody HandleRefundRequestRequest request) {
-        return ApiResponse.<RefundRequestResponse>builder()
-                .message("Approve a refund request successfully!")
-                .result(refundRequestService.handleRefund(request, Status.APPROVED.name()))
-                .build();
+    ResponseEntity<ApiResponse<RefundRequestResponse>> approveRefund(@RequestBody HandleRefundRequestRequest request) {
+        return ResponseEntity.accepted()
+                .body(ApiResponse.<RefundRequestResponse>builder()
+                        .message("Approve a refund request successfully!")
+                        .result(refundRequestService.handleRefund(request, Status.APPROVED.name()))
+                        .build());
     }
 
     @PostMapping("/rejected")

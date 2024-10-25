@@ -195,11 +195,11 @@ public class PaypalService {
         return payment.execute(apiContext, paymentExecution);
     }
 
-    public void refundPayment(String paymentId){
-        //Find Order by paymentId
-        Order order = orderRepository.findByPaymentId(paymentId)
+    public void refundPayment(String orderId){
+        //Check if order exist
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = createPayment(paymentId);
+        JsonNode payment = createPayment(order.getPaymentId());
         String captureId = payment.path("transactions").get(0)
                     .path("related_resources").get(1)
                     .path("capture").path("id").asText();
@@ -213,41 +213,45 @@ public class PaypalService {
         } catch (RestClientException e) {
             throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
         }
-        //Set status before refunded
-        order.setStatus(Status.REFUNDED.name());
-        //Return stock if order is refunded
-        order.getOrderDetails().forEach(orderDetail -> {
-            Product product = orderDetail.getProduct();
-            product.setStock(product.getStock() + orderDetail.getQuantity());
-            productRepository.save(product);
-        });
+//        //Set status before refunded
+//        order.setStatus(Status.REFUNDED.name());
+//        //Return stock if order is refunded
+//        order.getOrderDetails().forEach(orderDetail -> {
+//            Product product = orderDetail.getProduct();
+//            product.setStock(product.getStock() + orderDetail.getQuantity());
+//            productRepository.save(product);
+//        });
         orderRepository.save(order);
     }
 
-    public void capturePayment(String paymentId){
-        //Find Order by paymentId
-        Order order = orderRepository.findByPaymentId(paymentId)
+    public void capturePayment(String orderId){
+        //Check if order exist
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = createPayment(paymentId);
+        JsonNode payment = createPayment(order.getPaymentId());
         String authorizationId = payment.path("transactions").get(0)
                     .path("related_resources").get(0)
                     .path("authorization").path("id").asText();
         // Trả về phản hồi từ PayPal API
-        restTemplate.exchange(
-                PAYPAL_CAPTURE_API + authorizationId + "/capture",
-                HttpMethod.POST,
-                setBody(payment),
-                Void.class);
+        try {
+            restTemplate.exchange(
+                    PAYPAL_CAPTURE_API + authorizationId + "/capture",
+                    HttpMethod.POST,
+                    setBody(payment),
+                    Void.class);
+        } catch (RestClientException e) {
+            throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
+        }
         //Set status before capture
         order.setStatus(Status.APPROVED.name());
         orderRepository.save(order);
     }
 
-    public void voidPayment(String paymentId){
-        //Find Order by paymentId
-        Order order = orderRepository.findByPaymentId(paymentId)
+    public void voidPayment(String orderId){
+        //Check if order exist
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        JsonNode payment = createPayment(paymentId);
+        JsonNode payment = createPayment(order.getPaymentId());
         String authorizationId = payment.path("transactions").get(0)
                 .path("related_resources").get(0)
                 .path("authorization").path("id").asText();
@@ -264,12 +268,12 @@ public class PaypalService {
         }
         //Set status before Void
         order.setStatus(Status.REJECTED.name());
-        //Return product stock if order is rejected
+        //Return product stock when order is rejected
         order.getOrderDetails().forEach(orderDetail -> {
             Product product = orderDetail.getProduct();
             product.setStock(product.getStock() + orderDetail.getQuantity());
             productRepository.save(product);
-        });
+        })  ;
         orderRepository.save(order);
     }
 
