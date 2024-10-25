@@ -56,7 +56,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    ApiResponse<OrderResponse> getOrderById(@PathVariable String orderId) {
+    ApiResponse<OrderResponse> getOrderById(@PathVariable("orderId") String orderId) {
         return ApiResponse.<OrderResponse>builder()
                 .result(orderService.getOrder(orderId))
                 .build();

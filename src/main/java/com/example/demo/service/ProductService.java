@@ -73,10 +73,10 @@ public class ProductService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(int productId) {
-        if (productRepository.existsById(productId))
+        try {
             productRepository.deleteById(productId);
-        else
+        } catch (Exception e) {
             throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
+        }
     }
-
 }

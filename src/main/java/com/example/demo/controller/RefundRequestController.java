@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/refunds")
+@RequestMapping("/refund")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RefundRequestController {
     RefundRequestService refundRequestService;
 
-    @PostMapping
+    @PostMapping("/create")
     ApiResponse<RefundRequestResponse> makeARefund(@RequestBody RefundRequestRequest request) {
         return ApiResponse.<RefundRequestResponse>builder()
                 .message("Make a refund request successfully!")
@@ -44,7 +44,7 @@ public class RefundRequestController {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping("/get-all-refund-requests")
     ApiResponse<List<RefundRequestResponse>> getAllRefundRequests() {
         return ApiResponse.<List<RefundRequestResponse>>builder()
                 .message("Get all refund requests Successfully!")
@@ -52,6 +52,7 @@ public class RefundRequestController {
                 .build();
     }
 
+//    @PostAuthorize("hasRole('ADMIN') or returnObject.")
     @GetMapping("/{refundRequestId}")
     ApiResponse<RefundRequestResponse> getRefundRequest(@PathVariable String refundRequestId) {
         return ApiResponse.<RefundRequestResponse>builder()

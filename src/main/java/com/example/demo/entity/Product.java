@@ -53,13 +53,13 @@ public class Product {
     String description;
 
     @Column(name = "status")
-    private Boolean status;
+    Boolean status;
 
     @JsonIgnoreProperties({"product"})
     @OneToMany(mappedBy = "product")
-    private List<OrderDetail> orderDetails;
+    List<OrderDetail> orderDetails;
 
     @JsonIgnoreProperties({"product"})
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<CartItem> cartItems;
+    List<CartItem> cartItems;
 }

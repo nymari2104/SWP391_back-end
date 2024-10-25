@@ -90,6 +90,7 @@ public class AuthenticationService {
     }
 
     public SignInResponse authenticate(String email, String fullname){
+        //Check if user exist
         Optional<User> checkUser = userRepository.findByEmail(email);
         User user = User.builder()
                 .userId(checkUser.map(User::getUserId).orElse(null))
@@ -98,6 +99,7 @@ public class AuthenticationService {
                 .role(Role.USER.name())
                 .googleAccount(true)
                 .build();
+        //check if user is not google account
           if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }else if (checkUser.isEmpty()){

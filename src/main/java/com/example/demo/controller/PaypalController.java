@@ -53,7 +53,7 @@ public class PaypalController {
     ) {
         try {
             String cancelUrl = "http://localhost:8080/payment/cancel";
-            String successUrl = "http://localhost:8080/payment/success";
+            String successUrl = "http://localhost:8080/payment/successbuy";
             Payment payment = paypalService.createPaymentForBuyNow(
                     request,
                     "USD",

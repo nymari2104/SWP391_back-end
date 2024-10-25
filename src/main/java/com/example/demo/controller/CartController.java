@@ -24,7 +24,6 @@ public class CartController {
 
     @PostMapping("/create")
     ApiResponse<CartResponse> createCart(@RequestBody CreateCartRequest request) {
-
         return ApiResponse.<CartResponse>builder()
                 .message("Create cart successfully")
                 .result(cartService.createCart(request.getUserId()))

@@ -36,7 +36,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/payment/**",
             "/cart/**",
             "/order/**",
-            "/refunds/**"
+            "/refund/**"
     };
 
     @Autowired
