@@ -6,6 +6,7 @@ import com.example.demo.dto.response.RefundRequestResponse.RefundRequestResponse
 import com.example.demo.entity.Order;
 import com.example.demo.entity.RefundRequest;
 import com.example.demo.entity.User;
+import com.example.demo.enums.Role;
 import com.example.demo.enums.Status;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
@@ -75,8 +76,14 @@ public class RefundRequestService {
     }
 
     public RefundRequestResponse getRefundRequestById(String refundRequestId) {
-        return refundRequestMapper.toRefundRequestResponse(refundRequestRepository.findById(refundRequestId)
-                .orElseThrow(() -> new AppException(ErrorCode.REFUND_REQUEST_NOT_FOUND)));
+        RefundRequest refundRequest = refundRequestRepository.findById(refundRequestId)
+                .orElseThrow(() -> new AppException(ErrorCode.REFUND_REQUEST_NOT_FOUND));
+        User user = userService.getCurrentUser();
+        //Check if user is Member and not his/her order
+        if (!user.getUserId().equals(refundRequest.getOrder().getUser().getUserId())
+                && user.getRole().equals(Role.USER.name()))
+            throw new AppException(ErrorCode.DID_NOT_OWN_ORDER);
+        return refundRequestMapper.toRefundRequestResponse(refundRequest);
     }
 
     private void callPayPalRefundApi(String paymentId){

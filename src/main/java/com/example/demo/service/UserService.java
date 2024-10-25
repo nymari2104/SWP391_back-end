@@ -38,7 +38,6 @@ public class UserService {
     VerificationTokenRepository verificationTokenRepository;
     VerificationMapper verificationMapper;
     EmailSender emailSender;
-    AuthenticationService authenticationService;
 
     public SignUpResponse createUser(SignUpRequest request){
         // Check username
@@ -80,9 +79,15 @@ public class UserService {
     }
 
     public void updateMyPassword(UpdatePasswordRequest request){
+        //Get user who currently log in
         User user = getCurrentUser();
+        //Check if google account
+        if (user.isGoogleAccount())
+            throw new AppException(ErrorCode.LOGGED_BY_GOOGLE);
+        //Check if password did not match the current
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
             throw new AppException(ErrorCode.WRONG_PASSWORD);
+        //Check if new password match the old
         if (passwordEncoder.matches(request.getNewPassword(), user.getPassword()))
             throw new AppException(ErrorCode.MATCH_OLD_PASSWORD);
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -149,9 +154,11 @@ public class UserService {
     public String forgotPassword(ForgotPasswordRequest request){
         //Check username
         String email = request.getEmail();
-        if (!userRepository.existsByEmail(email)) {
-            throw new AppException(ErrorCode.EMAIL_NOT_EXISTED);
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        //Check if google account
+        if (user.isGoogleAccount())
+            throw new AppException(ErrorCode.LOGGED_BY_GOOGLE);
 
         String subject = "Forgot password";
         String body = ("Hello " + email + ",\n\n" +

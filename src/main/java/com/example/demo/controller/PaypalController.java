@@ -53,7 +53,7 @@ public class PaypalController {
     ) {
         try {
             String cancelUrl = "http://localhost:8080/payment/cancel";
-            String successUrl = "http://localhost:8080/payment/success";
+            String successUrl = "http://localhost:8080/payment/success-buy-now";
             Payment payment = paypalService.createPaymentForBuyNow(
                     request,
                     "USD",
@@ -80,6 +80,19 @@ public class PaypalController {
             }
         return new RedirectView(
                 "http://localhost:5173/payment/success?paymentId=" + paymentId);
+    }
+
+    @GetMapping("/success-buy-now")
+    RedirectView paymentSuccessBuy(
+            @RequestParam("paymentId") String paymentId,
+            @RequestParam("PayerID") String payerId
+    ) throws PayPalRESTException{
+        Payment payment = paypalService.executePayment(paymentId, payerId);
+        if(!payment.getState().equals("approved")) {
+            return new RedirectView("/payment/error");
+        }
+        return new RedirectView(
+                "http://localhost:5173/payment/successbuy?paymentId=" + paymentId);
     }
 
     @PostMapping("/capture")
