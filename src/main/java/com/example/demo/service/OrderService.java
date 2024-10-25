@@ -114,15 +114,16 @@ public class OrderService {
         decreaseProductStock(product, request.getQuantity());
         //Create Order
         Order order = createOrderObject(request);
-        OrderDetail orderDetail =OrderDetail.builder()
+        OrderDetail orderDetail = OrderDetail.builder()
                 .order(order)
                 .product(product)
                 .quantity(request.getQuantity())
                 .total(request.getQuantity())
                 .build();
         orderDetail.snapshotProduct(product);
-        order.getOrderDetails()
-                .add(orderDetail);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        orderDetails.add(orderDetail);
+        order.setOrderDetails(orderDetails);
         order.setPaymentId(request.getPaymentId());
         //Save Order
         orderRepository.save(order);
