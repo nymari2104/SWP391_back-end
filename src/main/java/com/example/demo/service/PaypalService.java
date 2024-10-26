@@ -1,7 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.orderRequest.BuyNowRequest;
-import com.example.demo.dto.request.orderRequest.CheckoutRequest;
+import com.example.demo.dto.request.orderRequest.GuestCartItemRequest;
+import com.example.demo.dto.request.paymentRequest.BuyNowPaymentRequest;
+import com.example.demo.dto.request.paymentRequest.CheckoutPaymentRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.CartItem;
@@ -23,6 +24,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -56,7 +58,7 @@ public class PaypalService {
     protected String PAYPAL_ACCESS_TOKEN_API = "https://api-m.sandbox.paypal.com/v1/oauth2/token";
 
     public Payment createPaymentForCart(
-            CheckoutRequest request,
+            CheckoutPaymentRequest request,
             String currency,
             String method,
             String intent,
@@ -74,7 +76,7 @@ public class PaypalService {
 
         if (request.getCartId() == null) {
             Product product;
-            for (CheckoutRequest.GuestCartItemRequest cartItem : request.getCartItems()){
+            for (GuestCartItemRequest cartItem : request.getCartItems()){
                 item = new Item();
                 product = productRepository.findById(cartItem.getProductId())
                         .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -103,7 +105,7 @@ public class PaypalService {
     }
 
     public Payment createPaymentForBuyNow(
-            BuyNowRequest request,
+            BuyNowPaymentRequest request,
             String currency,
             String method,
             String intent,
@@ -200,9 +202,14 @@ public class PaypalService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         JsonNode payment = createPayment(order.getPaymentId());
-        String captureId = payment.path("transactions").get(0)
-                    .path("related_resources").get(1)
-                    .path("capture").path("id").asText();
+        String captureId;
+        try {
+            captureId = payment.path("transactions").get(0)
+                        .path("related_resources").get(1)
+                        .path("capture").path("id").asText();
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.ORDER_IS_PENDING);
+        }
         // Trả về phản hồi từ PayPal API
         try {
             restTemplate.exchange(
@@ -224,6 +231,7 @@ public class PaypalService {
         orderRepository.save(order);
     }
 
+    @Async
     public void capturePayment(String orderId){
         //Check if order exist
         Order order = orderRepository.findById(orderId)
@@ -240,7 +248,8 @@ public class PaypalService {
                     setBody(payment),
                     Void.class);
         } catch (RestClientException e) {
-            throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
+            log.error("error {}", e.getMessage());
+            throw new AppException(ErrorCode.ORDER_ALREADY_APPROVED);
         }
         //Set status before capture
         order.setStatus(Status.APPROVED.name());
@@ -264,7 +273,7 @@ public class PaypalService {
                     entity,
                     Void.class);
         } catch (RestClientException e) {
-            throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
+            throw new AppException(ErrorCode.ORDER_ALREADY_REJECTED);
         }
         //Set status before Void
         order.setStatus(Status.REJECTED.name());

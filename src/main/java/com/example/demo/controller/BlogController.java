@@ -36,7 +36,7 @@ public class BlogController {
     @GetMapping("/list")
     ApiResponse<List<BlogResponse>> getAllBlogs() {
         return ApiResponse.<List<BlogResponse>>builder()
-                .message("Get all blogs successfully")
+                .message("Get all blogs successfully!")
                 .result(blogService.getAllBlogs())
                 .build();
     }

@@ -9,6 +9,7 @@ import com.example.demo.service.RefundRequestService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,20 +23,20 @@ public class RefundRequestController {
     RefundRequestService refundRequestService;
 
     @PostMapping("/create")
-    ApiResponse<RefundRequestResponse> makeARefund(@RequestBody RefundRequestRequest request) {
-        return ApiResponse.<RefundRequestResponse>builder()
-                .message("Make a refund request successfully!")
-                .result(refundRequestService.makeARefund(request))
-                .build();
+    ResponseEntity<ApiResponse<RefundRequestResponse>> makeARefund(@RequestBody RefundRequestRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<RefundRequestResponse>builder()
+                        .message("Make a refund request successfully!")
+                        .result(refundRequestService.makeARefund(request))
+                        .build());
     }
 
     @PostMapping("/approved")
-    ResponseEntity<ApiResponse<RefundRequestResponse>> approveRefund(@RequestBody HandleRefundRequestRequest request) {
-        return ResponseEntity.accepted()
-                .body(ApiResponse.<RefundRequestResponse>builder()
-                        .message("Approve a refund request successfully!")
-                        .result(refundRequestService.handleRefund(request, Status.APPROVED.name()))
-                        .build());
+    ApiResponse<RefundRequestResponse> approveRefund(@RequestBody HandleRefundRequestRequest request) {
+        return ApiResponse.<RefundRequestResponse>builder()
+                .message("Approve a refund request successfully!")
+                .result(refundRequestService.handleRefund(request, Status.APPROVED.name()))
+                .build();
     }
 
     @PostMapping("/rejected")

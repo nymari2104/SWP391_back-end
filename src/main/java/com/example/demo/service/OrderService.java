@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.orderRequest.BuyNowRequest;
 import com.example.demo.dto.request.orderRequest.CheckoutRequest;
+import com.example.demo.dto.request.orderRequest.GuestCartItemRequest;
 import com.example.demo.dto.response.checkoutResponse.CheckoutResponse;
 import com.example.demo.dto.response.orderResponse.OrderResponse;
 import com.example.demo.entity.*;
@@ -54,7 +55,7 @@ public class OrderService {
             OrderDetail orderDetail;
             orderDetails = new ArrayList<>();
             //Check all product he/she buys
-            for(CheckoutRequest.GuestCartItemRequest cartItemRequest : request.getCartItems()){
+            for(GuestCartItemRequest cartItemRequest : request.getCartItems()){
                 //Check exist product
                 product = productRepository.findById(cartItemRequest.getProductId()).orElseThrow(() ->
                         new AppException(ErrorCode.PRODUCT_NOT_FOUND));

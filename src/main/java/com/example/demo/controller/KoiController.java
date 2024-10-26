@@ -8,6 +8,8 @@ import com.example.demo.service.KoiService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,11 +22,12 @@ public class KoiController {
     KoiService koiService;
 
     @PostMapping("/create")
-    ApiResponse<Koi> createKoi(@RequestBody KoiCreateRequest request) {
-        return ApiResponse.<Koi>builder()
-                .message("Create Koi successfully")
-                .result(koiService.createKoi(request))
-                .build();
+    ResponseEntity<ApiResponse<Koi>> createKoi(@RequestBody KoiCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Koi>builder()
+                        .message("Create Koi successfully")
+                        .result(koiService.createKoi(request))
+                        .build());
     }
 
     @GetMapping("/{koiId}")
@@ -36,19 +39,14 @@ public class KoiController {
     }
 
     @PutMapping("/update/{koiId}")
-    ApiResponse<Koi> updateKoi(@PathVariable int koiId, @RequestBody KoiUpdateRequest request) {
-        return ApiResponse.<Koi>builder()
-                .message("Update koi successfully")
-                .result(koiService.updateKoi(koiId, request))
-                .build();
+   ResponseEntity<Void> updateKoi(@PathVariable int koiId, @RequestBody KoiUpdateRequest request) {
+        koiService.updateKoi(koiId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/delete/{koiId}")
-    ApiResponse<Boolean> deletePond(@PathVariable int koiId) {
+    ResponseEntity<Void> deletePond(@PathVariable int koiId) {
         koiService.deleteKoi(koiId);
-        return ApiResponse.<Boolean>builder()
-                .message("Delete pond successfully")
-                .result(true)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +28,13 @@ public class UserController {
     //Create a user
     @PostMapping("/sign-up")
     ResponseEntity<ApiResponse<SignUpResponse>> createUser(@Valid @RequestBody SignUpRequest request){
+        userService.createUser(request);
         return ResponseEntity.accepted()
                 .body(ApiResponse.<SignUpResponse>builder()
                         .message("Please check your email!")
-                        .result(userService.createUser(request))
+                        .result(SignUpResponse.builder()
+                                .email(request.getEmail())
+                                .build())
                         .build());
     }
 
@@ -81,19 +85,19 @@ public class UserController {
 
     //Delete user
     @DeleteMapping("/{userId}")
-    ApiResponse<String> deleteUser(@PathVariable String userId){
+    ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable String userId){
         userService.deleteUser(userId);
-        return  ApiResponse.<String>builder()
-                .result("Delete user successfully!")
-                .build();
+        return  ResponseEntity.noContent().build();
     }
 
     @PostMapping("/forgot-password")
-    ApiResponse<String> forgotPassword(@RequestBody ForgotPasswordRequest request){
-        return ApiResponse.<String>builder()
-                .message("Send mail successfully!")
-                .result(userService.forgotPassword(request))
-                .build();
+    ResponseEntity<ApiResponse<String>> forgotPassword(@RequestBody ForgotPasswordRequest request){
+        userService.forgotPassword(request);
+        return ResponseEntity.accepted()
+                .body(ApiResponse.<String>builder()
+                        .message("Send mail successfully!")
+                        .result(request.getEmail())
+                        .build());
     }
 
     @PostMapping("/reset-password")
@@ -105,17 +109,18 @@ public class UserController {
     }
 
     @PutMapping("/update-password")
-    ApiResponse<Void> updatePassword(@RequestBody UpdatePasswordRequest request){
+    ResponseEntity<ApiResponse<Void>> updatePassword(@RequestBody UpdatePasswordRequest request){
         userService.updateMyPassword(request);
-        return ApiResponse.<Void>builder()
-                .message("Update password successfully!")
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/admin/create")
-    ApiResponse<UserResponse> createAdmin(@Valid @RequestBody SignUpRequest request){
-        return ApiResponse.<UserResponse>builder()
-                .result(userService.createAdminAccount(request))
-                .build();
+    ResponseEntity<ApiResponse<UserResponse>> createAdmin(@Valid @RequestBody SignUpRequest request){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<UserResponse>builder()
+                        .code("201")
+                        .message("Create admin successfully!")
+                        .result(userService.createAdminAccount(request))
+                        .build());
     }
 }

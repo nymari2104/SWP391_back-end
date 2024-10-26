@@ -1,8 +1,6 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,6 +17,8 @@ import java.util.Date;
 
 public class VerificationToken {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    int verificationTokensId;
     int otp;
     Date expiryTime;
     String email;

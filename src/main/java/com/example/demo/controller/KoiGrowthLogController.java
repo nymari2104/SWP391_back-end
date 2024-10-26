@@ -7,6 +7,8 @@ import com.example.demo.service.KoiGrowthLogService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,20 +20,17 @@ public class KoiGrowthLogController {
     KoiGrowthLogService koiGrowthLogService;
 
     @PostMapping("/create")
-    ApiResponse<KoiGrowthLog> createKoiGrowthLog(@RequestBody KoiGrowthLogCreateRequest request) {
-
-        return ApiResponse.<KoiGrowthLog>builder()
-                .message("Create Koi's log successfully")
-                .result(koiGrowthLogService.createKoiGrowthLog(request))
-                .build();
+    ResponseEntity<ApiResponse<KoiGrowthLog>> createKoiGrowthLog(@RequestBody KoiGrowthLogCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<KoiGrowthLog>builder()
+                        .message("Create Koi's log successfully")
+                        .result(koiGrowthLogService.createKoiGrowthLog(request))
+                        .build());
     }
 
     @DeleteMapping("/{koiLogId}")
-    ApiResponse<Boolean> deleteKoiGrowthLog(@PathVariable String koiLogId) {
+    ResponseEntity<Void> deleteKoiGrowthLog(@PathVariable String koiLogId) {
         koiGrowthLogService.deleteKoiGrowthLog(koiLogId);
-        return ApiResponse.<Boolean>builder()
-                .message("Delete Koi's log successfully")
-                .result(true)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 }

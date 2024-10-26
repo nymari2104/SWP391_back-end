@@ -1,15 +1,14 @@
-package com.example.demo.dto.request.orderRequest;
+package com.example.demo.dto.request.paymentRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateOrderRequest {
+public class PaymentRequest {
     String orderId;
-    String status;
 }

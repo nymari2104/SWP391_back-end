@@ -1,5 +1,6 @@
-package com.example.demo.dto.request.orderRequest;
+package com.example.demo.dto.request.paymentRequest;
 
+import com.example.demo.dto.request.orderRequest.GuestCartItemRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,15 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CheckoutRequest {
-    String fullname;
-    String email;
-    String phone;
-    String address;
+public class CheckoutPaymentRequest {
     String cartId;
-    List<GuestCartItemRequest> cartItems;
     float total;
-    String paymentId;
+    List<GuestCartItemRequest> cartItems;
 }
-
-

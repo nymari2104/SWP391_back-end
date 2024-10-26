@@ -11,6 +11,8 @@ import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,19 +25,21 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping("/create/checkout")
-    ApiResponse<CheckoutResponse> checkout(@RequestBody CheckoutRequest request) throws MessagingException {
-        return ApiResponse.<CheckoutResponse>builder()
-                .message("Checkout successfully!")
-                .result(orderService.checkout(request))
-                .build();
+    ResponseEntity<ApiResponse<CheckoutResponse>> checkout(@RequestBody CheckoutRequest request) throws MessagingException {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<CheckoutResponse>builder()
+                        .message("Checkout successfully!")
+                        .result(orderService.checkout(request))
+                        .build());
     }
 
     @PostMapping("/create/buy-now")
-    ApiResponse<CheckoutResponse> buyNow(@RequestBody BuyNowRequest request) {
-        return ApiResponse.<CheckoutResponse>builder()
-                .message("Buy now successfully!")
-                .result(orderService.buyNow(request))
-                .build();
+    ResponseEntity<ApiResponse<CheckoutResponse>> buyNow(@RequestBody BuyNowRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<CheckoutResponse>builder()
+                        .message("Buy now successfully!")
+                        .result(orderService.buyNow(request))
+                        .build());
     }
 
     @GetMapping("/get-my-orders")

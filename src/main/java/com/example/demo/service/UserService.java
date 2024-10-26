@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.authenticationRequest.SignUpRequest;
 import com.example.demo.dto.request.userRequest.*;
-import com.example.demo.dto.response.authenticationResponse.SignUpResponse;
 import com.example.demo.dto.response.userResponse.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.entity.VerificationToken;
@@ -11,13 +10,14 @@ import com.example.demo.enums.Role;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.UserMapper;
-import com.example.demo.mapper.VerificationMapper;
+import com.example.demo.mapper.VerificationTokenMapper;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.VerificationTokenRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,18 +36,24 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     VerificationTokenRepository verificationTokenRepository;
-    VerificationMapper verificationMapper;
+    VerificationTokenMapper verificationTokenMapper;
     EmailSender emailSender;
 
-    public SignUpResponse createUser(SignUpRequest request){
+    @Async
+    public void createUser(SignUpRequest request){
         // Check username
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
         //Map data from SignUpRequest to VerificationToken
-        VerificationToken verificationToken = verificationMapper.toVerificationToken(request);
+
+        VerificationToken verificationToken = verificationTokenMapper.updateVerificationToken(
+                verificationTokenRepository.findByEmail(request.getEmail())
+                        .orElse(VerificationToken.builder().build()),
+                request);
         //Encoder password
-        verificationToken.setPassword(passwordEncoder.encode(request.getPassword()));
+        if (request.getPassword() != null)
+            verificationToken.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String to = request.getEmail();
         String subject = "Verify Your Email!";
@@ -64,8 +70,6 @@ public class UserService {
                 Instant.now().plus(10, ChronoUnit.MINUTES).toEpochMilli()));
 
         verificationTokenRepository.save(verificationToken);
-
-        return verificationMapper.toSignUpResponse(verificationToken);
     }
 
     public UserResponse getMyInfo(){
@@ -128,7 +132,6 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         userMapper.updateUser(user, request);
-        //set password after encode
         return userMapper.toUserResponse(userRepository.save(user));
     }
     @PreAuthorize("hasRole('ADMIN')")
@@ -148,10 +151,12 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUser(String Id){
-        return userMapper.toUserResponse(userRepository.findById(Id).orElseThrow(() -> new AppException(ErrorCode.USER_ID_NOT_EXISTED)));
+        return userMapper.toUserResponse(userRepository.findById(Id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_ID_NOT_EXISTED)));
     }
 
-    public String forgotPassword(ForgotPasswordRequest request){
+    @Async
+    public void forgotPassword(ForgotPasswordRequest request){
         //Check username
         String email = request.getEmail();
         User user = userRepository.findByEmail(email)
@@ -173,8 +178,6 @@ public class UserService {
                 .expiryTime(new Date(Instant.now()
                         .plus(5, ChronoUnit.MINUTES).toEpochMilli()))
                 .build());
-
-        return email;
     }
 
     public User getCurrentUser(){

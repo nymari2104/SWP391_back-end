@@ -36,12 +36,14 @@ public class RefundRequestService {
         //Check if order exist
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        //Check if order is approved
-        if(order.getStatus().equals(Status.PENDING.name()))
-            throw new AppException(ErrorCode.ORDER_IS_NOT_PENDING);
         //Check if already refund
         if(order.getRefundRequest() != null)
             throw new AppException(ErrorCode.ALREADY_REQUEST_REFUNDED);
+        //Check if order is approved
+        if(order.getStatus().equals(Status.PENDING.name()))
+            throw new AppException(ErrorCode.ORDER_IS_PENDING);
+        else if(order.getStatus().equals(Status.REJECTED.name()))
+            throw new AppException(ErrorCode.ORDER_IS_REJECTED);
         //map request to RefundRequest Object to save
         RefundRequest refundRequest = refundRequestMapper.toRefundRequest(request);
         refundRequest.setOrder(order);
@@ -54,21 +56,18 @@ public class RefundRequestService {
         //Check if order exist
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-//        //Check if order is approved
-//        if(order.getStatus().equals(Status.PENDING.name()))
-//            throw new AppException(ErrorCode.ORDER_IS_NOT_PENDING);
         //Check refund request exist
         RefundRequest refundRequest = order.getRefundRequest();
         if(refundRequest == null)
             throw new AppException(ErrorCode.REFUND_REQUEST_NOT_FOUND);
         //Check if refund request already be handled
-        if (!refundRequest.getStatus().equals(Status.PENDING.name()))
-            throw new AppException(ErrorCode.ALREADY_HANDLE_REFUND_REQUEST);
+        if (refundRequest.getStatus().equals(Status.APPROVED.name()))
+            throw new AppException(ErrorCode.ALREADY_APPROVED_REFUND_REQUEST);
         //map request to RefundRequest Object to save
         refundRequestMapper.toRefundRequest(request);
-        //Check if request was approved or rejected
+        //Check if request was approved
         if(status.equals(Status.APPROVED.name()))
-            callPayPalRefundApi(refundRequest.getOrder().getPaymentId());
+            callPayPalRefundApi(request.getOrderId());
         refundRequest.setStatus(status);
         //Get info admin who pending the refund
         User user = userService.getCurrentUser();
@@ -96,8 +95,8 @@ public class RefundRequestService {
         return refundRequestMapper.toRefundRequestResponse(refundRequest);
     }
 
-    private void callPayPalRefundApi(String paymentId){
-        String refundEndpoint = "http://localhost:8080/payment/refund?paymentId=" + paymentId;
+    private void callPayPalRefundApi(String orderId){
+        String refundEndpoint = "http://localhost:8080/payment/refund?orderId=" + orderId;
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getForEntity(refundEndpoint, Void.class);
     }

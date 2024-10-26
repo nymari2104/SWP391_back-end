@@ -8,6 +8,8 @@ import com.example.demo.service.WaterParamService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,19 +21,18 @@ public class WaterParamController {
     WaterParamService waterParamService;
 
     @PostMapping("/create")
-    ApiResponse<WaterParam> createWaterParam(@RequestBody WaterParamCreateRequest request) {
-        return ApiResponse.<WaterParam>builder()
-                .message("Create water parameter log successfully")
-                .result(waterParamService.createWaterParam(request))
-                .build();
+    ResponseEntity<ApiResponse<WaterParam>> createWaterParam(@RequestBody WaterParamCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<WaterParam>builder()
+                        .message("Create water parameter log successfully")
+                        .result(waterParamService.createWaterParam(request))
+                        .build());
     }
 
     @PutMapping("/update/{waterParamId}")
-    ApiResponse<WaterParam> updateWaterParam(@PathVariable String waterParamId ,@RequestBody WaterParamUpdateRequest request) {
-        return ApiResponse.<WaterParam>builder()
-                .message("Update water parameter log successfully")
-                .result(waterParamService.updateWaterParam(waterParamId, request))
-                .build();
+    ResponseEntity<Void> updateWaterParam(@PathVariable String waterParamId ,@RequestBody WaterParamUpdateRequest request) {
+        waterParamService.updateWaterParam(waterParamId, request);
+        return ResponseEntity.noContent().build();
     }
 
 }

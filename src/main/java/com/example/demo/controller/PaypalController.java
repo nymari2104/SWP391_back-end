@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.orderRequest.BuyNowRequest;
-import com.example.demo.dto.request.orderRequest.CheckoutRequest;
+import com.example.demo.dto.request.paymentRequest.BuyNowPaymentRequest;
+import com.example.demo.dto.request.paymentRequest.CheckoutPaymentRequest;
+import com.example.demo.dto.request.paymentRequest.PaymentRequest;
 import com.example.demo.dto.response.ApiResponse;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
@@ -27,7 +28,7 @@ public class PaypalController {
 
     @PostMapping("/create/checkout")
     ApiResponse<Map<String, String>> createPaymentForCart(
-                @RequestBody CheckoutRequest request
+                @RequestBody CheckoutPaymentRequest request
     ) {
         try {
             String cancelUrl = "http://localhost:8080/payment/cancel";
@@ -49,7 +50,7 @@ public class PaypalController {
 
     @PostMapping("/create/buy-now")
     ApiResponse<Map<String, String>> createPaymentForBuyNow(
-            @RequestBody BuyNowRequest request
+            @RequestBody BuyNowPaymentRequest request
     ) {
         try {
             String cancelUrl = "http://localhost:8080/payment/cancel";
@@ -96,16 +97,16 @@ public class PaypalController {
     }
 
     @PostMapping("/capture")
-    ApiResponse<Void> capture(@RequestBody String orderId){
-        paypalService.capturePayment(orderId);
+    ApiResponse<Void> capture(@RequestBody PaymentRequest request){
+        paypalService.capturePayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Capture payment successfully!")
                 .build();
     }
 
     @PostMapping("/void")
-    ApiResponse<Void> voidPayment(@RequestBody String orderId){
-        paypalService.voidPayment(orderId);
+    ApiResponse<Void> voidPayment(@RequestBody PaymentRequest request){
+        paypalService.voidPayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Void payment successfully!")
                 .build();

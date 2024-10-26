@@ -8,6 +8,8 @@ import com.example.demo.service.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +23,12 @@ public class ProductController {
     ProductService productService;
 
     @PostMapping("/create")
-    ApiResponse<Product> createProduct(@RequestBody ProductCreateRequest request){
-
-        return ApiResponse.<Product>builder()
-                .result(productService.createProduct(request))
-                .message("Create product successfully")
-                .build();
+    ResponseEntity<ApiResponse<Product>> createProduct(@RequestBody ProductCreateRequest request){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Product>builder()
+                        .result(productService.createProduct(request))
+                        .message("Create product successfully")
+                        .build());
     }
 
     @GetMapping("/list")
@@ -54,21 +56,14 @@ public class ProductController {
     }
 
     @PutMapping("/update/{productId}")
-    ApiResponse<Product> updateProduct(@PathVariable("productId") int productId, @RequestBody ProductUpdateRequest request) {
-        return ApiResponse.<Product>builder()
-                .message("Update product successfully")
-                .result(productService.updateProduct(productId, request))
-                .build();
+    ResponseEntity<Void> updateProduct(@PathVariable("productId") int productId, @RequestBody ProductUpdateRequest request) {
+        productService.updateProduct(productId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("delete/{productId}")
-    ApiResponse<Boolean> deleteProduct(@PathVariable int productId) {
+    ResponseEntity<Void> deleteProduct(@PathVariable int productId) {
         productService.deleteProduct(productId);
-        return ApiResponse.<Boolean>builder()
-                .message("Delete product successfully")
-                .result(true)
-                .build();
+        return ResponseEntity.noContent().build();
     }
-
-
 }

@@ -11,7 +11,7 @@ import com.example.demo.enums.Role;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.UserMapper;
-import com.example.demo.mapper.VerificationMapper;
+import com.example.demo.mapper.VerificationTokenMapper;
 import com.example.demo.repository.InvalidatedTokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.VerificationTokenRepository;
@@ -52,7 +52,7 @@ public class AuthenticationService {
     InvalidatedTokenRepository invalidatedTokenRepository;
     UserMapper userMapper;
     VerificationTokenRepository verificationTokenRepository;
-    VerificationMapper verificationMapper;
+    VerificationTokenMapper verificationTokenMapper;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -81,7 +81,7 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
         if (!user.isStatus())
-            throw new AppException(ErrorCode.LOGIN_FAIL);
+            throw new AppException(ErrorCode.USER_INACTIVE);
         //check match password
         if (!checkMatchPassword(request.getPassword(), user.getPassword()))
             throw new AppException(ErrorCode.LOGIN_FAIL);//no match
@@ -117,6 +117,7 @@ public class AuthenticationService {
                 .email(email)
                 .role(Role.USER.name())
                 .googleAccount(true)
+                .status(checkUser.map(User::isStatus).orElse(true))
                 .build();
         //check if user is not google account
           if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
@@ -154,7 +155,7 @@ public class AuthenticationService {
         //Verify otp
         VerificationToken verificationToken = verifyOtp(request);
 
-        User user = verificationMapper.toUser(verificationToken);
+        User user = verificationTokenMapper.toUser(verificationToken);
         user.setRole(Role.USER.toString());
         user.setGoogleAccount(false);
 

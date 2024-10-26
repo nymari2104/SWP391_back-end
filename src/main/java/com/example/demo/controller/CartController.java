@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +25,12 @@ public class CartController {
     CartService cartService;
 
     @PostMapping("/create")
-    ApiResponse<CartResponse> createCart(@RequestBody CreateCartRequest request) {
-        return ApiResponse.<CartResponse>builder()
-                .message("Create cart successfully")
-                .result(cartService.createCart(request.getUserId()))
-                .build();
+    ResponseEntity<ApiResponse<CartResponse>> createCart(@RequestBody CreateCartRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<CartResponse>builder()
+                        .message("Create cart successfully")
+                        .result(cartService.createCart(request.getUserId()))
+                        .build());
     }
 
     @PostMapping("/{cartId}/add/{productId}")

@@ -1,4 +1,4 @@
-package com.example.demo.dto.request.orderRequest;
+package com.example.demo.dto.request.paymentRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,13 +9,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BuyNowRequest {
-    String fullname;
-    String email;
-    String phone;
-    String address;
+public class BuyNowPaymentRequest {
     float total;
     int productId;
     int quantity;
-    String paymentId;
 }

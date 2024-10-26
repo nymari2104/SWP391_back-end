@@ -56,7 +56,7 @@ public class EmailSender {
         try {
             javaMailSender.send(simpleMailMessage);
         } catch (MailException e) {
-            throw new AppException(ErrorCode.SENDER_EMAIL_IS_NOT_PERMITTED);
+            throw new AppException(ErrorCode.SENDER_EMAIL_IS_NOT_AUTHORIZED);
         }
         return otp;
     }

@@ -1,8 +1,6 @@
 package com.example.demo.dto.request.authenticationRequest;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,13 +10,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SignUpRequest {
     String fullname;
-
-    @NotBlank(message = "BLANK_EMAIL")
-    @Email(message = "EMAIL_INVALID")
     String email;
-    @Size(min = 8, message = "PASSWORD_INVALID")
     String password;
 
 }

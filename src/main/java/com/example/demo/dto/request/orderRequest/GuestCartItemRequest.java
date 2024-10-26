@@ -5,17 +5,11 @@ import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BuyNowRequest {
-    String fullname;
-    String email;
-    String phone;
-    String address;
-    float total;
+public class GuestCartItemRequest {
     int productId;
     int quantity;
-    String paymentId;
 }

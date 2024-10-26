@@ -8,6 +8,7 @@ import com.example.demo.service.PondService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,16 +19,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PondController {
-
     PondService pondService;
 
     @PostMapping("/create")
-    ApiResponse<Pond> createPond(@RequestBody PondCreateRequest request){
-
-        return ApiResponse.<Pond>builder()
-                .result(pondService.createPond(request))
-                .message("Create pond successfully")
-                .build();
+    ResponseEntity<ApiResponse<Pond>> createPond(@RequestBody PondCreateRequest request){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Pond>builder()
+                        .result(pondService.createPond(request))
+                        .message("Create pond successfully")
+                        .build());
     }
 
     @GetMapping("/user/{userId}")
