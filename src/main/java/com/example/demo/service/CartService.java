@@ -61,7 +61,11 @@ public class CartService {
         if (!cart.getCartId().isEmpty()) {
             for (CartItem item : cart.getCartItems()) {
                 if (item.getProduct().getProductId() == productId) {
-                    item.setQuantity(request.getQuantity() + item.getQuantity());
+                    int newQuantity = request.getQuantity() + item.getQuantity();
+                    if (newQuantity > product.getStock()) {
+                        throw new AppException(ErrorCode.QUANTITY_GREATER_THAN_STOCK);
+                    }
+                    item.setQuantity(newQuantity);
                     cartItemRepository.save(item);
                     productExistsInCart = true;
                     break;
@@ -69,12 +73,16 @@ public class CartService {
             }
         }
         if (!productExistsInCart) {
-            CartItem cartItem = cartItemRepository.save(CartItem.builder()
-                    .cart(cart)
-                    .product(product)
-                    .quantity(request.getQuantity())
-                    .build());
-            cart.getCartItems().add(cartItem);
+            if(request.getQuantity() > product.getStock())
+                throw new AppException(ErrorCode.QUANTITY_GREATER_THAN_STOCK);
+            else {
+                CartItem cartItem = cartItemRepository.save(CartItem.builder()
+                        .cart(cart)
+                        .product(product)
+                        .quantity(request.getQuantity())
+                        .build());
+                cart.getCartItems().add(cartItem);
+            }
         }
 
         List<CartItemResponse> itemResponses = cart.getCartItems().stream()
@@ -99,6 +107,9 @@ public class CartService {
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+        if(request.getQuantity() > cartItem.getProduct().getStock())
+            throw new AppException(ErrorCode.QUANTITY_GREATER_THAN_STOCK);
 
         cartItem.setQuantity(request.getQuantity());
         cartItemRepository.save(cartItem);

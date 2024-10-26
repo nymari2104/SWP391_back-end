@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.categoryResponse.CategoryResponse;
 import com.example.demo.entity.Category;
 import com.example.demo.service.CategoryService;
 import lombok.AccessLevel;
@@ -27,8 +28,8 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<Category> getCategory(@PathVariable int id) {
-        return ApiResponse.<Category>builder()
+    ApiResponse<CategoryResponse> getCategory(@PathVariable int id) {
+        return ApiResponse.<CategoryResponse>builder()
                 .result(categoryService.getCategory(id))
                 .message("Get category successfully")
                 .build();

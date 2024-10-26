@@ -55,11 +55,11 @@ public class Product {
     @Column(name = "status")
     Boolean status;
 
-    @JsonIgnoreProperties({"product"})
-    @OneToMany(mappedBy = "product")
+    @JsonIgnoreProperties({"products"})
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     List<OrderDetail> orderDetails;
 
     @JsonIgnoreProperties({"product"})
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     List<CartItem> cartItems;
 }

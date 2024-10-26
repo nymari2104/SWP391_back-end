@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.dto.request.productRequest.ProductCreateRequest;
 import com.example.demo.dto.request.productRequest.ProductUpdateRequest;
+import com.example.demo.dto.response.categoryResponse.CategoryResponse;
+import com.example.demo.dto.response.productResponse.ProductResponse;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Product;
 import com.example.demo.exception.AppException;
@@ -47,13 +49,51 @@ public class ProductService {
         return productRepository.findAll().stream().toList();
     }
 
-    public Product getProduct(int id) {
-        return productRepository.findById(id)
+//    public Product getProduct(int id) {
+//        return productRepository.findById(id)
+//                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+//    }
+
+    public ProductResponse getProduct(int id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        CategoryResponse categoryResponse = CategoryResponse.builder()
+                .cateId(product.getCategory().getCateId())
+                .cateName(product.getCategory().getCateName())
+                .build();
+
+        return ProductResponse.builder()
+                .productId(product.getProductId())
+                .category(categoryResponse)
+                .productName(product.getProductName())
+                .description(product.getDescription())
+                .image(product.getImage())
+                .stock(product.getStock())
+                .status(product.getStatus())
+                .unitPrice(product.getUnitPrice())
+                .build();
     }
 
-    public List<Product> getAllActiveProduct() {
-        return productRepository.findByStatusTrue().stream().toList();
+    public List<ProductResponse> getAllActiveProduct() {
+        List<Product> products = productRepository.findByStatusTrue().stream().toList();
+        List<ProductResponse> productResponseList = products.stream().map(product -> {
+            CategoryResponse categoryResponse = CategoryResponse.builder()
+                    .cateId(product.getCategory().getCateId())
+                    .cateName(product.getCategory().getCateName())
+                    .build();
+            return ProductResponse.builder()
+                    .productId(product.getProductId())
+                    .category(categoryResponse)
+                    .productName(product.getProductName())
+                    .description(product.getDescription())
+                    .image(product.getImage())
+                    .stock(product.getStock())
+                    .status(product.getStatus())
+                    .unitPrice(product.getUnitPrice())
+                    .build();
+        }).toList();
+        return productResponseList;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -62,7 +102,7 @@ public class ProductService {
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         productMapper.updateProduct(product, request);
-        if(request.getCategoryId() != null) {
+        if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
             product.setCategory(category);

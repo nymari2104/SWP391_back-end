@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.productRequest.ProductCreateRequest;
 import com.example.demo.dto.request.productRequest.ProductUpdateRequest;
 import com.example.demo.dto.response.ApiResponse;
+import com.example.demo.dto.response.productResponse.ProductResponse;
 import com.example.demo.entity.Product;
 import com.example.demo.service.ProductService;
 import lombok.AccessLevel;
@@ -40,16 +41,16 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<Product> getProduct(@PathVariable("id") int id) {
-        return ApiResponse.<Product>builder()
+    ApiResponse<ProductResponse> getProduct(@PathVariable("id") int id) {
+        return ApiResponse.<ProductResponse>builder()
                 .message("Get product successfully")
                 .result(productService.getProduct(id))
                 .build();
     }
 
     @GetMapping("/shop")
-    ApiResponse<List<Product>> getAllActiveProducts() {
-        return ApiResponse.<List<Product>>builder()
+    ApiResponse<List<ProductResponse>> getAllActiveProducts() {
+        return ApiResponse.<List<ProductResponse>>builder()
                 .message("Get all active product successfully")
                 .result(productService.getAllActiveProduct())
                 .build();
