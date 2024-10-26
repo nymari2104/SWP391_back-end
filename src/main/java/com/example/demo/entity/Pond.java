@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 

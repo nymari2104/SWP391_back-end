@@ -59,6 +59,7 @@ public enum ErrorCode {
     ORDER_IS_REJECTED("ORDER_IS_REJECTED","The order is rejected", HttpStatus.BAD_REQUEST),
     ORDER_ALREADY_APPROVED("ORDER_ALREADY_APPROVED","Order is already approved", HttpStatus.BAD_REQUEST),
     ORDER_ALREADY_REJECTED("ORDER_ALREADY_REJECTED","Order is already rejected", HttpStatus.BAD_REQUEST),
+    QUANTITY_GREATER_THAN_STOCK("QUANTITY_GREATER_THAN_STOCK", "Quantity add to cart must be less than or equal stock", HttpStatus.BAD_REQUEST),
     ;
 
      String code;
