@@ -34,6 +34,8 @@ public class OrderDetail {
 
     String productName;
     float unitPrice;
+
+    @Column(name = "description", columnDefinition = "TEXT")
     String description;
 
     @Column(name = "total", nullable = false)

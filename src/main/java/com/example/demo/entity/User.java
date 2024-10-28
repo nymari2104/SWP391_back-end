@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String userId;
+    @Column(name = "fullname", unique = true,  columnDefinition = "NVARCHAR(255)")
     String fullname;
     @Column(name = "email", unique = true,  columnDefinition = "VARCHAR(255)")
     String email;

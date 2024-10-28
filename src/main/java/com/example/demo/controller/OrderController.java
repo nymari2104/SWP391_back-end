@@ -43,7 +43,7 @@ public class OrderController {
     }
 
     @GetMapping("/get-my-orders")
-    ApiResponse<List<CheckoutResponse>> getMyOrder() {
+    ApiResponse<List<CheckoutResponse>> getMyOrders() {
         return ApiResponse.<List<CheckoutResponse>>builder()
                 .message("Get my order successfully!")
                 .result(orderService.getMyOrders())
@@ -51,7 +51,7 @@ public class OrderController {
     }
 
     @GetMapping("/get-all-orders")
-    ApiResponse<List<CheckoutResponse>> getAllOrder() {
+    ApiResponse<List<CheckoutResponse>> getAllOrders() {
         return ApiResponse.<List<CheckoutResponse>>builder()
                 .message("Get all order successfully!")
                 .result(orderService.getAllOrders())

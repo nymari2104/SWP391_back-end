@@ -67,26 +67,24 @@ public class BlogService {
 
         return blogRepository.findAll()
                 .stream()
-                .map(blog -> {
-                    return BlogResponse.builder()
-                            .blogId(blog.getBlogId())
-                            .image(blog.getImage())
-                            .title(blog.getTitle())
-                            .content(blog.getContent())
-                            .createDate(blog.getCreateDate())
-                            .fullname(blog.getUser().getFullname())
-                            .userId(blog.getUser().getUserId())
-                            .build();
-                }).collect(Collectors.toList());
+                .map(blog -> BlogResponse.builder()
+                        .blogId(blog.getBlogId())
+                        .image(blog.getImage())
+                        .title(blog.getTitle())
+                        .content(blog.getContent())
+                        .createDate(blog.getCreateDate())
+                        .fullname(blog.getUser().getFullname())
+                        .userId(blog.getUser().getUserId())
+                        .build()).collect(Collectors.toList());
     }
 
-    public Blog updateBlog(int blogId, BlogUpdateRequest request) {
+    public void updateBlog(int blogId, BlogUpdateRequest request) {
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
 
         blogMapper.updateBlog(blog, request);
 
-        return blogRepository.save(blog);
+        blogRepository.save(blog);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -102,16 +100,14 @@ public class BlogService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return user.getBlogs().stream().map(
-                blog -> {
-                    return BlogResponse.builder()
-                            .blogId(blog.getBlogId())
-                            .image(blog.getImage())
-                            .title(blog.getTitle())
-                            .content(blog.getContent())
-                            .createDate(blog.getCreateDate())
-                            .fullname(blog.getUser().getFullname())
-                            .build();
-                }
+                blog -> BlogResponse.builder()
+                        .blogId(blog.getBlogId())
+                        .image(blog.getImage())
+                        .title(blog.getTitle())
+                        .content(blog.getContent())
+                        .createDate(blog.getCreateDate())
+                        .fullname(blog.getUser().getFullname())
+                        .build()
         ).toList();
     }
 }

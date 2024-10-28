@@ -56,7 +56,8 @@ public class KoiService {
         return koi.orElse(null);
     }
 
-    public Koi updateKoi(int koiId, KoiUpdateRequest request) {
+    @PreAuthorize("hasRole('USER')")
+    public void updateKoi(int koiId, KoiUpdateRequest request) {
         Koi koi = koiRepository.findById(koiId)
                 .orElseThrow(() -> new AppException(ErrorCode.KOI_NOT_FOUND));
 
@@ -68,9 +69,10 @@ public class KoiService {
             koi.setPond(pond);
         }
 
-        return koiRepository.save(koi);
+        koiRepository.save(koi);
     }
 
+    @PreAuthorize("hasRole('USER')")
     public void deleteKoi(int koiId) {
         if (koiRepository.existsById(koiId))
             koiRepository.deleteById(koiId);

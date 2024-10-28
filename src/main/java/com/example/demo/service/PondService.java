@@ -47,6 +47,7 @@ public class PondService {
         );
     }
 
+    @PreAuthorize("hasRole('USER')")
     public Pond getPond(int pondId) {
         return pondRepository.findById(pondId)
                 .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
@@ -59,6 +60,7 @@ public class PondService {
         return user.getPonds();
     }
 
+    @PreAuthorize("hasRole('USER')")
     public void deletePond(int pondId) {
         if (pondRepository.existsById(pondId))
             pondRepository.deleteById(pondId);
@@ -66,10 +68,11 @@ public class PondService {
             throw new AppException(ErrorCode.POND_NOT_FOUND);
     }
 
-    public Pond updatePond(int pondId, PondUpdateRequest request) {
+    @PreAuthorize("hasRole('USER')")
+    public void updatePond(int pondId, PondUpdateRequest request) {
         Pond pond = pondRepository.findById(pondId)
                 .orElseThrow(() -> new AppException(ErrorCode.POND_NOT_FOUND));
         pondMapper.updatePond(pond, request);
-        return pondRepository.save(pond);
+        pondRepository.save(pond);
     }
 }

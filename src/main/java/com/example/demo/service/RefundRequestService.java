@@ -16,6 +16,7 @@ import com.example.demo.repository.RefundRequestRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -37,12 +38,12 @@ public class RefundRequestService {
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         //Check if already refund
-        if(order.getRefundRequest() != null)
+        if (order.getRefundRequest() != null)
             throw new AppException(ErrorCode.ALREADY_REQUEST_REFUNDED);
-        //Check if order is approved
-        if(order.getStatus().equals(Status.PENDING.name()))
+        //Check if order is already approved
+        if (order.getStatus().equals(Status.PENDING.name()))
             throw new AppException(ErrorCode.ORDER_IS_PENDING);
-        else if(order.getStatus().equals(Status.REJECTED.name()))
+        else if (order.getStatus().equals(Status.REJECTED.name()))
             throw new AppException(ErrorCode.ORDER_IS_REJECTED);
         //map request to RefundRequest Object to save
         RefundRequest refundRequest = refundRequestMapper.toRefundRequest(request);
@@ -58,7 +59,7 @@ public class RefundRequestService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         //Check refund request exist
         RefundRequest refundRequest = order.getRefundRequest();
-        if(refundRequest == null)
+        if (refundRequest == null)
             throw new AppException(ErrorCode.REFUND_REQUEST_NOT_FOUND);
         //Check if refund request already be handled
         if (refundRequest.getStatus().equals(Status.APPROVED.name()))
@@ -66,8 +67,10 @@ public class RefundRequestService {
         //map request to RefundRequest Object to save
         refundRequestMapper.toRefundRequest(request);
         //Check if request was approved
-        if(status.equals(Status.APPROVED.name()))
+        if (status.equals(Status.APPROVED.name())) {
+            order.setStatus(Status.REFUNDED.name());
             callPayPalRefundApi(request.getOrderId());
+        }
         refundRequest.setStatus(status);
         //Get info admin who pending the refund
         User user = userService.getCurrentUser();
@@ -95,7 +98,8 @@ public class RefundRequestService {
         return refundRequestMapper.toRefundRequestResponse(refundRequest);
     }
 
-    private void callPayPalRefundApi(String orderId){
+    @Async
+    protected void callPayPalRefundApi(String orderId) {
         String refundEndpoint = "http://localhost:8080/payment/refund?orderId=" + orderId;
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getForEntity(refundEndpoint, Void.class);

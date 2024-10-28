@@ -101,8 +101,8 @@ public class CartService {
                 .build();
     }
 
-    public Cart updateCartItemQuantity(String cartId, String cartItemId, UpdateQuantityRequest request) {
-        Cart cart = cartRepository.findById(cartId)
+    public void updateCartItemQuantity(String cartId, String cartItemId, UpdateQuantityRequest request) {
+        cartRepository.findById(cartId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
@@ -113,7 +113,6 @@ public class CartService {
 
         cartItem.setQuantity(request.getQuantity());
         cartItemRepository.save(cartItem);
-        return cart;
     }
 
     public void removeCartItem(String cartItemId) {

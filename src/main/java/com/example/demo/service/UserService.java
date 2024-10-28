@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class UserService {
     EmailSender emailSender;
 
     @Async
-    public void createUser(SignUpRequest request){
+    public void createUser(SignUpRequest request) {
         // Check username
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
@@ -72,17 +73,17 @@ public class UserService {
         verificationTokenRepository.save(verificationToken);
     }
 
-    public UserResponse getMyInfo(){
+    public UserResponse getMyInfo() {
         return userMapper.toUserResponse(getCurrentUser());
     }
 
-    public UserResponse updateMyInfo(UpdateMyInfoRequest request){
+    public void updateMyInfo(UpdateMyInfoRequest request) {
         User user = getCurrentUser();
         userMapper.updateUser(user, request);
-        return userMapper.toUserResponse(userRepository.save(user));
+        userMapper.toUserResponse(userRepository.save(user));
     }
 
-    public void updateMyPassword(UpdatePasswordRequest request){
+    public void updateMyPassword(UpdatePasswordRequest request) {
         //Get user who currently log in
         User user = getCurrentUser();
         //Check if google account
@@ -99,7 +100,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void resetPassword(ResetPasswordRequest request){
+    public void resetPassword(ResetPasswordRequest request) {
         //Get user who has been verified forgot password
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
@@ -112,7 +113,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse createAdminAccount(SignUpRequest request){
+    public UserResponse createAdminAccount(SignUpRequest request) {
         //Map request to User
         User user = userMapper.toUser(request);
         //Encode password
@@ -128,14 +129,15 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse updateUser(String userId, UserUpdateRequest request){
+    public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         userMapper.updateUser(user, request);
         return userMapper.toUserResponse(userRepository.save(user));
     }
+
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteUser(String userId){
+    public void deleteUser(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         user.setStatus(false);
@@ -143,20 +145,20 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserResponse> getUsers(){
+    public List<UserResponse> getUsers() {
         return userRepository.findAll()
                 .stream()
                 .map(userMapper::toUserResponse).toList();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse getUser(String Id){
+    public UserResponse getUser(String Id) {
         return userMapper.toUserResponse(userRepository.findById(Id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_ID_NOT_EXISTED)));
     }
 
     @Async
-    public void forgotPassword(ForgotPasswordRequest request){
+    public void forgotPassword(ForgotPasswordRequest request) {
         //Check username
         String email = request.getEmail();
         User user = userRepository.findByEmail(email)
@@ -180,7 +182,7 @@ public class UserService {
                 .build());
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         var context = SecurityContextHolder.getContext();//when user login success, user info will be store in SecurityContextHolder
         String email = context.getAuthentication().getName();//get email of user
 

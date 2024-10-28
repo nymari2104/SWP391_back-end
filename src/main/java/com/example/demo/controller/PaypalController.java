@@ -28,7 +28,7 @@ public class PaypalController {
 
     @PostMapping("/create/checkout")
     ApiResponse<Map<String, String>> createPaymentForCart(
-                @RequestBody CheckoutPaymentRequest request
+            @RequestBody CheckoutPaymentRequest request
     ) {
         try {
             String cancelUrl = "http://localhost:8080/payment/cancel";
@@ -74,11 +74,11 @@ public class PaypalController {
     RedirectView paymentSuccess(
             @RequestParam("paymentId") String paymentId,
             @RequestParam("PayerID") String payerId
-    ) throws PayPalRESTException{
-            Payment payment = paypalService.executePayment(paymentId, payerId);
-            if(!payment.getState().equals("approved")) {
-                 return new RedirectView("/payment/error");
-            }
+    ) throws PayPalRESTException {
+        Payment payment = paypalService.executePayment(paymentId, payerId);
+        if (!payment.getState().equals("approved")) {
+            return new RedirectView("/payment/error");
+        }
         return new RedirectView(
                 "http://localhost:5173/payment/success?paymentId=" + paymentId);
     }
@@ -87,9 +87,9 @@ public class PaypalController {
     RedirectView paymentSuccessBuy(
             @RequestParam("paymentId") String paymentId,
             @RequestParam("PayerID") String payerId
-    ) throws PayPalRESTException{
+    ) throws PayPalRESTException {
         Payment payment = paypalService.executePayment(paymentId, payerId);
-        if(!payment.getState().equals("approved")) {
+        if (!payment.getState().equals("approved")) {
             return new RedirectView("/payment/error");
         }
         return new RedirectView(
@@ -97,7 +97,7 @@ public class PaypalController {
     }
 
     @PostMapping("/capture")
-    ApiResponse<Void> capture(@RequestBody PaymentRequest request){
+    ApiResponse<Void> capture(@RequestBody PaymentRequest request) {
         paypalService.capturePayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Capture payment successfully!")
@@ -105,7 +105,7 @@ public class PaypalController {
     }
 
     @PostMapping("/void")
-    ApiResponse<Void> voidPayment(@RequestBody PaymentRequest request){
+    ApiResponse<Void> voidPayment(@RequestBody PaymentRequest request) {
         paypalService.voidPayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Void payment successfully!")
@@ -113,7 +113,7 @@ public class PaypalController {
     }
 
     @GetMapping("/refund")
-    ApiResponse<Void> refund(@RequestParam("orderId") String orderId){
+    ApiResponse<Void> refund(@RequestParam("orderId") String orderId) {
         paypalService.refundPayment(orderId);
         return ApiResponse.<Void>builder()
                 .message("Refund payment successfully!")
@@ -122,12 +122,12 @@ public class PaypalController {
 
 
     @GetMapping("/cancel")
-    String paymentCancel(){
-        return "cancel";
+    RedirectView paymentCancel() {
+        return new RedirectView("http://localhost:5173/checkout");
     }
 
     @GetMapping("/error")
-    String paymentError(){
-        return "error";
+    RedirectView paymentError() {
+        return new RedirectView("http://localhost:5173/cancel");
     }
 }

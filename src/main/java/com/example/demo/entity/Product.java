@@ -49,7 +49,7 @@ public class Product {
     @Column(name = "stock")
     int stock;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     String description;
 
     @Column(name = "status")

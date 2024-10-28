@@ -11,6 +11,7 @@ import com.example.demo.repository.KoiRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
@@ -25,8 +26,8 @@ public class KoiGrowthLogService {
     KoiRepository koiRepository;
     KoiGrowthLogMapper koiGrowthLogMapper;
 
+    @PreAuthorize("hasRole('USER')")
     public KoiGrowthLog createKoiGrowthLog(KoiGrowthLogCreateRequest request) {
-
         Koi koi = koiRepository.findById(request.getKoiId())
                 .orElseThrow(() -> new AppException(ErrorCode.KOI_NOT_FOUND));
 
@@ -38,6 +39,7 @@ public class KoiGrowthLogService {
         return koiGrowthLogRepository.save(koiGrowthLog);
     }
 
+    @PreAuthorize("hasRole('USER')")
     public void deleteKoiGrowthLog(String koiLogId) {
         if (koiGrowthLogRepository.existsById(koiLogId))
             koiGrowthLogRepository.deleteById(koiLogId);
