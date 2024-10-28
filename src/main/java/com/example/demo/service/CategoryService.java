@@ -25,7 +25,6 @@ public class CategoryService {
         return categoryRepository.findAll().stream().toList();
     }
 
-
     public CategoryResponse getCategory(int id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
