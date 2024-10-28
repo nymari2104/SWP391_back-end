@@ -77,10 +77,10 @@ public class UserService {
         return userMapper.toUserResponse(getCurrentUser());
     }
 
-    public void updateMyInfo(UpdateMyInfoRequest request) {
+    public UserResponse updateMyInfo(UpdateMyInfoRequest request) {
         User user = getCurrentUser();
         userMapper.updateUser(user, request);
-        userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     public void updateMyPassword(UpdatePasswordRequest request) {

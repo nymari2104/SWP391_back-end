@@ -201,7 +201,7 @@ public class PaypalService {
         return payment.execute(apiContext, paymentExecution);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public void refundPayment(String orderId) {
         //Check if order exist
         Order order = orderRepository.findById(orderId)

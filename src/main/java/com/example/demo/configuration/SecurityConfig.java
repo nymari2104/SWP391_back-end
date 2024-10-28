@@ -28,7 +28,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/category/**",
             "/product/**",
             "/category/**",
-            "/payment/create/checkout","/payment/create/buy-now","/payment/success","/payment/success-buy-now",
+            "/payment/create/checkout","/payment/create/buy-now","/payment/success","/payment/success-buy-now","/payment/refund",
             "/blog/{blogId}","/blog/list"
     };
 

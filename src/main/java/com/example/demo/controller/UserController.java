@@ -67,9 +67,10 @@ public class UserController {
 
     //Update my info
     @PutMapping("/update-my-info")
-    ResponseEntity<Void> updateMyInfo(@RequestBody UpdateMyInfoRequest request) {
-        userService.updateMyInfo(request);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<ApiResponse<UserResponse>> updateMyInfo(@RequestBody UpdateMyInfoRequest request) {
+        return ResponseEntity.ok().body(ApiResponse.<UserResponse>builder()
+                        .result(userService.updateMyInfo(request))
+                .build());
     }
 
     //Update user
