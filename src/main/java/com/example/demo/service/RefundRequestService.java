@@ -98,7 +98,6 @@ public class RefundRequestService {
         return refundRequestMapper.toRefundRequestResponse(refundRequest);
     }
 
-    @Async
     protected void callPayPalRefundApi(String orderId) {
         String refundEndpoint = "http://localhost:8080/payment/refund?orderId=" + orderId;
         RestTemplate restTemplate = new RestTemplate();

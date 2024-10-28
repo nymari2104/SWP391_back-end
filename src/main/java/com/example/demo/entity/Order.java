@@ -36,7 +36,7 @@ public class Order {
     @Column(name = "phone", length = 10)
     String phone;
 
-    @Column(name = "address")
+    @Column(name = "address", columnDefinition = "TEXT")
     String address;
 
     @Column(name = "email")

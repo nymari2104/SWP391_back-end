@@ -24,6 +24,7 @@ public class User {
     @Column(name = "email", unique = true,  columnDefinition = "VARCHAR(255)")
     String email;
     String phone;
+    @Column(name = "address", columnDefinition = "TEXT")
     String address;
     String password;
     boolean googleAccount;

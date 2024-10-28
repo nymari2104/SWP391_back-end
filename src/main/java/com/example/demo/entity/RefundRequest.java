@@ -41,7 +41,4 @@ public class RefundRequest {
 
     @Column(name = "adminId")
     String adminId;
-
-    @Column(name = "refundResponse")
-    String refundResponse;
 }
