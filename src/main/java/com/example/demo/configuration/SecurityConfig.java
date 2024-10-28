@@ -23,20 +23,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final String[] PUBLIC_ENDPOINTS ={
-            "/users/**",
+            "/users/sign-up", "/users/reset-password", "/forgot-password",
             "auth/**",
             "/category/**",
             "/product/**",
-            "/blog/**",
-            "/pond/**",
-            "/koi/**",
             "/category/**",
-            "/water-param/**",
-            "/koi-growth-log/**",
-            "/payment/**",
-            "/cart/**",
-            "/order/**",
-            "/refund/**"
+            "/payment/create/checkout","/payment/create/buy-now","/payment/success","/payment/success-buy-now",
+            "/blog/{blogId}","/blog/list"
     };
 
     @Autowired
@@ -51,15 +44,15 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .anyRequest().authenticated())
                     .csrf(AbstractHttpConfigurer::disable)
                     .oauth2ResourceServer(oauth2 ->
-                    oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer
-                                .decoder(customJwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                        oauth2.jwt(jwtConfigurer ->
+                            jwtConfigurer
+                                    .decoder(customJwtDecoder)
+                                    .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                            .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+
+
                             //redirect user when authentication failed
-
             );
-
         return httpSecurity
                 .build();
     }
@@ -95,5 +88,4 @@ public class SecurityConfig implements WebMvcConfigurer {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);
     }
-
 }

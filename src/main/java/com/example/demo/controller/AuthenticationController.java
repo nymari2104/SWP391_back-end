@@ -24,7 +24,7 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/sign-in")
-    ResponseEntity<ApiResponse<SignInResponse>> signIn(@RequestBody SignInRequest request){
+    ResponseEntity<ApiResponse<SignInResponse>> signIn(@RequestBody SignInRequest request) {
         var result = authenticationService.authenticate(request);
         return ResponseEntity.ok()
                 .body(ApiResponse.<SignInResponse>builder()
@@ -35,10 +35,10 @@ public class AuthenticationController {
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
-            throws JOSEException {
+            throws JOSEException, ParseException {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
-                .message("Authenticate successfully!")
+                .message("Introspect successfully!")
                 .result(result)
                 .build();
     }
@@ -51,7 +51,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify-sign-up")
-    ApiResponse<UserResponse> verifySignUp(@RequestBody VerifyOtpRequest request){
+    ApiResponse<UserResponse> verifySignUp(@RequestBody VerifyOtpRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .message("sign-up successfully!")
                 .result(authenticationService.verifySignUp(request))
@@ -59,7 +59,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify-reset-password")
-    ApiResponse<String> verifyResetPassword(@RequestBody VerifyOtpRequest request){
+    ApiResponse<String> verifyResetPassword(@RequestBody VerifyOtpRequest request) {
         return ApiResponse.<String>builder()
                 .message("Verify successfully!")
                 .result(authenticationService.verifyOtp(request).getEmail())

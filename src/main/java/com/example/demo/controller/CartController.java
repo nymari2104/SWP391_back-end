@@ -37,7 +37,6 @@ public class CartController {
     ApiResponse<CartResponse> addToCart(@PathVariable("cartId") String cartId,
                                         @PathVariable("productId") int productId,
                                         @RequestBody AddToCartRequest request) {
-
         return ApiResponse.<CartResponse>builder()
                 .message("Add to cart successfully")
                 .result(cartService.addToCart(cartId, productId, request))

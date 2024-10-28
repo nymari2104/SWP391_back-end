@@ -27,7 +27,7 @@ public class UserController {
 
     //Create a user
     @PostMapping("/sign-up")
-    ResponseEntity<ApiResponse<SignUpResponse>> createUser(@Valid @RequestBody SignUpRequest request){
+    ResponseEntity<ApiResponse<SignUpResponse>> createUser(@Valid @RequestBody SignUpRequest request) {
         userService.createUser(request);
         return ResponseEntity.accepted()
                 .body(ApiResponse.<SignUpResponse>builder()
@@ -40,16 +40,16 @@ public class UserController {
 
     //Get all users
     @GetMapping
-    ApiResponse<List<UserResponse>> getUsers(){
-       return ApiResponse.<List<UserResponse>>builder()
-               .message("Get all users successfully!")
-               .result(userService.getUsers())
-               .build();
+    ApiResponse<List<UserResponse>> getUsers() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .message("Get all users successfully!")
+                .result(userService.getUsers())
+                .build();
     }
 
     //Get specific user
     @GetMapping("/{userId}")
-    ApiResponse<UserResponse> getUser(@PathVariable String userId){
+    ApiResponse<UserResponse> getUser(@PathVariable String userId) {
         return ApiResponse.<UserResponse>builder()
                 .message("Get user successfully!")
                 .result(userService.getUser(userId))
@@ -58,7 +58,7 @@ public class UserController {
 
     //get info who is login
     @GetMapping("/my-info")
-    ApiResponse<UserResponse> getMyInfo(){
+    ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .message("Get my info successfully!")
                 .result(userService.getMyInfo())
@@ -67,16 +67,14 @@ public class UserController {
 
     //Update my info
     @PutMapping("/update-my-info")
-    ApiResponse<UserResponse> updateMyInfo(@RequestBody UpdateMyInfoRequest request){
-        return ApiResponse.<UserResponse>builder()
-                .message("Update info successfully!")
-                .result(userService.updateMyInfo(request))
-                .build();
+    ResponseEntity<Void> updateMyInfo(@RequestBody UpdateMyInfoRequest request) {
+        userService.updateMyInfo(request);
+        return ResponseEntity.noContent().build();
     }
 
     //Update user
     @PutMapping("/{userId}")
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request){
+    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .message("Update user successfully!")
                 .result(userService.updateUser(userId, request))
@@ -85,13 +83,13 @@ public class UserController {
 
     //Delete user
     @DeleteMapping("/{userId}")
-    ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable String userId){
+    ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
-        return  ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/forgot-password")
-    ResponseEntity<ApiResponse<String>> forgotPassword(@RequestBody ForgotPasswordRequest request){
+    ResponseEntity<ApiResponse<String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         userService.forgotPassword(request);
         return ResponseEntity.accepted()
                 .body(ApiResponse.<String>builder()
@@ -100,22 +98,20 @@ public class UserController {
                         .build());
     }
 
-    @PostMapping("/reset-password")
-    ApiResponse<Void> resetPassword(@RequestBody ResetPasswordRequest request){
+    @PutMapping("/reset-password")
+    ResponseEntity<ApiResponse<Void>> resetPassword(@RequestBody ResetPasswordRequest request) {
         userService.resetPassword(request);
-        return ApiResponse.<Void>builder()
-                .message("Reset password successfully!")
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/update-password")
-    ResponseEntity<ApiResponse<Void>> updatePassword(@RequestBody UpdatePasswordRequest request){
+    ResponseEntity<ApiResponse<Void>> updatePassword(@RequestBody UpdatePasswordRequest request) {
         userService.updateMyPassword(request);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/admin/create")
-    ResponseEntity<ApiResponse<UserResponse>> createAdmin(@Valid @RequestBody SignUpRequest request){
+    ResponseEntity<ApiResponse<UserResponse>> createAdmin(@Valid @RequestBody SignUpRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<UserResponse>builder()
                         .code("201")

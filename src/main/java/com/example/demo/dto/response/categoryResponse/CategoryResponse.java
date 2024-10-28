@@ -1,7 +1,6 @@
 package com.example.demo.dto.response.categoryResponse;
 
 import com.example.demo.dto.response.productResponse.ProductResponse;
-import com.example.demo.entity.Product;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

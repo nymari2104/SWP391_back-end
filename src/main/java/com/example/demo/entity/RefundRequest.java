@@ -28,7 +28,7 @@ public class RefundRequest {
     @Column(name = "refundReason")
     String refundReason;
 
-    @Column(name = "refundReasonImage")
+    @Column(name = "refundReasonImage", columnDefinition = "TEXT")
     String refundReasonImage;
 
     @CreationTimestamp

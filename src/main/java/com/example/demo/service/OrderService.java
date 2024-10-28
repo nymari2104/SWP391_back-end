@@ -22,13 +22,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,7 +53,7 @@ public class OrderService {
             OrderDetail orderDetail;
             orderDetails = new ArrayList<>();
             //Check all product he/she buys
-            for(GuestCartItemRequest cartItemRequest : request.getCartItems()){
+            for (GuestCartItemRequest cartItemRequest : request.getCartItems()) {
                 //Check exist product
                 product = productRepository.findById(cartItemRequest.getProductId()).orElseThrow(() ->
                         new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -72,7 +70,7 @@ public class OrderService {
                 orderDetails.add(orderDetail);
             }
             //If Member or admin buy and have cart
-        }else {
+        } else {
             //get cart
             cart = cartRepository.findById(request.getCartId())
                     .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
@@ -91,9 +89,12 @@ public class OrderService {
                     })
                     .collect(Collectors.toList());
             //Delete Cart
-            User user = cart.getUser();
+            User user = order.getUser();
             //Remove relation between cart and user in user before delete cart
             user.setCart(null);
+            //Remember Phone and address when user checkout
+            user.setAddress(request.getAddress());
+            user.setPhone(request.getPhone());
             userRepository.save(user);
             cartRepository.delete(cart);
         }
@@ -108,13 +109,14 @@ public class OrderService {
     }
 
     public CheckoutResponse buyNow(BuyNowRequest request) {
+        //Create Order
+        Order order = createOrderObject(request);
         //Check exist Product
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         //Check if product has enough stock
         decreaseProductStock(product, request.getQuantity());
-        //Create Order
-        Order order = createOrderObject(request);
+
         OrderDetail orderDetail = OrderDetail.builder()
                 .order(order)
                 .product(product)
@@ -126,6 +128,9 @@ public class OrderService {
         orderDetails.add(orderDetail);
         order.setOrderDetails(orderDetails);
         order.setPaymentId(request.getPaymentId());
+        //Remember Phone and address when user checkout
+        order.getUser().setAddress(order.getAddress());
+        order.getUser().setPhone(order.getPhone());
         //Save Order
         orderRepository.save(order);
         //Map Order to OrderResponse
@@ -134,10 +139,10 @@ public class OrderService {
                 .build();
     }
 
-    public List<CheckoutResponse> getMyOrders(){
+    public List<CheckoutResponse> getMyOrders() {
         User user = userService.getCurrentUser();
         List<Order> orders = user.getOrders();
-        return  orders.stream().map(order -> {
+        return orders.stream().map(order -> {
             OrderResponse orderResponse = OrderMapper.INSTANCE.toOrderResponse(order);
             CheckoutResponse checkoutResponse = new CheckoutResponse();
             checkoutResponse.setOrder(orderResponse);
@@ -145,7 +150,8 @@ public class OrderService {
         }).collect(Collectors.toList());
     }
 
-    public List<CheckoutResponse> getAllOrders(){
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<CheckoutResponse> getAllOrders() {
         return orderRepository.findAll().stream().map(order -> {
             OrderResponse orderResponse = OrderMapper.INSTANCE.toOrderResponse(order);
             CheckoutResponse checkoutResponse = new CheckoutResponse();
@@ -168,12 +174,17 @@ public class OrderService {
     }
 
     private void decreaseProductStock(Product product, int quantity) {
+        //Check if product is active
+        if (!product.getStatus()) {
+            throw new AppException(ErrorCode.PRODUCT_IS_INACTIVE);
+        }
         //Check if product has enough stock
         int productStockRemaining = product.getStock() - quantity;
-        if (productStockRemaining < 0)
+        if (productStockRemaining < 0) {
             throw new AppException(ErrorCode.PRODUCT_NOT_ENOUGH_STOCK);
+        }
         //If stock remaining is 0, set status unavailable
-        if(productStockRemaining == 0)
+        if (productStockRemaining == 0)
             product.setStatus(false);
         //Decrease stock of product
         product.setStock(productStockRemaining);
@@ -194,29 +205,28 @@ public class OrderService {
         try {
             user = userService.getCurrentUser();
         } catch (Exception e) {
-            user = null;
-        }
-        //Create userId for Guest
-        if (user == null)
+            //Create userId for Guest
             user = userRepository.save(User.builder()
                     .userId("GUEST-" + UUID.randomUUID())
                     .build());
-        else{
-            if (cartId != null) {
-                Cart cart = cartRepository.findById(cartId)
-                        .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
-                if (!cart.getUser().getUserId().equals(user.getUserId())) {
-                    throw new AppException(ErrorCode.DID_NOT_OWN_CART);
-                }
-            }//If member, check this cart is his/her own
         }
+        if (cartId != null) {
+            Cart cart = cartRepository.findById(cartId)
+                    .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+            if (!cart.getUser().getUserId().equals(user.getUserId())) {
+                throw new AppException(ErrorCode.DID_NOT_OWN_CART);
+            }
+        }//If member, check this cart is his/her own
+
         order.setCreateDate(new Date(Instant.now().toEpochMilli()));
         order.setStatus(Status.PENDING.name());
         order.setUser(user);
         try {
-            return orderRepository.save(order);
+            return order;
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.PAYMENT_ID_EXISTED);
         }
     }
 }
+
+

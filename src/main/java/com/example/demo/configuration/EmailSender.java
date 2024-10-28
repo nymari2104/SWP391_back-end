@@ -17,6 +17,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -32,7 +33,6 @@ public class EmailSender {
     @NonFinal
     @Value("${spring.mail.username}")
     protected String SENDER_EMAIL;
-
 
 
     public int sendSixDigitOtp(String to, String subject, String body){
@@ -61,6 +61,7 @@ public class EmailSender {
         return otp;
     }
 
+    @Async
     public void sendOrderEmail(Order order) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

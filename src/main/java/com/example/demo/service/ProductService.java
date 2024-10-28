@@ -28,11 +28,10 @@ public class ProductService {
     CategoryRepository categoryRepository;
     ProductMapper productMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Product createProduct(ProductCreateRequest request) {
-
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-
         return productRepository.save(Product.builder()
                 .productName(request.getName())
                 .image(request.getImage())
@@ -77,7 +76,7 @@ public class ProductService {
 
     public List<ProductResponse> getAllActiveProduct() {
         List<Product> products = productRepository.findByStatusTrue().stream().toList();
-        List<ProductResponse> productResponseList = products.stream().map(product -> {
+        return products.stream().map(product -> {
             CategoryResponse categoryResponse = CategoryResponse.builder()
                     .cateId(product.getCategory().getCateId())
                     .cateName(product.getCategory().getCateName())
@@ -93,11 +92,10 @@ public class ProductService {
                     .unitPrice(product.getUnitPrice())
                     .build();
         }).toList();
-        return productResponseList;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Product updateProduct(int productId, ProductUpdateRequest request) {
+    public void updateProduct(int productId, ProductUpdateRequest request) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
@@ -108,7 +106,7 @@ public class ProductService {
             product.setCategory(category);
         }
 
-        return productRepository.save(product);
+        productRepository.save(product);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

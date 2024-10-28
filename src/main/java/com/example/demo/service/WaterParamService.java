@@ -38,11 +38,11 @@ public class WaterParamService {
         return waterParamRepository.save(waterParam);
     }
 
-    public WaterParam updateWaterParam(String waterParamId,WaterParamUpdateRequest request) {
+    public void updateWaterParam(String waterParamId, WaterParamUpdateRequest request) {
         WaterParam waterParam = waterParamRepository.findById(waterParamId)
                 .orElseThrow(() -> new AppException(ErrorCode.WATER_PARAM_NOT_FOUND));
         waterParamMapper.updateWaterParam(waterParam, request);
         waterParam.setCreateDate(new Date());
-        return waterParamRepository.save(waterParam);
+        waterParamRepository.save(waterParam);
     }
 }

@@ -7,11 +7,9 @@ import com.example.demo.entity.Product;
 import com.example.demo.exception.AppException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.CategoryRepository;
-import com.example.demo.repository.ProductRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +20,6 @@ import java.util.List;
 public class CategoryService {
 
     CategoryRepository categoryRepository;
-    ProductRepository productRepository;
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll().stream().toList();

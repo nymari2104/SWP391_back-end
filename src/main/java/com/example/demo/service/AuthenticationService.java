@@ -60,23 +60,21 @@ public class AuthenticationService {
 
 
     public IntrospectResponse introspect(IntrospectRequest request)
-            throws JOSEException{
+            throws JOSEException, ParseException {
         //get token
         var token = request.getToken();
-        //check token
         boolean isValid = true;
         try {
             verifyToken(token);
-        } catch (ParseException e) {
+        } catch (Exception e) {
+            log.error(e.getMessage());
             isValid = false;
         }
-
         return IntrospectResponse.builder()
                 .valid(isValid).build();
-
     }
 
-    public SignInResponse authenticate(SignInRequest request){
+    public SignInResponse authenticate(SignInRequest request) {
         //check username
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.LOGIN_FAIL));
@@ -120,9 +118,9 @@ public class AuthenticationService {
                 .status(checkUser.map(User::isStatus).orElse(true))
                 .build();
         //check if user is not google account
-          if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
+        if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }else if (checkUser.isEmpty()){
+        } else if (checkUser.isEmpty()) {
             userRepository.save(user);
         }
 
@@ -151,7 +149,7 @@ public class AuthenticationService {
         invalidatedTokenRepository.save(invalidatedToken);
     }
 
-    public UserResponse verifySignUp(VerifyOtpRequest request){
+    public UserResponse verifySignUp(VerifyOtpRequest request) {
         //Verify otp
         VerificationToken verificationToken = verifyOtp(request);
 
@@ -159,9 +157,9 @@ public class AuthenticationService {
         user.setRole(Role.USER.toString());
         user.setGoogleAccount(false);
 
-            user = userRepository.save(user);
+        user = userRepository.save(user);
 
-         return userMapper.toUserResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
     public SignedJWT verifyToken(String token) throws ParseException, JOSEException {
@@ -177,23 +175,24 @@ public class AuthenticationService {
         //4. Verify signature of signedJWT
         var verified = signedJWT.verify(verifier);
 
-        if(!(verified && expiryTime.after(new Date())))
+        if (!(verified && expiryTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         //5. Check if token has been logout
-        if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
             throw new AppException(ErrorCode.TOKEN_INVALID);
+
         return signedJWT;
     }
 
-    public boolean checkMatchPassword(String requestPassword, String userPassword){
+    public boolean checkMatchPassword(String requestPassword, String userPassword) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         return passwordEncoder.matches(requestPassword, userPassword);
     }
 
-    public VerificationToken verifyOtp(VerifyOtpRequest request){
+    public VerificationToken verifyOtp(VerifyOtpRequest request) {
         //get verificationToken
-        VerificationToken verificationToken = verificationTokenRepository.findById(request.getOtp())
+        VerificationToken verificationToken = verificationTokenRepository.findByOtp(request.getOtp())
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_OTP_INVALID));
         //check if this otp is generated for sign-up email
         if (!verificationToken.getEmail().equals(request.getEmail()))
@@ -204,7 +203,7 @@ public class AuthenticationService {
         return verificationToken;
     }
 
-    private String generateToken(User user){
+    private String generateToken(User user) {
         //1. Create jwt header
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         //2. Create jwt payload
