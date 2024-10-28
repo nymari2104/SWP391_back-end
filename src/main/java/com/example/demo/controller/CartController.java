@@ -33,7 +33,7 @@ public class CartController {
                         .build());
     }
 
-    @PostMapping("/{cartId}/add/{productId}")
+    @PutMapping("/{cartId}/add/{productId}")
     ApiResponse<CartResponse> addToCart(@PathVariable("cartId") String cartId,
                                         @PathVariable("productId") int productId,
                                         @RequestBody AddToCartRequest request) {
