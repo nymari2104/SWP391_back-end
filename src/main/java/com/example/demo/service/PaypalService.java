@@ -24,7 +24,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -229,7 +228,7 @@ public class PaypalService {
         orderRepository.save(order);
     }
 
-    @Async
+//    @Async
     @PreAuthorize("hasRole('ADMIN')")
     public void capturePayment(String orderId) {
         //Check if order exist
