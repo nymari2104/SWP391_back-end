@@ -120,7 +120,10 @@ public class AuthenticationService {
         //check if user is not google account
         if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-        } else if (checkUser.isEmpty()) {
+        }else if(checkUser.isPresent() && !checkUser.get().isStatus()){
+            throw new AppException(ErrorCode.USER_INACTIVE);
+        }
+        else if (checkUser.isEmpty()) {
             userRepository.save(user);
         }
 
