@@ -40,7 +40,6 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -108,29 +107,28 @@ public class AuthenticationService {
         String email = userInfoJson.get("email").asText();
         String name = userInfoJson.get("name").asText();
         //Check if user exist
-        Optional<User> checkUser = userRepository.findByEmail(email);
-        User user = User.builder()
-                .userId(checkUser.map(User::getUserId).orElse(null))
-                .fullname(name)
-                .email(email)
-                .role(Role.USER.name())
-                .googleAccount(true)
-                .status(checkUser.map(User::isStatus).orElse(true))
-                .build();
+        User checkUser = userRepository.findByEmail(email)
+                .orElseGet(() -> User.builder()
+                        .fullname(name)
+                        .email(email)
+                        .role(Role.USER.name())
+                        .googleAccount(true)
+                        .build());
+
         //check if user is not google account
-        if (checkUser.isPresent() && !checkUser.get().isGoogleAccount()) {
+        if (!checkUser.isGoogleAccount()) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }else if(checkUser.isPresent() && !checkUser.get().isStatus()){
+        }else if(!checkUser.isStatus()){
             throw new AppException(ErrorCode.USER_INACTIVE);
         }
-        else if (checkUser.isEmpty()) {
-            userRepository.save(user);
+        else if(checkUser.getUserId() == null){
+            checkUser = userRepository.save(checkUser);
         }
 
-        var token = generateToken(user);
+        var token = generateToken(checkUser);
 
         return SignInResponse.builder()
-                .user(userMapper.toUserResponse(user))
+                .user(userMapper.toUserResponse(checkUser))
                 .token(token)
                 .build();
     }

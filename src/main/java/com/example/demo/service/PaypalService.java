@@ -228,7 +228,6 @@ public class PaypalService {
         orderRepository.save(order);
     }
 
-//    @Async
     @PreAuthorize("hasRole('ADMIN')")
     public void capturePayment(String orderId) {
         //Check if order exist
