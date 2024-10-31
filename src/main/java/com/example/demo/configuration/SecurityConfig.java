@@ -22,14 +22,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
-    private final String[] PUBLIC_ENDPOINTS ={
+    private final String[] PUBLIC_ENDPOINTS = {
             "/users/sign-up", "/users/reset-password", "/forgot-password",
             "auth/**",
             "/category/**",
             "/product/**",
             "/category/**",
-            "/payment/create/checkout","/payment/create/buy-now","/payment/success","/payment/success-buy-now","/payment/refund",
-            "/blog/{blogId}","/blog/list"
+            "/payment/create/checkout", "/payment/create/buy-now", "/payment/success", "/payment/success-buy-now", "/payment/refund",
+            "/blog/{blogId}", "/blog/list"
     };
 
     @Autowired
@@ -37,22 +37,22 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-            httpSecurity
-                    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                    .authorizeHttpRequests(request ->
-                    request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                            .anyRequest().authenticated())
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwtConfigurer ->
-                            jwtConfigurer
-                                    .decoder(customJwtDecoder)
-                                    .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                            .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+        httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                                .anyRequest().authenticated())
+                .csrf(AbstractHttpConfigurer::disable)
+                .oauth2ResourceServer(oauth2 ->
+                                oauth2.jwt(jwtConfigurer ->
+                                                jwtConfigurer
+                                                        .decoder(customJwtDecoder)
+                                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
 
 
-                            //redirect user when authentication failed
-            );
+                        //redirect user when authentication failed
+                );
         return httpSecurity
                 .build();
     }
@@ -72,7 +72,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     //Change SCOPE_ to ROLE_
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter(){
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
         //set prefix
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
@@ -85,7 +85,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 }
