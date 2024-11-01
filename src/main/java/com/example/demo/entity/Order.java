@@ -33,7 +33,7 @@ public class Order {
     @JoinColumn(name = "id")
     User user;
 
-    @Column(name = "phone", length = 10)
+    @Column(name = "phone", columnDefinition = "VARCHAR(MAX)")
     String phone;
 
     @Column(name = "address", columnDefinition = "TEXT")

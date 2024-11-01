@@ -108,7 +108,7 @@ public class OrderService {
                 .build();
     }
 
-    public CheckoutResponse buyNow(BuyNowRequest request) {
+    public CheckoutResponse buyNow(BuyNowRequest request) throws MessagingException {
         //Create Order
         Order order = createOrderObject(request);
         //Check exist Product
@@ -133,6 +133,8 @@ public class OrderService {
         order.getUser().setPhone(order.getPhone());
         //Save Order
         orderRepository.save(order);
+        //send invoice
+        emailSender.sendOrderEmail(order);
         //Map Order to OrderResponse
         return CheckoutResponse.builder()
                 .order(OrderMapper.INSTANCE.toOrderResponse(order))

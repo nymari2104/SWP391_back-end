@@ -67,7 +67,7 @@ public class EmailSender {
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         helper.setTo(order.getEmail());
-        helper.setSubject("Hóa đơn mua hàng");
+        helper.setSubject("Purchase Invoice");
         helper.setText(generateOrderHtml(order), true);
         helper.setFrom(SENDER_EMAIL);
 
@@ -78,7 +78,7 @@ public class EmailSender {
         StringBuilder htmlContent = new StringBuilder();
 
         htmlContent.append("<html><head><style>");
-        // CSS chung
+        // Common CSS
         htmlContent.append("table {font-family: Arial, sans-serif; border-collapse: collapse; width: 100%;}");
         htmlContent.append("td, th {border: 1px solid #ddd; padding: 8px;}");
         htmlContent.append("th {background-color: #f2f2f2; text-align: left;}");
@@ -86,23 +86,23 @@ public class EmailSender {
         htmlContent.append(".summary {font-weight: bold;}");
         htmlContent.append("</style></head><body>");
 
-        // Nội dung email
-        htmlContent.append("<h2 class='title'>Chi tiết đơn hàng</h2>");
+        // Email content
+        htmlContent.append("<h2 class='title'>Order Details</h2>");
         htmlContent.append("<table>");
-        htmlContent.append("<tr><th>Mã đơn hàng:</th><td>").append(order.getOrderId()).append("</td></tr>");
-        htmlContent.append("<tr><th>Mã thanh toán:</th><td>").append(order.getPaymentId()).append("</td></tr>");
-        htmlContent.append("<tr><th>Tên khách hàng:</th><td>").append(order.getFullname()).append("</td></tr>");
-        htmlContent.append("<tr><th>Số điện thoại:</th><td>").append(order.getPhone()).append("</td></tr>");
+        htmlContent.append("<tr><th>Order ID:</th><td>").append(order.getOrderId()).append("</td></tr>");
+        htmlContent.append("<tr><th>Payment ID:</th><td>").append(order.getPaymentId()).append("</td></tr>");
+        htmlContent.append("<tr><th>Customer Name:</th><td>").append(order.getFullname()).append("</td></tr>");
+        htmlContent.append("<tr><th>Phone Number:</th><td>").append(order.getPhone()).append("</td></tr>");
         htmlContent.append("<tr><th>Email:</th><td>").append(order.getEmail()).append("</td></tr>");
-        htmlContent.append("<tr><th>Địa chỉ:</th><td>").append(order.getAddress()).append("</td></tr>");
-        htmlContent.append("<tr><th>Trạng thái:</th><td>").append(order.getStatus()).append("</td></tr>");
-        htmlContent.append("<tr><th>Ngày tạo:</th><td>").append(order.getCreateDate()).append("</td></tr>");
+        htmlContent.append("<tr><th>Address:</th><td>").append(order.getAddress()).append("</td></tr>");
+        htmlContent.append("<tr><th>Status:</th><td>").append(order.getStatus()).append("</td></tr>");
+        htmlContent.append("<tr><th>Creation Date:</th><td>").append(order.getCreateDate()).append("</td></tr>");
         htmlContent.append("</table>");
 
-        // Chi tiết đơn hàng
-        htmlContent.append("<h3 class='title'>Chi tiết sản phẩm</h3>");
+        // Order details
+        htmlContent.append("<h3 class='title'>Product Details</h3>");
         htmlContent.append("<table>");
-        htmlContent.append("<tr><th>Sản phẩm</th><th>Số lượng</th><th>Giá</th></tr>");
+        htmlContent.append("<tr><th>Product</th><th>Quantity</th><th>Price</th></tr>");
         for (OrderDetail detail : order.getOrderDetails()) {
             htmlContent.append("<tr>");
             htmlContent.append("<td>").append(detail.getProductName()).append("</td>");

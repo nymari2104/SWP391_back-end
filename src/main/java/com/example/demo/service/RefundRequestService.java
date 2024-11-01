@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.request.RefundRequestRequest.HandleRefundRequestRequest;
 import com.example.demo.dto.request.RefundRequestRequest.RefundRequestRequest;
+import com.example.demo.dto.request.paymentRequest.PaymentRequest;
 import com.example.demo.dto.response.RefundRequestResponse.RefundRequestResponse;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.RefundRequest;
@@ -16,8 +17,14 @@ import com.example.demo.repository.RefundRequestRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -31,6 +38,8 @@ public class RefundRequestService {
     OrderRepository orderRepository;
     RefundRequestMapper refundRequestMapper;
     UserService userService;
+
+
 
     public RefundRequestResponse makeARefund(RefundRequestRequest request) {
         //Check if order exist
@@ -98,8 +107,32 @@ public class RefundRequestService {
     }
 
     protected void callPayPalRefundApi(String orderId) {
-        String refundEndpoint = "http://localhost:8080/payment/refund?orderId=" + orderId;
+        String refundEndpoint = "http://localhost:8080/payment/refund";
+        JwtAuthenticationToken context =(JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        String jwtToken = null;
+        if (context != null && context.getPrincipal() != null)
+            jwtToken = context.getToken().getTokenValue();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.set("Content-Type", "application/json");
+
+        // Thiết lập request body với HttpEntity
+        HttpEntity<PaymentRequest> entity =
+                new HttpEntity<>(PaymentRequest.builder()
+                        .orderId(orderId)
+                        .build(),
+                        headers);
+        // Gọi API bằng RestTemplate
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getForEntity(refundEndpoint, Void.class);
+        try {
+            restTemplate.exchange(
+                    refundEndpoint,
+                    HttpMethod.POST,
+                    entity,
+                    Void.class);
+        } catch (RestClientException e) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
     }
 }

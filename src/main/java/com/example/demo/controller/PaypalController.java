@@ -112,9 +112,9 @@ public class PaypalController {
                 .build();
     }
 
-    @GetMapping("/refund")
-    ApiResponse<Void> refund(@RequestParam("orderId") String orderId) {
-        paypalService.refundPayment(orderId);
+    @PostMapping("/refund")
+    ApiResponse<Void> refund(@RequestBody PaymentRequest request) {
+        paypalService.refundPayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Refund payment successfully!")
                 .build();
@@ -128,6 +128,6 @@ public class PaypalController {
 
     @GetMapping("/error")
     RedirectView paymentError() {
-        return new RedirectView("http://localhost:5173/cancel");
+        return new RedirectView("http://localhost:5173/payment/cancel");
     }
 }

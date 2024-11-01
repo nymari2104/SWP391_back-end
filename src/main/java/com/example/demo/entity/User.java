@@ -23,6 +23,7 @@ public class User {
     String fullname;
     @Column(name = "email", unique = true,  columnDefinition = "VARCHAR(255)")
     String email;
+    @Column(name = "phone", columnDefinition = "VARCHAR(MAX)")
     String phone;
     @Column(name = "address", columnDefinition = "TEXT")
     String address;

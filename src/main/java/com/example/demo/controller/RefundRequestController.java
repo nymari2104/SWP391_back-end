@@ -55,7 +55,6 @@ public class RefundRequestController {
                 .build();
     }
 
-    //    @PostAuthorize("hasRole('ADMIN') or returnObject.")
     @GetMapping("/{refundRequestId}")
     ApiResponse<RefundRequestResponse> getRefundRequest(@PathVariable String refundRequestId) {
         return ApiResponse.<RefundRequestResponse>builder()

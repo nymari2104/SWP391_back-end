@@ -34,7 +34,7 @@ public class OrderController {
     }
 
     @PostMapping("/create/buy-now")
-    ResponseEntity<ApiResponse<CheckoutResponse>> buyNow(@RequestBody BuyNowRequest request) {
+    ResponseEntity<ApiResponse<CheckoutResponse>> buyNow(@RequestBody BuyNowRequest request) throws MessagingException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<CheckoutResponse>builder()
                         .message("Buy now successfully!")
