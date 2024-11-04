@@ -9,6 +9,7 @@ import com.example.demo.exception.ErrorCode;
 import com.example.demo.service.PaypalService;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -97,7 +98,7 @@ public class PaypalController {
     }
 
     @PostMapping("/capture")
-    ApiResponse<Void> capture(@RequestBody PaymentRequest request) {
+    ApiResponse<Void> capture(@RequestBody PaymentRequest request) throws MessagingException {
         paypalService.capturePayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Capture payment successfully!")
@@ -105,7 +106,7 @@ public class PaypalController {
     }
 
     @PostMapping("/void")
-    ApiResponse<Void> voidPayment(@RequestBody PaymentRequest request) {
+    ApiResponse<Void> voidPayment(@RequestBody PaymentRequest request) throws MessagingException {
         paypalService.voidPayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Void payment successfully!")
@@ -113,7 +114,7 @@ public class PaypalController {
     }
 
     @PostMapping("/refund")
-    ApiResponse<Void> refund(@RequestBody PaymentRequest request) {
+    ApiResponse<Void> refund(@RequestBody PaymentRequest request) throws MessagingException {
         paypalService.refundPayment(request.getOrderId());
         return ApiResponse.<Void>builder()
                 .message("Refund payment successfully!")

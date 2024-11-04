@@ -25,7 +25,7 @@ public class RefundRequest {
     @JoinColumn(name = "orderId", unique = true)
     Order order;
 
-    @Column(name = "refundReason")
+    @Column(name = "refundReason", columnDefinition = "NVARCHAR(MAX)")
     String refundReason;
 
     @Column(name = "refundReasonImage", columnDefinition = "TEXT")

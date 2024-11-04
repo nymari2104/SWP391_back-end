@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.configuration.EmailSender;
 import com.example.demo.dto.request.orderRequest.GuestCartItemRequest;
 import com.example.demo.dto.request.paymentRequest.BuyNowPaymentRequest;
 import com.example.demo.dto.request.paymentRequest.CheckoutPaymentRequest;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,6 +44,7 @@ public class PaypalService {
     CartRepository cartRepository;
     OrderRepository orderRepository;
     ProductRepository productRepository;
+    EmailSender emailSender;
 
     @NonFinal
     protected RestTemplate restTemplate = new RestTemplate();
@@ -112,12 +115,6 @@ public class PaypalService {
 
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        //Check if product is active
-        if (!product.getStatus())
-            throw new AppException(ErrorCode.PRODUCT_IS_INACTIVE);
-        //Check if product has enough stock
-        if (request.getQuantity() > product.getStock())
-            throw new AppException(ErrorCode.PRODUCT_NOT_ENOUGH_STOCK);
         items.add(item(product, request.getQuantity(), currency));
         return createPayment(method, intent, description, cancelUrl, successUrl, amount, items);
     }
@@ -201,7 +198,7 @@ public class PaypalService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void refundPayment(String orderId) {
+    public void refundPayment(String orderId) throws MessagingException {
         //Check if order exist
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
@@ -214,7 +211,6 @@ public class PaypalService {
         } catch (Exception e) {
             throw new AppException(ErrorCode.ORDER_IS_PENDING);
         }
-        // Trả về phản hồi từ PayPal API
         try {
             restTemplate.exchange(
                     PAYPAL_REFUND_API + captureId + "/refund",
@@ -224,12 +220,12 @@ public class PaypalService {
         } catch (RestClientException e) {
             throw new AppException(ErrorCode.PAYMENT_ID_INVALID);
         }
-//        //Set status before refunded
-        orderRepository.save(order);
+        order.setStatus(Status.REFUNDED.name());
+        emailSender.sendOrderEmail(order);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void capturePayment(String orderId) {
+    public void capturePayment(String orderId) throws MessagingException {
         //Check if order exist
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
@@ -237,7 +233,6 @@ public class PaypalService {
         String authorizationId = payment.path("transactions").get(0)
                 .path("related_resources").get(0)
                 .path("authorization").path("id").asText();
-        // Trả về phản hồi từ PayPal API
         try {
             restTemplate.exchange(
                     PAYPAL_CAPTURE_API + authorizationId + "/capture",
@@ -245,16 +240,16 @@ public class PaypalService {
                     setBody(payment),
                     Void.class);
         } catch (RestClientException e) {
-            log.error("error {}", e.getMessage());
             throw new AppException(ErrorCode.ORDER_ALREADY_APPROVED);
         }
         //Set status before capture
         order.setStatus(Status.APPROVED.name());
         orderRepository.save(order);
+        emailSender.sendOrderEmail(order);
     }
 
 
-    public void voidPayment(String orderId) {
+    public void voidPayment(String orderId) throws MessagingException {
         //Check if order exist
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
@@ -263,7 +258,6 @@ public class PaypalService {
                 .path("related_resources").get(0)
                 .path("authorization").path("id").asText();
         HttpEntity<String> entity = new HttpEntity<>(setHeader());
-        // Trả về phản hồi từ PayPal API
         try {
             restTemplate.exchange(
                     PAYPAL_VOID_API + authorizationId + "/void",
@@ -282,11 +276,12 @@ public class PaypalService {
             productRepository.save(product);
         });
         orderRepository.save(order);
+        emailSender.sendOrderEmail(order);
     }
 
     private JsonNode createPayment(String paymentId) {
         HttpEntity<JsonNode> entity = new HttpEntity<>(setHeader());
-        // Trả về phản hồi từ PayPal API
+        //Get response from PayPal API
         ResponseEntity<JsonNode> response;
         try {
             response = restTemplate.exchange(
@@ -311,23 +306,35 @@ public class PaypalService {
     }
 
     private String getAccessToken() {
+        // Combines the client ID and client secret with a colon to create credentials
         String credentials = apiContext.getClientID() + ":" + apiContext.getClientSecret();
-        String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        httpHeaders.set("Authorization", "Basic " + encodedCredentials);
 
+        // Encodes the credentials using Base64 to prepare for Basic Authentication header
+        String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
+
+        // Sets up HTTP headers for the request
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED); // Indicates form data in body
+        httpHeaders.set("Authorization", "Basic " + encodedCredentials);   // Adds Basic Auth header with encoded credentials
+
+        // Creates the body of the request with grant_type parameter set to client_credentials
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "client_credentials");
 
+        // Wraps the headers and body into an HttpEntity for the request
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, httpHeaders);
 
+        // Sends a POST request to the PayPal API endpoint to obtain an access token
         ResponseEntity<JsonNode> response = restTemplate.postForEntity(PAYPAL_ACCESS_TOKEN_API, request, JsonNode.class);
 
+        // Checks if the response status is OK (200), throws an error if not
         if (!(response.getStatusCode() == HttpStatus.OK))
             throw new AppException(ErrorCode.FAIL_TO_RETRIEVE_TOKEN);
+
+        // Extracts the access token from the JSON response body and returns it
         return Objects.requireNonNull(response.getBody()).path("access_token").asText();
     }
+
 
     private HttpHeaders setHeader() {
         //createOrderDetail headers with Bearer token

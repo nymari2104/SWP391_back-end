@@ -21,7 +21,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +42,9 @@ public class OrderService {
     EmailSender emailSender;
 
     public CheckoutResponse checkout(CheckoutRequest request) throws MessagingException {
+        //Check if there already has order for this paymentId
+        if(orderRepository.existsByPaymentId(request.getPaymentId()))
+            throw new AppException(ErrorCode.PAYMENT_ID_EXISTED);
         //create new order
         Order order = createOrderObject(request);
         Cart cart;
@@ -109,6 +111,9 @@ public class OrderService {
     }
 
     public CheckoutResponse buyNow(BuyNowRequest request) throws MessagingException {
+        //Check if there already has order for this paymentId
+        if(orderRepository.existsByPaymentId(request.getPaymentId()))
+            throw new AppException(ErrorCode.PAYMENT_ID_EXISTED);
         //Create Order
         Order order = createOrderObject(request);
         //Check exist Product
@@ -132,7 +137,7 @@ public class OrderService {
         order.getUser().setAddress(order.getAddress());
         order.getUser().setPhone(order.getPhone());
         //Save Order
-        orderRepository.save(order);
+            orderRepository.save(order);
         //send invoice
         emailSender.sendOrderEmail(order);
         //Map Order to OrderResponse
@@ -217,17 +222,12 @@ public class OrderService {
                     .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
             if (!cart.getUser().getUserId().equals(user.getUserId())) {
                 throw new AppException(ErrorCode.DID_NOT_OWN_CART);
-            }
-        }//If member, check this cart is his/her own
-
+            }//If member, check this cart is his/her own
+        }
         order.setCreateDate(new Date(Instant.now().toEpochMilli()));
         order.setStatus(Status.PENDING.name());
         order.setUser(user);
-        try {
             return order;
-        } catch (DataIntegrityViolationException e) {
-            throw new AppException(ErrorCode.PAYMENT_ID_EXISTED);
-        }
     }
 }
 

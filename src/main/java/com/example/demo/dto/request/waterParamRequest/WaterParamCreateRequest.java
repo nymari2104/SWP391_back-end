@@ -15,7 +15,6 @@ import java.util.Date;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WaterParamCreateRequest {
-
     float o2;
     float temperature;
     float nh4;

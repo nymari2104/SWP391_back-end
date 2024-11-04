@@ -49,14 +49,14 @@ public class Product {
     @Column(name = "stock")
     int stock;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     String description;
 
     @Column(name = "status")
     Boolean status;
 
     @JsonIgnoreProperties({"products"})
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     List<OrderDetail> orderDetails;
 
     @JsonIgnoreProperties({"product"})

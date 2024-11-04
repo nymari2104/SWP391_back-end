@@ -23,16 +23,18 @@ public class OrderDetail {
     String orderDetailId;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "orderId")
     Order order;
 
     @JsonIgnoreProperties({"orderDetails"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "productId", nullable = false)
     Product product;
 
+    @Column(name = "productName", columnDefinition = "NVARCHAR(MAX)")
     String productName;
+
     float unitPrice;
 
     @Column(name = "description", columnDefinition = "TEXT")

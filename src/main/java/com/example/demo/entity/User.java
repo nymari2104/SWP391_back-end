@@ -19,13 +19,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String userId;
-    @Column(name = "fullname", unique = true,  columnDefinition = "NVARCHAR(255)")
+    @Column(name = "fullname", unique = true,  columnDefinition = "NVARCHAR(MAX)")
     String fullname;
-    @Column(name = "email", unique = true,  columnDefinition = "VARCHAR(255)")
+    @Column(name = "email", unique = true,  columnDefinition = "NVARCHAR(MAX)")
     String email;
     @Column(name = "phone", columnDefinition = "VARCHAR(MAX)")
     String phone;
-    @Column(name = "address", columnDefinition = "TEXT")
+    @Column(name = "address", columnDefinition = "NVARCHAR(MAX)")
     String address;
     String password;
     boolean googleAccount;

@@ -7,6 +7,7 @@ import com.example.demo.exception.ErrorCode;
 import com.example.demo.repository.VerificationTokenRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -62,12 +63,23 @@ public class EmailSender {
     }
 
     @Async
+    @Transactional
     public void sendOrderEmail(Order order) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+        String status = order.getStatus();
         helper.setTo(order.getEmail());
-        helper.setSubject("Purchase Invoice");
+        switch (status) {
+            case "PENDING": helper.setSubject("Purchase Invoice");
+            break;
+            case "APPROVED": helper.setSubject("Approval Invoice");
+            break;
+            case "REJECTED": helper.setSubject("Reject Invoice");
+            break;
+            case "REFUNDED": helper.setSubject("Refund Invoice");
+            break;
+        }
+
         helper.setText(generateOrderHtml(order), true);
         helper.setFrom(SENDER_EMAIL);
 
@@ -86,8 +98,31 @@ public class EmailSender {
         htmlContent.append(".summary {font-weight: bold;}");
         htmlContent.append("</style></head><body>");
 
-        // Email content
-        htmlContent.append("<h2 class='title'>Order Details</h2>");
+        // Title based on order status
+        String title;
+        String message = switch (order.getStatus()) {
+            case "APPROVED" -> {
+                title = "Your Order Has Been Approved";
+                yield "<p>Your order has been approved and is being prepared for shipping. Thank you for your purchase!</p>";
+            }
+            case "REJECTED" -> {
+                title = "Order Rejected";
+                yield "<p>We're sorry to inform you that your order has been rejected. Please contact iyumiza666@gmail.com for further assistance.</p>";
+            }
+            case "REFUNDED" -> {
+                title = "Order Refunded";
+                yield "<p>Your order has been refunded. The refund should appear in your account shortly.</p>";
+            }
+            default -> {
+                title = "Order Details";
+                yield "";
+            }
+        };
+
+        htmlContent.append("<h2 class='title'>").append(title).append("</h2>");
+        htmlContent.append(message);
+
+        // Order summary
         htmlContent.append("<table>");
         htmlContent.append("<tr><th>Order ID:</th><td>").append(order.getOrderId()).append("</td></tr>");
         htmlContent.append("<tr><th>Payment ID:</th><td>").append(order.getPaymentId()).append("</td></tr>");
@@ -116,4 +151,5 @@ public class EmailSender {
 
         return htmlContent.toString();
     }
+
 }

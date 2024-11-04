@@ -36,13 +36,13 @@ public class Order {
     @Column(name = "phone", columnDefinition = "VARCHAR(MAX)")
     String phone;
 
-    @Column(name = "address", columnDefinition = "TEXT")
+    @Column(name = "address", columnDefinition = "NVARCHAR(MAX)")
     String address;
 
     @Column(name = "email")
     String email;
 
-    @Column(name = "fullname")
+    @Column(name = "fullname", columnDefinition = "NVARCHAR(MAX)")
     String fullname;
 
     @Column(name = "status")
@@ -57,7 +57,7 @@ public class Order {
     Date createDate;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<OrderDetail> orderDetails;
 
     @OneToOne(mappedBy = "order")

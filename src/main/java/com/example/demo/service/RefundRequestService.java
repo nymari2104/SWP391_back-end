@@ -76,7 +76,6 @@ public class RefundRequestService {
         refundRequestMapper.toRefundRequest(request);
         //Check if request was approved
         if (status.equals(Status.APPROVED.name())) {
-            order.setStatus(Status.REFUNDED.name());
             callPayPalRefundApi(request.getOrderId());
         }
         refundRequest.setStatus(status);
@@ -106,7 +105,7 @@ public class RefundRequestService {
         return refundRequestMapper.toRefundRequestResponse(refundRequest);
     }
 
-    protected void callPayPalRefundApi(String orderId) {
+    public void callPayPalRefundApi(String orderId) {
         String refundEndpoint = "http://localhost:8080/payment/refund";
         JwtAuthenticationToken context =(JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         String jwtToken = null;

@@ -39,9 +39,11 @@ public class KoiController {
     }
 
     @PutMapping("/update/{koiId}")
-   ResponseEntity<Void> updateKoi(@PathVariable int koiId, @RequestBody KoiUpdateRequest request) {
-        koiService.updateKoi(koiId, request);
-        return ResponseEntity.noContent().build();
+   ResponseEntity<ApiResponse<Koi>> updateKoi(@PathVariable int koiId, @RequestBody KoiUpdateRequest request) {
+        return ResponseEntity.ok().body(ApiResponse.<Koi>builder()
+                        .message("Update koi successfully")
+                        .result(koiService.updateKoi(koiId, request))
+                .build());
     }
 
     @DeleteMapping("/delete/{koiId}")
