@@ -76,6 +76,7 @@ public class RefundRequestService {
         refundRequestMapper.toRefundRequest(request);
         //Check if request was approved
         if (status.equals(Status.APPROVED.name())) {
+            order.setStatus(Status.REFUNDED.name());
             callPayPalRefundApi(request.getOrderId());
         }
         refundRequest.setStatus(status);

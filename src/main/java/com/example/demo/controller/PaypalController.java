@@ -124,7 +124,7 @@ public class PaypalController {
 
     @GetMapping("/cancel")
     RedirectView paymentCancel() {
-        return new RedirectView("http://localhost:5173/checkout");
+        return new RedirectView("http://localhost:5173/payment/cancel");
     }
 
     @GetMapping("/error")

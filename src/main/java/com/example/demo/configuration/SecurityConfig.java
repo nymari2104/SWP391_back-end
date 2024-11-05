@@ -23,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users/sign-up", "/users/reset-password", "/forgot-password",
+            "/users/**",
             "auth/**",
             "/category/**",
             "/product/**",
