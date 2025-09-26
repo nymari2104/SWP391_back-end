@@ -28,8 +28,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://${{ secrets.IP }}/trouni?cloudSqlInstance=trouni-473306:asia-east1:trouni-db&socketFactory=com.google.cloud.sql.postgres.SocketFactory
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
