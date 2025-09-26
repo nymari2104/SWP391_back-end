@@ -41,19 +41,27 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           export_default_credentials: true
 
+
       - name: Build & Push image with Jib
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
           IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
           mvn -B -DskipTests package jib:build -Dimage=$IMAGE
-
+          
       - name: Deploy to Cloud Run
         run: |
+          # Lấy image tag từ commit hash
           IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
-          gcloud run deploy spring-boot-app \
+
+          # Triển khai dịch vụ Cloud Run
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
             --image=$IMAGE \
             --platform=managed \
-            --region=${{ secrets.REGION }} \
+            --region=${{ env.REGION }} \
             --allow-unauthenticated \
-            --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.IP }},SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}"
+            # (GIỮ NGUYÊN) Đặt các biến môi trường không nhạy cảm
+            --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.IP }}" \
+            # (THAY ĐỔI) Dùng --set-secrets để tham chiếu đến Secret Manager một cách an toàn
+            # Thay thế 'TEN_SECRET_...' bằng tên secret thực tế của bạn trong Google Cloud
+            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=TEN_DB_PASSWORD:latest"    
