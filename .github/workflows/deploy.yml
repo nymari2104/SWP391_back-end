@@ -8,7 +8,7 @@ on:
 # Biến môi trường dùng chung cho cả job, giúp dễ dàng quản lý và thay đổi
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: ${{ secrets.GCP_REGION }}
+  REGION: ${{ secrets.REGION }}
   REPOSITORY: trouni-repo
   SERVICE_NAME: spring-boot-app
 
