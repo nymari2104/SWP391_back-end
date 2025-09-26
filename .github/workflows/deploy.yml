@@ -64,4 +64,4 @@ jobs:
             --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.IP }}" \
             # (THAY ĐỔI) Dùng --set-secrets để tham chiếu đến Secret Manager một cách an toàn
             # Thay thế 'TEN_SECRET_...' bằng tên secret thực tế của bạn trong Google Cloud
-            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=TEN_DB_PASSWORD:latest"    
+            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"    
