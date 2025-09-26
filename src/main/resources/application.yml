@@ -27,10 +27,19 @@
 spring:
 
   datasource:
-    url:   jdbc:postgresql://${SPRING_DATASOURCE_URL}:5432/trouni
-    username:  ${SPRING_DATASOURCE_USERNAME}
-    password:  ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:postgresql://${{ secrets.IP }}/trouni?cloudSqlInstance=trouni-473306:asia-east1:trouni-db&socketFactory=com.google.cloud.sql.postgres.SocketFactory
+    username: ${{ secrets.DB_USERNAME }}
+    password: ${{ secrets.DB_PASSWORD }}
     driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: false
   mail:
     host: smtp.gmail.com
     port: 587

@@ -17,7 +17,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "WaterParams")
+@Table(name = "water_params")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WaterParam {
     @Id
@@ -27,32 +27,32 @@ public class WaterParam {
 
     @JsonBackReference
     @OneToOne
-    @JoinColumn(name = "pondId", unique = true)  // unique = true để đảm bảo quan hệ 1-1
+    @JoinColumn(name = "pond_id", unique = true)  // unique = true để đảm bảo quan hệ 1-1
     Pond pond;
 
-    @Column(name = "O2")
+    @Column(name = "o2")
     float o2;
 
     @Column(name = "temperature")
     float temperature;
 
-    @Column(name = "NH4")
+    @Column(name = "nh4")
     float nh4;
 
     @Column(name = "salt")
     float salt;
 
-    @Column(name = "pH")
+    @Column(name = "ph")
     float ph;
 
-    @Column(name = "NO2")
+    @Column(name = "no2")
     float no2;
 
-    @Column(name = "NO3")
+    @Column(name = "no3")
     float no3;
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     Date createDate;
 }

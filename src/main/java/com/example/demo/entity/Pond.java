@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Ponds")
+@Table(name = "ponds")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Pond {
     @Id
@@ -30,16 +30,16 @@ public class Pond {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "pondName", nullable = false)
+    @Column(name = "pond_name", nullable = false)
     String pondName;
 
-    @Column(name = "pumpPower")
+    @Column(name = "pump_power")
     float pumpPower;
 
-    @Column(name = "image", columnDefinition = "VARCHAR(MAX)")
+    @Column(name = "image", columnDefinition = "TEXT")
     String image;
 
     @Column(name = "size")
@@ -56,7 +56,7 @@ public class Pond {
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     Date createDate;
 
     @JsonManagedReference

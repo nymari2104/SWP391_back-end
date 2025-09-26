@@ -12,16 +12,27 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "VerificationTokens")
+@Table(name = "verification_tokens")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class VerificationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "verification_tokens_id")
     int verificationTokensId;
+    
+    @Column(name = "otp")
     int otp;
+    
+    @Column(name = "expiry_time")
     Date expiryTime;
+    
+    @Column(name = "email")
     String email;
+    
+    @Column(name = "password")
     String password;
+    
+    @Column(name = "fullname")
     String fullname;
 }

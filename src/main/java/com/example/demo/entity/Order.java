@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Orders")
+@Table(name = "orders")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order {
     @Id
@@ -25,24 +25,24 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     String orderId;
 
-    @Column(name = "paymentId", nullable = false, unique = true)
+    @Column(name = "payment_id", nullable = false, unique = true)
     String paymentId;
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "phone", columnDefinition = "VARCHAR(MAX)")
+    @Column(name = "phone", columnDefinition = "VARCHAR(20)")
     String phone;
 
-    @Column(name = "address", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "address", columnDefinition = "TEXT")
     String address;
 
-    @Column(name = "email")
+    @Column(name = "email", columnDefinition = "VARCHAR(255)")
     String email;
 
-    @Column(name = "fullname", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "fullname", columnDefinition = "TEXT")
     String fullname;
 
     @Column(name = "status")
@@ -53,7 +53,7 @@ public class Order {
 
 //    @Temporal(TemporalType.DATE)
 //    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     Date createDate;
 
     @JsonManagedReference

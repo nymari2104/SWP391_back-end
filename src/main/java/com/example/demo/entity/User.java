@@ -13,23 +13,27 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Users")
+@Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String userId;
-    @Column(name = "fullname", unique = true,  columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "fullname", unique = true, columnDefinition = "TEXT")
     String fullname;
-    @Column(name = "email", unique = true,  columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "email", unique = true, columnDefinition = "TEXT")
     String email;
-    @Column(name = "phone", columnDefinition = "VARCHAR(MAX)")
+    @Column(name = "phone", columnDefinition = "VARCHAR(20)")
     String phone;
-    @Column(name = "address", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "address", columnDefinition = "TEXT")
     String address;
+    @Column(name = "password")
     String password;
+    @Column(name = "google_account")
     boolean googleAccount;
+    @Column(name = "role")
     String role;
+    @Column(name = "status")
     boolean status;
 
 //    @JsonManagedReference

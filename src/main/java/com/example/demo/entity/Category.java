@@ -13,14 +13,14 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Categories")
+@Table(name = "categories")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category {
     @Id
-    @Column(name = "cateId", nullable = false)
+    @Column(name = "cate_id", nullable = false)
     int cateId;
 
-    @Column(name = "cateName", nullable = false)
+    @Column(name = "cate_name", nullable = false)
     String cateName;
 
 //    @JsonManagedReference

@@ -16,7 +16,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Blogs")
+@Table(name = "blogs")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Blog {
     @Id
@@ -26,13 +26,13 @@ public class Blog {
 
     @JsonIgnoreProperties({"blogs"})
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "image", columnDefinition = "VARCHAR(MAX)")
+    @Column(name = "image", columnDefinition = "TEXT")
     String image;
 
-    @Column(name = "content", columnDefinition = "VARCHAR(MAX)")
+    @Column(name = "content", columnDefinition = "TEXT")
     String content;
 
     @Column(name = "title")
@@ -40,7 +40,7 @@ public class Blog {
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     Date createDate;
 
 }

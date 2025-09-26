@@ -14,7 +14,7 @@ import jakarta.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "CartItem")
+@Table(name = "cart_items")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItem {
     @Id
@@ -24,12 +24,12 @@ public class CartItem {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "cartId")
+    @JoinColumn(name = "cart_id")
     Cart cart;
 
     @JsonIgnoreProperties({"cartItems"})
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "productId")
+    @JoinColumn(name = "product_id")
     Product product;
 
     @Column(name = "quantity", nullable = false)

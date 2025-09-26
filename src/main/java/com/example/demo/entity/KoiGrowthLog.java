@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "KoiGrowthLogs")
+@Table(name = "koi_growth_logs")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KoiGrowthLog {
     @Id
@@ -24,15 +24,15 @@ public class KoiGrowthLog {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "koiId")
+    @JoinColumn(name = "koi_id")
     Koi koi;
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "koiLogDate", nullable = false)
+    @Column(name = "koi_log_date", nullable = false)
     Date koiLogDate;
 
-    @Column(name = "logTime", nullable = false)
+    @Column(name = "log_time", nullable = false)
     @DateTimeFormat(pattern = "HH:mm:ss")
     java.sql.Time logTime;  // Cột lưu giờ
 

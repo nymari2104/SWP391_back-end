@@ -26,12 +26,12 @@ public class Cart {
 
     @JsonBackReference
     @OneToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     User user;
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     Date createDate;
 
     @JsonManagedReference

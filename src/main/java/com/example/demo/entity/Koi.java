@@ -18,7 +18,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Kois")
+@Table(name = "kois")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Koi {
     @Id
@@ -29,13 +29,13 @@ public class Koi {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "pondId")
+    @JoinColumn(name = "pond_id")
     Pond pond;
 
-    @Column(name = "koiName", nullable = false)
+    @Column(name = "koi_name", nullable = false)
     String name;
 
-    @Column(name = "koiImage", columnDefinition = "TEXT")
+    @Column(name = "koi_image", columnDefinition = "TEXT")
     String image;
 
     @Column(name = "sex")
@@ -49,7 +49,7 @@ public class Koi {
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     Date createDate;
 
     @JsonManagedReference

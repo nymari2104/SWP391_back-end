@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Products")
+@Table(name = "products")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Product {
@@ -33,23 +33,23 @@ public class Product {
 
     @JsonIgnoreProperties({"products"})
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cateId")
+    @JoinColumn(name = "cate_id")
     Category category;
 
-    @Column(name = "productName", nullable = false)
+    @Column(name = "product_name", nullable = false)
     String productName;
 
     @Column(name = "image", columnDefinition = "TEXT")
     String image;
 
-    @Column(name = "unitPrice", nullable = false)
+    @Column(name = "unit_price", nullable = false)
     float unitPrice;
 
     @Min(value = 0, message = "STOCK_INVALID")
     @Column(name = "stock")
     int stock;
 
-    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "description", columnDefinition = "TEXT")
     String description;
 
     @Column(name = "status")

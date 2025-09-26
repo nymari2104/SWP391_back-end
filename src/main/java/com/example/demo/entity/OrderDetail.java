@@ -14,7 +14,7 @@ import jakarta.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "OrderDetails")
+@Table(name = "order_details")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDetail {
     @Id
@@ -24,17 +24,18 @@ public class OrderDetail {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "orderId")
+    @JoinColumn(name = "order_id")
     Order order;
 
     @JsonIgnoreProperties({"orderDetails"})
     @ManyToOne
-    @JoinColumn(name = "productId", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     Product product;
 
-    @Column(name = "productName", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "product_name", columnDefinition = "TEXT")
     String productName;
 
+    @Column(name = "unit_price")
     float unitPrice;
 
     @Column(name = "description", columnDefinition = "TEXT")

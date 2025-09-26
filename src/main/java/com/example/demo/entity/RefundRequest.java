@@ -13,7 +13,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "refundRequests")
+@Table(name = "refund_requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RefundRequest {
     @Id
@@ -22,23 +22,23 @@ public class RefundRequest {
     String refundRequestId;
 
     @OneToOne
-    @JoinColumn(name = "orderId", unique = true)
+    @JoinColumn(name = "order_id", unique = true)
     Order order;
 
-    @Column(name = "refundReason", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "refund_reason", columnDefinition = "TEXT")
     String refundReason;
 
-    @Column(name = "refundReasonImage", columnDefinition = "TEXT")
+    @Column(name = "refund_reason_image", columnDefinition = "TEXT")
     String refundReasonImage;
 
     @CreationTimestamp
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     Date createDate;
 
     @Column(name = "status")
     String status;
 
 
-    @Column(name = "adminId")
+    @Column(name = "admin_id")
     String adminId;
 }
