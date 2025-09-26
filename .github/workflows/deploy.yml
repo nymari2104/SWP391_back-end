@@ -47,5 +47,5 @@ jobs:
           gcloud run deploy spring-boot-app \
             --image=$IMAGE \
             --platform=managed \
-            --region=${{ secrets.GCP_REGION }} \
+            --region=${{ secrets.REGION }} \
             --allow-unauthenticated
