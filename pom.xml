@@ -150,6 +150,69 @@
 			<version>1.14.0</version>
 		</dependency>
 	</dependencies>
+	<build>
+
+		<plugins>
+			<!--Google cloud run-->
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>3.4.0</version>
+				<configuration>
+					<from>
+						<image>eclipse-temurin:21-jre</image>
+					</from>
+					<to>
+						<image>gcr.io/trouni-473306/spring-boot-app</image>
+					</to>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${projectlombok-lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>${lombok-mapstruct-binding.version}</version>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+					</annotationProcessorPaths>
+					<compilerArgs>
+						<arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
+						<arg>-Amapstruct.defaultComponentModel=spring</arg>
+						<arg>-Amapstruct.verbose=true</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencyManagement>
 		<dependencies>
@@ -163,79 +226,5 @@
 
 		</dependencies>
 	</dependencyManagement>
-	<build>
 
-
-		<plugins>
-			<!--Google cloud run-->
-			<plugin>
-				<groupId>com.google.cloud.tools</groupId>
-				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.0</version>
-				<configuration>
-					<!-- Base image cho Java 21 -->
-					<from>
-						<image>eclipse-temurin:21-jre</image>
-					</from>
-					<!-- Artifact Registry repository -->
-					<to>
-						<image>asia-southeast1-docker.pkg.dev/trouni-473306/trouni-repo/spring-boot-app</image>
-					</to>
-					<container>
-						<jvmFlags>
-							<jvmFlag>-Xms512m</jvmFlag>
-							<jvmFlag>-Xmx1024m</jvmFlag>
-						</jvmFlags>
-						<ports>
-							<port>8080</port>
-						</ports>
-					</container>
-				</configuration>
-			</plugin>
-
-	<plugin>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-maven-plugin</artifactId>
-		<configuration>
-			<excludes>
-				<exclude>
-					<groupId>org.projectlombok</groupId>
-					<artifactId>lombok</artifactId>
-				</exclude>
-			</excludes>
-		</configuration>
-	</plugin>
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-compiler-plugin</artifactId>
-		<version>${maven-compiler-plugin.version}</version>
-		<configuration>
-			<source>${java.version}</source>
-			<target>${java.version}</target>
-			<annotationProcessorPaths>
-				<path>
-					<groupId>org.projectlombok</groupId>
-					<artifactId>lombok</artifactId>
-					<version>${projectlombok-lombok.version}</version>
-				</path>
-				<path>
-					<groupId>org.projectlombok</groupId>
-					<artifactId>lombok-mapstruct-binding</artifactId>
-					<version>${lombok-mapstruct-binding.version}</version>
-				</path>
-				<path>
-					<groupId>org.mapstruct</groupId>
-					<artifactId>mapstruct-processor</artifactId>
-					<version>${mapstruct.version}</version>
-				</path>
-			</annotationProcessorPaths>
-			<compilerArgs>
-				<arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
-				<arg>-Amapstruct.defaultComponentModel=spring</arg>
-				<arg>-Amapstruct.verbose=true</arg>
-			</compilerArgs>
-		</configuration>
-	</plugin>
-	</plugins>
-	</build>
 </project>
