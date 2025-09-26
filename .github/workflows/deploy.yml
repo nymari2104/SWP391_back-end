@@ -10,11 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create application.properties
-        run: |
-          echo "spring.datasource.url=jdbc:postgresql://${{ secrets.IP }}/trouni" >> SWP391_back-end/D/src/main\/\resources/application.properties
-          echo "spring.datasource.username=${{ secrets.DB_USERNAME }}" >> SWP391_back-end/src/main/resources/application.properties
-          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> SWP391_back-end/src/main/resources/application.properties
 
       - name: Checkout
         uses: actions/checkout@v4
