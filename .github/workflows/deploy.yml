@@ -38,12 +38,12 @@ jobs:
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
-          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-repo/spring-boot-app:${{ github.sha }}
+          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
           mvn -B -DskipTests package jib:build -Dimage=$IMAGE
 
       - name: Deploy to Cloud Run
         run: |
-          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-repo/spring-boot-app:${{ github.sha }}
+          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
           gcloud run deploy spring-boot-app \
             --image=$IMAGE \
             --platform=managed \
