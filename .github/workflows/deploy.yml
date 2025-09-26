@@ -55,5 +55,5 @@ jobs:
             --image=$IMAGE \
             --platform=managed \
             --region=${{ secrets.REGION }} \
-            --allow-unauthenticated
+            --allow-unauthenticated \
             --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.IP }},SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}"
