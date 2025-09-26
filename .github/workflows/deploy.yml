@@ -3,49 +3,61 @@ name: Build & Deploy to Cloud Run
 on:
   push:
     branches:
-      - test-API   # thay bằng tên branch bạn muốn deploy (ảnh của bạn default branch là test-API)
+      - test-API
+
+# Biến môi trường dùng chung cho cả job, giúp dễ dàng quản lý và thay đổi
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: ${{ secrets.GCP_REGION }}
+  REPOSITORY: trouni-repo
+  SERVICE_NAME: spring-boot-app
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
+      # --- CÁC BƯỚC XÁC THỰC VỚI GOOGLE CLOUD ---
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
-
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # --- CÁC BƯỚC BUILD ỨNG DỤNG JAVA ---
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          export_default_credentials: true
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven' # Thêm cache để build nhanh hơn
 
+      # --- BUILD VÀ ĐẨY IMAGE LÊN ARTIFACT REGISTRY ---
       - name: Build & Push image with Jib
-        env:
-          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
-          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
-          mvn -B -DskipTests package jib:build -Dimage=$IMAGE
+          # Tạo một tag duy nhất cho image dựa trên mã commit
+          IMAGE_TAG=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          
+          # Build và đẩy image đi bằng Jib
+          mvn -B -DskipTests package jib:build -Dimage=$IMAGE_TAG
+          
+          # Lưu lại tên image để bước sau có thể dùng
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
+      # --- DEPLOY IMAGE LÊN CLOUD RUN VÀ CẤU HÌNH BIẾN MÔI TRƯỜNG ---
       - name: Deploy to Cloud Run
         run: |
-          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
-          gcloud run deploy spring-boot-app \
-            --image=$IMAGE \
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image=${{ env.IMAGE_TAG }} \
             --platform=managed \
-            --region=${{ secrets.REGION }} \
-            --allow-unauthenticated
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.IP }},SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}"
