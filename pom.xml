@@ -173,11 +173,13 @@
 				<artifactId>jib-maven-plugin</artifactId>
 				<version>3.4.0</version>
 				<configuration>
+					<!-- Base image cho Java 21 -->
 					<from>
 						<image>eclipse-temurin:21-jre</image>
 					</from>
+					<!-- Artifact Registry repository -->
 					<to>
-						<image>gcr.io/trouni-473306/trouni-repo/spring-boot-app</image>
+						<image>asia-southeast1-docker.pkg.dev/trouni-473306/trouni-repo/spring-boot-app</image>
 					</to>
 					<container>
 						<jvmFlags>
@@ -190,6 +192,7 @@
 					</container>
 				</configuration>
 			</plugin>
+
 	<plugin>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-maven-plugin</artifactId>
