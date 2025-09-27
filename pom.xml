@@ -36,11 +36,12 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- THAY ĐỔI 1: Thêm Google Cloud BOM để quản lý phiên bản -->
+			<!-- === THAY ĐỔI 1: SỬ DỤNG BOM CỦA SPRING CLOUD GCP === -->
+			<!-- BOM này quản lý phiên bản cho tất cả các thư viện tích hợp Spring và Google Cloud -->
 			<dependency>
 				<groupId>com.google.cloud</groupId>
-				<artifactId>libraries-bom</artifactId>
-				<version>26.42.0</version>
+				<artifactId>spring-cloud-gcp-dependencies</artifactId>
+				<version>5.5.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -56,22 +57,29 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<!-- === THAY ĐỔI 2: THÊM DEPENDENCY CỦA SECRET MANAGER === -->
+		<!-- Dependency này chứa logic để đọc secret từ GCP -->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>spring-cloud-gcp-starter-secretmanager</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.7.3</version>
 		</dependency>
-		<!-- THAY ĐỔI 2: Xóa version khỏi các thư viện Google Cloud -->
+
+		<!-- === THAY ĐỔI 3: XÓA CÁC VERSION THỪA === -->
 		<dependency>
 			<groupId>com.google.cloud.sql</groupId>
 			<artifactId>postgres-socket-factory</artifactId>
-			<version>1.18.1</version>
-			<!-- Version được quản lý bởi BOM -->
+			<version>1.18.1</version> <!-- XÓA DÒNG NÀY -->
 		</dependency>
 		<dependency>
 			<groupId>com.google.cloud.sql</groupId>
 			<artifactId>jdbc-socket-factory-core</artifactId>
-			<version>1.18.1</version>
+			<version>1.18.1</version> <!-- XÓA DÒNG NÀY -->
 		</dependency>
 		<dependency>
 			<groupId>com.google.api-client</groupId>
@@ -171,7 +179,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.15.0</version>
+			<version>2.15.0</version> <!-- Bạn có thể xem xét xóa version này để dùng version mặc định của Spring Boot 3.3.3 -->
 		</dependency>
 		<dependency>
 			<groupId>com.paypal.sdk</groupId>
@@ -215,7 +223,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
+				<version>3.11.0</version> <!-- Bạn nên khai báo version cho maven-compiler-plugin -->
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
