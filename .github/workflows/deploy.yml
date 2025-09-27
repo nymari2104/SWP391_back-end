@@ -56,8 +56,7 @@ jobs:
             --platform=managed \
             --region=${{ secrets.REGION }} \
             --allow-unauthenticated \
-            --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.IP }},SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}"
-            --remove-env-vars=SPRING_DATASOURCE_URL,SPRING_DATASOURCE_USERNAME,SPRING_DATASOURCE_PASSWORD
+            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
 
 
 
