@@ -47,6 +47,14 @@
 			</dependency>
 
 			<dependency>
+				<groupId>com.google.cloud</groupId>
+				<artifactId>libraries-bom</artifactId>
+				<version>26.42.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
 				<groupId>org.testcontainers</groupId>
 				<artifactId>testcontainers-bom</artifactId>
 				<version>1.19.7</version>
@@ -57,13 +65,6 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>2023.0.3</version> <!-- Version tương thích với Spring Boot 3.3.x -->
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
 		<!-- === THAY ĐỔI 2: THÊM DEPENDENCY CỦA SECRET MANAGER === -->
 		<!-- Dependency này chứa logic để đọc secret từ GCP -->
 		<dependency>
