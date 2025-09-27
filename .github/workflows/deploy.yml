@@ -47,6 +47,12 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          export_default_credentials: true
+
       # 5. Build và Push Docker image bằng Jib
       # Jib sẽ tự động dùng thông tin xác thực Docker đã cấu hình ở bước trên
       - name: Build & Push image with Jib
