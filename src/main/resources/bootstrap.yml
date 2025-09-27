@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gcp:
+      # Khai báo project-id ở đây là tốt nhất
+      project-id: trouni-473306
+      sql:
+        # Cấu hình quan trọng nhất, giờ đã được nạp đúng lúc
+        database-name: trouni-473306:asia-east1:trouni-db

@@ -57,6 +57,13 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies</artifactId>
+			<version>2023.0.3</version> <!-- Version tương thích với Spring Boot 3.3.x -->
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
 		<!-- === THAY ĐỔI 2: THÊM DEPENDENCY CỦA SECRET MANAGER === -->
 		<!-- Dependency này chứa logic để đọc secret từ GCP -->
 		<dependency>
