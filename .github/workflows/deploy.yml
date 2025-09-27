@@ -1,3 +1,4 @@
+
 name: Build & Deploy to Cloud Run
 
 on:
@@ -5,76 +6,60 @@ on:
     branches:
       - test-API
 
-# Biến môi trường dùng chung cho cả job
+# Biến môi trường dùng chung cho cả job, giúp dễ dàng quản lý và thay đổi
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: asia-southeast1 # Điền thẳng region vào đây nếu nó không đổi, hoặc dùng secret
+  REGION: ${{ secrets.REGION }}
   REPOSITORY: trouni-repo
   SERVICE_NAME: spring-boot-app
-  SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }} # Dùng biến để dễ quản  lý
 
 jobs:
   build-and-deploy:
-    # Cấp quyền cho workflow để lấy OIDC token cho Workload Identity Federation
-    permissions:
-      contents: read
-      id-token: write
-
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code (Chỉ cần làm một lần)
-      - name: Checkout repository
+
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Thiết lập Java
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      # 3. Xác thực với Google Cloud (DÙNG WORKLOAD IDENTITY FEDERATION - CÁCH ĐÚNG)
       - name: Authenticate to Google Cloud
-        id: auth # Đặt id để các bước sau có thể tham chiếu
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
-          service_account: ${{ env.SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # 4. Cấu hình Docker để push lên Artifact Registry
-      # Bước này phải chạy SAU KHI đã xác thực thành công
       - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+        run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
 
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: ${{ env.PROJECT_ID }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
           export_default_credentials: true
 
-      # 5. Build và Push Docker image bằng Jib
-      # Jib sẽ tự động dùng thông tin xác thực Docker đã cấu hình ở bước trên
-      - name: Build & Push image with Jib
-        run: |
-          IMAGE_TAG=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-          mvn -B -DskipTests package jib:build -Dimage=$IMAGE_TAG
 
-      # 6. Deploy lên Cloud Run với Service Account và Secrets
+      - name: Build & Push image with Jib
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
+          mvn -B -DskipTests package jib:build -Dimage=$IMAGE
+
       - name: Deploy to Cloud Run
         run: |
-          IMAGE_TAG=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-
+          # Lấy image tag từ commit hash
+          IMAGE=asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/trouni-repo/spring-boot-app:${{ github.sha }}
           # Triển khai dịch vụ Cloud Run
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image=$IMAGE_TAG \
+            --image=$IMAGE \
             --platform=managed \
             --region=${{ env.REGION }} \
             --allow-unauthenticated \
-            # BƯỚC QUAN TRỌNG NHẤT: Gắn Service Account cho dịch vụ Cloud Run
-            # Để ứng dụng Spring Boot của bạn có quyền đọc Secret Manager lúc chạy
-            --service-account=${{ env.SERVICE_ACCOUNT }}
-            # Ví dụ về cách inject secret vào biến môi trường của Cloud Run
-            # Ứng dụng Spring của bạn sẽ đọc biến môi trường SPRING_DATASOURCE_PASSWORD
-            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest"\
-            --set-secrets="SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
+            # (THAY ĐỔI) Dùng --set-secrets để tham chiếu đến Secret Manager một cách an toàn
+            # Thay thế 'TEN_SECRET_...' bằng tên secret thực tế của bạn trong Google Cloud
+            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
