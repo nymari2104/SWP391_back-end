@@ -60,9 +60,5 @@ jobs:
             --platform=managed \
             --region=${{ env.REGION }} \
             --allow-unauthenticated \
-            # (GIỮ NGUYÊN) Đặt các biến môi trường không nhạy cảm
-            --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.IP }}" \
             # (THAY ĐỔI) Dùng --set-secrets để tham chiếu đến Secret Manager một cách an toàn
             # Thay thế 'TEN_SECRET_...' bằng tên secret thực tế của bạn trong Google Cloud
-            --set-secrets DB_USERNAME=DB_USERNAME:latest \ 
-            --set-secrets DB_PASSWORD=DB_PASSWORD:latest    
