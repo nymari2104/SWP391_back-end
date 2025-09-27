@@ -56,7 +56,10 @@ jobs:
             --platform=managed \
             --region=${{ secrets.REGION }} \
             --allow-unauthenticated \
-            --update-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
+            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest" \
+            # === THÊM DÒNG NÀY ĐỂ XÓA CÁC BIẾN MÔI TRƯỜDNG CŨ ===
+            # Bạn cũng có thể xóa cả SPRING_DATASOURCE_USERNAME và PASSWORD nếu không cần chúng nữa
+            --remove-env-vars=SPRING_DATASOURCE_URL,SPRING_DATASOURCE_USERNAME,SPRING_DATASOURCE_PASSWORD
 
 
 
