@@ -56,7 +56,7 @@ jobs:
             --platform=managed \
             --region=${{ secrets.REGION }} \
             --allow-unauthenticated \
-            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
+            --update-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
 
 
 
