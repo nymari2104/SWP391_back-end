@@ -19,13 +19,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String userId;
-    @Column(name = "fullname", unique = true, columnDefinition = "TEXT")
+    @Column(name = "fullname", unique = true, columnDefinition = "nvarchar(255)")
     String fullname;
-    @Column(name = "email", unique = true, columnDefinition = "TEXT")
+    @Column(name = "email", unique = true, columnDefinition = "nvarchar(255)")
     String email;
     @Column(name = "phone", columnDefinition = "VARCHAR(20)")
     String phone;
-    @Column(name = "address", columnDefinition = "TEXT")
+    @Column(name = "address", columnDefinition = "nvarchar(255)")
     String address;
     @Column(name = "password")
     String password;

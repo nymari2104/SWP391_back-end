@@ -25,10 +25,10 @@ public class RefundRequest {
     @JoinColumn(name = "order_id", unique = true)
     Order order;
 
-    @Column(name = "refund_reason", columnDefinition = "TEXT")
+    @Column(name = "refund_reason", columnDefinition = "nvarchar(255)")
     String refundReason;
 
-    @Column(name = "refund_reason_image", columnDefinition = "TEXT")
+    @Column(name = "refund_reason_image", columnDefinition = "nvarchar(255)")
     String refundReasonImage;
 
     @CreationTimestamp

@@ -39,7 +39,7 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     String productName;
 
-    @Column(name = "image", columnDefinition = "TEXT")
+    @Column(name = "image", columnDefinition = "nvarchar(255)")
     String image;
 
     @Column(name = "unit_price", nullable = false)
@@ -49,7 +49,7 @@ public class Product {
     @Column(name = "stock")
     int stock;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "nvarchar(255)")
     String description;
 
     @Column(name = "status")

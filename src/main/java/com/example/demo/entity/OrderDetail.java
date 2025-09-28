@@ -32,13 +32,13 @@ public class OrderDetail {
     @JoinColumn(name = "product_id", nullable = false)
     Product product;
 
-    @Column(name = "product_name", columnDefinition = "TEXT")
+    @Column(name = "product_name", columnDefinition = "nvarchar(255)")
     String productName;
 
     @Column(name = "unit_price")
     float unitPrice;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "nvarchar(255)")
     String description;
 
     @Column(name = "total", nullable = false)

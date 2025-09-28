@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -29,10 +30,10 @@ public class Blog {
     @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "image", columnDefinition = "TEXT")
+    @Column(name = "image", columnDefinition = "nvarchar(255)")
     String image;
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(name = "content", columnDefinition = "nvarchar(255)")
     String content;
 
     @Column(name = "title")
@@ -42,5 +43,6 @@ public class Blog {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "create_date")
     Date createDate;
+
 
 }

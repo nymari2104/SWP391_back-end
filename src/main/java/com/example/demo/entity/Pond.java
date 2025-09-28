@@ -39,7 +39,7 @@ public class Pond {
     @Column(name = "pump_power")
     float pumpPower;
 
-    @Column(name = "image", columnDefinition = "TEXT")
+    @Column(name = "image", columnDefinition = "nvarchar(255)")
     String image;
 
     @Column(name = "size")
