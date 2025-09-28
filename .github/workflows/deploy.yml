@@ -67,14 +67,8 @@ jobs:
 
           # Triển khai dịch vụ Cloud Run
           gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --set-secrets=SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest\
             --image=$IMAGE_TAG \
             --platform=managed \
             --region=${{ env.REGION }} \
             --allow-unauthenticated \
-            # BƯỚC QUAN TRỌNG NHẤT: Gắn Service Account cho dịch vụ Cloud Run
-            # Để ứng dụng Spring Boot của bạn có quyền đọc Secret Manager lúc chạy
-            --service-account=${{ env.SERVICE_ACCOUNT }}
-#            # Ví dụ về cách inject secret vào biến môi trường của Cloud Run
-#            --set-secrets="SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest"\
-#            --set-secrets="SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
-            --set-env-vars="SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}"
