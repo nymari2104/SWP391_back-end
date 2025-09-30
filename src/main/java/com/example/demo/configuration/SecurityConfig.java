@@ -29,7 +29,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/product/**",
             "/category/**",
             "/payment/**",
-            "/blog/{blogId}", "/blog/list"
+            "/blog/**"
     };
 
     @Autowired

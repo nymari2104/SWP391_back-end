@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Nationalized;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -30,10 +31,11 @@ public class Blog {
     @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "image", columnDefinition = "nvarchar(255)")
+    @Nationalized
+    @Column(name = "image")
     String image;
-
-    @Column(name = "content", columnDefinition = "nvarchar(255)")
+    @Nationalized
+    @Column(name = "content")
     String content;
 
     @Column(name = "title")

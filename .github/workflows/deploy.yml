@@ -8,9 +8,9 @@ on:
 # Biến môi trường dùng chung cho cả job
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: asia-southeast1 # Điền thẳng region vào đây nếu nó không đổi, hoặc dùng secret
+  REGION: asia-east1 # Điền thẳng region vào đây nếu nó không đổi, hoặc dùng secret
   REPOSITORY: trouni-repo
-  SERVICE_NAME: spring-boot-app
+  SERVICE_NAME: trouni
   SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }} # Dùng biến để dễ quản  lý
 
 jobs:
@@ -67,8 +67,8 @@ jobs:
 
           # Triển khai dịch vụ Cloud Run
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --set-secrets=SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest\
+            --set-env-vars="JWT_SIGNER_KEY=${{ secrets.JWT_SECRET }},PAYPAL_CLIENT_ID=${{ secrets.PAYPAL_ID }},PAYPAL_CLIENT_SECRET=${{ secrets.PAYPAL_SECRET }},SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}" \
             --image=$IMAGE_TAG \
             --platform=managed \
             --region=${{ env.REGION }} \
-            --allow-unauthenticated \
+            --allow-unauthenticated

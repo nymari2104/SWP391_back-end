@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Nationalized;
 
 import java.util.List;
 
@@ -19,13 +20,16 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String userId;
-    @Column(name = "fullname", unique = true, columnDefinition = "nvarchar(255)")
+    @Nationalized
+    @Column(name = "fullname", unique = true)
     String fullname;
-    @Column(name = "email", unique = true, columnDefinition = "nvarchar(255)")
+    @Nationalized
+    @Column(name = "email", unique = true)
     String email;
     @Column(name = "phone", columnDefinition = "VARCHAR(20)")
     String phone;
-    @Column(name = "address", columnDefinition = "nvarchar(255)")
+    @Nationalized
+    @Column(name = "address")
     String address;
     @Column(name = "password")
     String password;

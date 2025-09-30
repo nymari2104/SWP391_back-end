@@ -67,12 +67,18 @@
 
 	<dependencies>
 
-
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<!-- KHÔNG cần version nếu Parent POM đã quản lý, nhưng nếu cần debug, bạn có thể thêm:
+            <version>${hibernate.version}</version> -->
+		</dependency>
 		<!-- === THAY ĐỔI 2: THÊM DEPENDENCY CỦA SECRET MANAGER === -->
 		<!-- Dependency này chứa logic để đọc secret từ GCP -->
 		<dependency>
 			<groupId>com.google.cloud</groupId>
 			<artifactId>spring-cloud-gcp-starter-secretmanager</artifactId>
+
 		</dependency>
 
 		<dependency>
